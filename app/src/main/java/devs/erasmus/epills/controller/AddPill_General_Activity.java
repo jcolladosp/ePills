@@ -1,4 +1,4 @@
-package devs.erasmus.epills;
+package devs.erasmus.epills.controller;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -15,6 +15,8 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import devs.erasmus.epills.R;
 
 public class AddPill_General_Activity extends AppCompatActivity {
 

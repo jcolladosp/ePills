@@ -24,7 +24,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AddPill_General_Activity"></activity>
+        <activity android:name=".controller.AddPill_General_Activity"></activity>
         
         <provider
             android:authorities="devs.erasmus.epills.FileProvider"
