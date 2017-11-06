@@ -11,11 +11,13 @@ public class Medicine {
     private String name;
     private String description;
     private ArrayList<MedicineQuantity> medicineQuantityList;
+    private String image;
 
-    public Medicine(int id, String name) {
+    public Medicine(int id, String name,String image) {
         this.id = id;
         this.name = name;
         medicineQuantityList = new ArrayList<>();
+        this.image = image;
 
     }
 
@@ -45,6 +47,9 @@ public class Medicine {
 
     public void addMedicineQuantity(MedicineQuantity medicineQuantity) {
         medicineQuantityList.add(medicineQuantity);
+    }
+    public String getImage(){
+        return this.image;
     }
 
     public void removeMedicineQuantity(MedicineQuantity o) {
