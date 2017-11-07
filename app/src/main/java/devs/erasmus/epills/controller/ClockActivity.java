@@ -8,13 +8,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 
-import com.lsjwzh.widget.recyclerviewpager.RecyclerViewPager;
 import com.mikepenz.materialdrawer.Drawer;
-import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.tomerrosenfeld.customanalogclockview.CustomAnalogClock;
-
+import com.viewpagerindicator.as.library.indicator.RecyclerCirclePageIndicator;
+import com.viewpagerindicator.as.library.pageview.RecyclerViewPager;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -38,6 +36,8 @@ public class ClockActivity extends AppCompatActivity {
     CustomAnalogClock analogClock;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
+    @BindView (R.id.indicator)
+    RecyclerCirclePageIndicator indicator;
 
     private Drawer drawer;
     @Override
@@ -47,7 +47,6 @@ public class ClockActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
-        //toolbar.setTitle(R.string.title_activity_clock);
 
         drawer = NavigationDrawer.getDrawerBuilder(this,this,toolbar).build();
 
@@ -61,7 +60,7 @@ public class ClockActivity extends AppCompatActivity {
         LinearLayoutManager layout = new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false);
         mRecyclerView.setLayoutManager(layout);
         mRecyclerView.setAdapter(pillCardAdapter);
-        mRecyclerView.setScrollbarFadingEnabled(false);
+        mRecyclerView.setHorizontalScrollBarEnabled(false);
 
         Date date =  new Date();
         IntakeMoment intake = new IntakeMoment(0,date,null,null);
@@ -80,7 +79,9 @@ public class ClockActivity extends AppCompatActivity {
 
         pillCardAdapter.notifyDataSetChanged();
 
-
+        indicator.setViewPager(mRecyclerView);
+        indicator.setRadius(15);
+        indicator.setFillColor(Color.parseColor("#FF33B5E5"));
 
     }
 
