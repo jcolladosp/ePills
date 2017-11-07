@@ -11,6 +11,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import com.lsjwzh.widget.recyclerviewpager.RecyclerViewPager;
+import com.mikepenz.materialdrawer.Drawer;
+import com.mikepenz.materialdrawer.DrawerBuilder;
+import com.tomerrosenfeld.customanalogclockview.CustomAnalogClock;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -22,6 +25,7 @@ import devs.erasmus.epills.R;
 import devs.erasmus.epills.model.IntakeMoment;
 import devs.erasmus.epills.model.Medicine;
 import devs.erasmus.epills.model.MedicineQuantity;
+import devs.erasmus.epills.widget.NavigationDrawer;
 import devs.erasmus.epills.widget.PillCardAdapter;
 
 public class ClockActivity extends AppCompatActivity {
@@ -30,26 +34,34 @@ public class ClockActivity extends AppCompatActivity {
 
     @BindView(R.id.list)
     RecyclerViewPager mRecyclerView;
+    @BindView(R.id.analog_clock)
+    CustomAnalogClock analogClock;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
 
+    private Drawer drawer;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_clock);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
         ButterKnife.bind(this);
+
+        setSupportActionBar(toolbar);
+        //toolbar.setTitle(R.string.title_activity_clock);
+
+        drawer = NavigationDrawer.getDrawerBuilder(this,this,toolbar).build();
+        //result.setSelection(1);
+
+        analogClock.setAutoUpdate(true);
+        analogClock.setScale(2f);
 
 
         medicineQuantities = new ArrayList<>();
-
         pillCardAdapter = new PillCardAdapter(this,medicineQuantities);
-        // setLayoutManager like normal RecyclerView, you do not need to change any thing.
         LinearLayoutManager layout = new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false);
         mRecyclerView.setLayoutManager(layout);
-
-        //set adapter
-        //You just need to implement ViewPageAdapter by yourself like a normal RecyclerView.Adpater.
         mRecyclerView.setAdapter(pillCardAdapter);
+        mRecyclerView.setScrollbarFadingEnabled(false);
 
         Date date =  new Date();
         IntakeMoment intake = new IntakeMoment(0,date,null,null);
@@ -71,5 +83,11 @@ public class ClockActivity extends AppCompatActivity {
 
 
     }
+
+    @Override
+    public void onBackPressed() {
+        drawer.openDrawer();
+    }
+
 
 }
