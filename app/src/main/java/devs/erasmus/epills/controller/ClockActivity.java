@@ -53,7 +53,7 @@ public class ClockActivity extends AppCompatActivity {
 
         analogClock.init(this, R.drawable.clock_face, R.drawable.hour_hand, R.drawable.minute_hand, 0, true, false);
         analogClock.setAutoUpdate(true);
-        analogClock.setScale(1.2f);
+        analogClock.setScale(1.1f);
 
 
         medicineQuantities = new ArrayList<>();
