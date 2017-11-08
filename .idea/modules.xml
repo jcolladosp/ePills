@@ -4,6 +4,8 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/ePills.iml" filepath="$PROJECT_DIR$/ePills.iml" />
+      <module fileurl="file://$PROJECT_DIR$/libs/library-clock/library-clock.iml" filepath="$PROJECT_DIR$/libs/library-clock/library-clock.iml" />
+      <module fileurl="file://C:\Users\Jonas\Documents\WInfo\WS1718\AndroidProgramming\Assignment\ePills\libs\library-clock\library-clock.iml" filepath="C:\Users\Jonas\Documents\WInfo\WS1718\AndroidProgramming\Assignment\ePills\libs\library-clock\library-clock.iml" />
     </modules>
   </component>
 </project>

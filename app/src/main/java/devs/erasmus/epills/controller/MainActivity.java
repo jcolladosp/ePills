@@ -17,18 +17,33 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.widget.Button;
 
+import com.mikepenz.materialdrawer.Drawer;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import devs.erasmus.epills.R;
+import devs.erasmus.epills.widget.NavigationDrawer;
 
 public class MainActivity extends AppCompatActivity {
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
     String mCurrentPhotoPath;
+
+    private Drawer drawer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         final Button button = findViewById(R.id.Add_pill_button);
         button.setOnClickListener(new View.OnClickListener() {
@@ -38,7 +53,15 @@ public class MainActivity extends AppCompatActivity {
                 dispatchPictureIntent();
             }
         });
+
+        ButterKnife.bind(this);
+        setSupportActionBar(toolbar);
+
+        drawer = NavigationDrawer.getDrawerBuilder(this,this,toolbar).build();
+        drawer.setSelection(-1);
+
     }
+
 
 
     private void dispatchPictureIntent() {
@@ -83,6 +106,11 @@ public class MainActivity extends AppCompatActivity {
         //TODO: Save the path also in the DB
         mCurrentPhotoPath = image.getAbsolutePath();
         return image;
+    }
+
+    @Override
+    public void onBackPressed() {
+        drawer.openDrawer();
     }
 
 }
