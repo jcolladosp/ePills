@@ -11,6 +11,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -31,6 +33,12 @@ public class AddPill_General_Activity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_pill__general_);
         mCurrentPhotoPath = getIntent().getStringExtra(EXTRA_PHOTO_URI);
+
+        ImageView imageView = findViewById(R.id.image_view);
+        Glide.with(this)
+                .load(mCurrentPhotoPath)
+                .fitCenter()
+                .into(imageView);
     }
 
 }
