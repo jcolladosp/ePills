@@ -17,10 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.widget.Button;
 
 import com.mikepenz.materialdrawer.Drawer;
 
@@ -62,8 +59,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
-
     private void dispatchPictureIntent() {
         Intent takepicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takepicture.resolveActivity(getPackageManager()) != null) {
@@ -87,9 +82,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Bitmap imageBitmap = BitmapFactory.decodeFile(mCurrentPhotoPath);
-            ImageView imageView = (ImageView) findViewById(R.id.image_view);
-            imageView.setImageBitmap(imageBitmap);
+            Intent addPillIntent = new Intent(this, AddPill_General_Activity.class);
+            System.out.println("Created intent"); //TODO: delete. it's only for testing.
+            addPillIntent.putExtra(AddPill_General_Activity.EXTRA_PHOTO_URI, mCurrentPhotoPath);
+            startActivity(addPillIntent);
         }
     }
 
