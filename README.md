@@ -2,7 +2,7 @@
 **ePills** is an for medicine management.
 
 #### Screenshot
-![Screenshot Android](https://github.com/jcolladosp/ePills/tree/master/clockDesigns/readme_screenshot.png)
+![Screenshot Android](https://image.ibb.co/b0iGOG/readme_screenshot.png)
 
 
 
