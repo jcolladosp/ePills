@@ -30,36 +30,15 @@ public class AddPill_General_Activity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_pill__general_);
-
-        dispatchPictureIntent();
-    }
-
-
-    private void dispatchPictureIntent() {
-        Intent takepicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takepicture.resolveActivity(getPackageManager()) != null) {
-            File photoFile = null;
-            try {
-                photoFile = createPictureFile();
-            } catch (IOException ioE) {
-                ioE.printStackTrace();
-                System.exit(-1);
-            }
-
-            if(photoFile != null) {
-                Uri photoURI = FileProvider.getUriForFile(this, "devs.erasmus.epills.FileProvider", photoFile);
-                takepicture.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                startActivityForResult(takepicture, REQUEST_IMAGE_CAPTURE);
-            }
-
-        }
+        //TODO: Think of a good intent for loading the picture
+        //dispatchPictureIntent();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bitmap imageBitmap = BitmapFactory.decodeFile(mCurrentPhotoPath);
-            ImageView imageView = (ImageView) findViewById(R.id.imageView);
+            ImageView imageView = (ImageView) findViewById(R.id.image_view);
             imageView.setImageBitmap(imageBitmap);
         }
     }
@@ -78,5 +57,6 @@ public class AddPill_General_Activity extends AppCompatActivity {
         mCurrentPhotoPath = image.getAbsolutePath();
         return image;
     }
+
 
 }
