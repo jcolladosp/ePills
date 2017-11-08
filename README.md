@@ -2,7 +2,7 @@
 **ePills** is an for medicine management.
 
 #### Screenshot
-![Screenshot Android](https://image.ibb.co/b0iGOG/readme_screenshot.png)
+![Screenshot Android](https://image.ibb.co/c8AD3G/readme_screenshot_Small.png)
 
 
 
