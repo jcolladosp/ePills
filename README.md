@@ -1,5 +1,6 @@
 # ePills
 **ePills** is an for medicine management.
+Paper link: https://docs.google.com/document/d/14k_HZtBkN8quOTmMbACSD_Fw7UverJunN6yQL9ite3w/edit?usp=sharing
 
 #### Screenshot
 ![Screenshot Android](https://image.ibb.co/c8AD3G/readme_screenshot_Small.png)
