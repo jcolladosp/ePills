@@ -37,7 +37,6 @@ public class AddPill_General_Activity extends AppCompatActivity {
         ImageView imageView = findViewById(R.id.image_view);
         Glide.with(this)
                 .load(mCurrentPhotoPath)
-                .fitCenter()
                 .into(imageView);
     }
 
