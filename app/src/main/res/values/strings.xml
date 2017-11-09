@@ -9,4 +9,6 @@
     <string name="autofill_button">Auto-Fill</string>
     <string name="description_helper">Press Auto-fill to download description data.</string>
     <string name="empty_Name">Medicine´s name must not be empty</string>
+    <string name="time_picker_title">Time</string>
+    <string name="pick_time">Choose Time</string>
 </resources>

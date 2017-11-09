@@ -46,8 +46,11 @@
         <activity
             android:name=".controller.ClockActivity"
             android:label="@string/title_activity_clock"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity android:name=".controller.AddPillSetTime"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity android:name=".controller.AddPillSetTime"
+            android:label="@style/AppTheme.NoActionBar">
+        </activity>
 
     </application>
 
