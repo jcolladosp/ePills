@@ -8,4 +8,5 @@
     <string name="medicin_description">Description</string>
     <string name="autofill_button">Auto-Fill</string>
     <string name="description_helper">Press Auto-fill to download description data.</string>
+    <string name="empty_Name">Medicine´s name must not be empty</string>
 </resources>

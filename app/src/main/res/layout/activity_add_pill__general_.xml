@@ -98,11 +98,11 @@
                 android:text="@string/autofill_button"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView2"
+                app:layout_constraintTop_toBottomOf="@+id/Description_helper"
                 app:layout_constraintVertical_bias="0.0" />
 
             <TextView
-                android:id="@+id/textView2"
+                android:id="@+id/Description_helper"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -117,6 +117,7 @@
     </android.support.v4.widget.NestedScrollView>
 
     <android.support.design.widget.FloatingActionButton
+        android:id="@+id/FAB"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
@@ -127,4 +128,5 @@
         app:layout_anchor="@id/app_bar_layout"
         app:layout_anchorGravity="bottom|right"
         />
+
 </android.support.design.widget.CoordinatorLayout>
