@@ -10,15 +10,17 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
+import devs.erasmus.epills.widget.SquareImageView;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.mikepenz.materialdrawer.Drawer;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,6 +30,7 @@ import java.util.Date;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import devs.erasmus.epills.R;
+import devs.erasmus.epills.widget.NavigationDrawer;
 
 public class AddPill_General_Activity extends AppCompatActivity {
 
@@ -45,6 +48,11 @@ public class AddPill_General_Activity extends AppCompatActivity {
     EditText name_text;
     @BindView(R.id.description_text)
     MultiAutoCompleteTextView description_text;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+
+    private Drawer drawer;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +61,11 @@ public class AddPill_General_Activity extends AppCompatActivity {
         ButterKnife.bind(this);
         mCurrentPhotoPath = getIntent().getStringExtra(EXTRA_PHOTO_URI);
 
-        ImageView imageView = findViewById(R.id.image_view);
+        setSupportActionBar(toolbar);
+
+        drawer = NavigationDrawer.getDrawerBuilder(this,this,toolbar).build();
+
+        SquareImageView imageView = findViewById(R.id.image_view);
         Glide.with(this)
                 .load(mCurrentPhotoPath)
                 .into(imageView);
