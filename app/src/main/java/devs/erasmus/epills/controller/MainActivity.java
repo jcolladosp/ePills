@@ -21,6 +21,8 @@ import android.support.v7.widget.Toolbar;
 
 import com.mikepenz.materialdrawer.Drawer;
 
+import org.litepal.LitePal;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -52,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
         ButterKnife.bind(this);
+        LitePal.initialize(this);
+
         setSupportActionBar(toolbar);
 
         drawer = NavigationDrawer.getDrawerBuilder(this,this,toolbar).build();

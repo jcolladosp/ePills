@@ -1,26 +1,20 @@
 package devs.erasmus.epills.model;
 
+import org.litepal.crud.DataSupport;
+
 /**
  * Created by jcolladosp on 28/10/2017.
  */
 
-public class MedicineQuantity {
-    private int id;
+public class MedicineQuantity extends DataSupport {
+
     private IntakeMoment intakeMoment;
     private Medicine medicine;
 
-    public MedicineQuantity(int id, IntakeMoment intakeMoment, Medicine medicine) {
-        this.id = id;
+    public MedicineQuantity(IntakeMoment intakeMoment, Medicine medicine) {
+
         this.intakeMoment = intakeMoment;
         this.medicine = medicine;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public IntakeMoment getIntakeMoment() {
