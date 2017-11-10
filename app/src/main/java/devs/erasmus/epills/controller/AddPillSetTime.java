@@ -5,9 +5,11 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.TimePickerDialog;
 import android.os.Build;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,12 +34,14 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
 
     //Stepnumbers of each element
     private final int REPETITION_STEP = 0;
-    private final int TIME_STEP = 1;
+    private final int TIME_STEP = 0;
     private final int DATE_STEP = 2;
     //Bind views
     @BindView(R.id.stepper)
     VerticalStepperFormLayout verticalStepper;
-    @BindView(R.id.time_label)
+    @BindView(R.id.toolbar)
+    Toolbar toolBar;
+    //Can't use butterKnife on this one..
     TextView timeTextView;
 
     private TimePickerDialog timePicker;
@@ -50,11 +54,12 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
         ButterKnife.bind(this);
 
         Calendar calendar = Calendar.getInstance();
+        time = new Pair(calendar.get(Calendar.HOUR_OF_DAY),calendar.get(Calendar.MINUTE));
         setTimePicker(calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE));
 
-        //TODO: setSupportActionBar(null);
+        setSupportActionBar(toolBar);
         //TODO: drawer: Yes or no? TOOLBAR: how?
-        String[] mySteps = {"Repetition", "Time", "StartDate"};
+        String[] mySteps = {"Time"};
         VerticalStepperFormLayout.Builder.newInstance(verticalStepper, mySteps, this, this)
                 .primaryColor(ContextCompat.getColor(getApplicationContext(),R.color.primary))
                 .primaryDarkColor(ContextCompat.getColor(getApplicationContext(), R.color.primary_dark))
@@ -85,18 +90,18 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
     public View createStepContentView(int stepNumber) {
         View view = null;
         switch (stepNumber) {
-            case REPETITION_STEP:
-                view = createDateStep();
+            case TIME_STEP:
+                view = createTimeStep();
                 break;
         }
         return view;
     }
 
-    private View createDateStep() {
+    private View createTimeStep() {
         LayoutInflater inflater = LayoutInflater.from(getBaseContext());
-        LinearLayout timeStepContent =
-                (LinearLayout) inflater.inflate(R.layout.stepper_time, null, false);
-
+        ConstraintLayout timeStepContent =
+                (ConstraintLayout) inflater.inflate(R.layout.stepper_time, null, false);
+        timeTextView = timeStepContent.findViewById(R.id.time_label);
         timeTextView.setText(getTimeString());
         timeTextView.setOnClickListener(new View.OnClickListener() {
             @Override
