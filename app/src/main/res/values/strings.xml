@@ -3,7 +3,7 @@
     <string name="title_activity_clock">Medicine Clock</string>
     <string name="action_settings">Settings</string>
     <string name="sync_google_calendar">Sync with Google Calendar</string>
-    <string name="title_activity_addPill">Adding Pill</string>
+    <string name="title_activity_addPill">Add a Medicine</string>
     <string name="medicin_name">Name of Medicin</string>
     <string name="medicin_description">Description</string>
     <string name="autofill_button">Auto-Fill</string>

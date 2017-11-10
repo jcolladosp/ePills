@@ -69,14 +69,14 @@ public class ClockActivity extends AppCompatActivity {
         intake.save();
 
 
-        Medicine medicine = new Medicine(0,"Ibuprofeno","http://omicrono.elespanol.com/wp-content/uploads/2015/05/ibuprofeno.jpg");
-        Medicine medicine2 = new Medicine(0,"Paracetamol","https://www.supermadre.net/wp-content/uploads/2016/05/paracetamol.jpg");
-        Medicine medicine3 = new Medicine(0,"Strepsils","http://www.londondrugs.com/dw/image/v2/AAJI_PRD/on/demandware.static/-/Sites-londondrugs-master/default/dw39a84b23/products/L7861065/large/L7861065.JPG?sw=556&sh=680&sm=fit");
+        Medicine medicine = new Medicine("Ibuprofeno","http://omicrono.elespanol.com/wp-content/uploads/2015/05/ibuprofeno.jpg");
+        Medicine medicine2 = new Medicine("Paracetamol","https://www.supermadre.net/wp-content/uploads/2016/05/paracetamol.jpg");
+        Medicine medicine3 = new Medicine("Strepsils","http://www.londondrugs.com/dw/image/v2/AAJI_PRD/on/demandware.static/-/Sites-londondrugs-master/default/dw39a84b23/products/L7861065/large/L7861065.JPG?sw=556&sh=680&sm=fit");
 
 
-        MedicineQuantity a = new MedicineQuantity(1,intake,medicine);
-        MedicineQuantity b = new MedicineQuantity(2,intake,medicine2);
-        MedicineQuantity c = new MedicineQuantity(3,intake,medicine3);
+        MedicineQuantity a = new MedicineQuantity(intake,medicine);
+        MedicineQuantity b = new MedicineQuantity(intake,medicine2);
+        MedicineQuantity c = new MedicineQuantity(intake,medicine3);
 
         medicineQuantities.add(a);
         medicineQuantities.add(b);
