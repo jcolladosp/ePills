@@ -15,8 +15,8 @@
         android:id="@+id/day"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:textColor="#ffffff"
-        android:gravity="center"
         android:layout_gravity="center_vertical"
-        android:textSize="20sp"/>
+        android:gravity="center"
+        android:textColor="#ffffff"
+        android:textSize="18sp" />
 </LinearLayout>

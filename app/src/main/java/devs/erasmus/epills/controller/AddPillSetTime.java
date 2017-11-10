@@ -131,7 +131,7 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
             dayLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if((boolean) v.getTag()) {
+                    if(!(boolean) v.getTag()) {
                         activateDay(index, dayLayout, true);
                     } else {
                         deactivateDay(index, dayLayout, true);
@@ -145,17 +145,37 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
         return repetitionContent;
     }
 
-    private void activateDay(int index, LinearLayout dayLayout, boolean b) {
+    private void disableDays() {
+        double opacity = 0.26;
+        for (int i = 0; i < weekdays.length; i++) {
+            LinearLayout day = getDayLayout(i);
+            day.setOnClickListener(null);
+            int colorBlack = ContextCompat.getColor(getBaseContext(), R.color.black);
+            if (day.getBackground()== null) {
+                Drawable bg = ContextCompat.getDrawable(getBaseContext(), R.drawable.circle_step);
+                bg.setColorFilter(new PorterDuffColorFilter(colorBlack, PorterDuff.Mode.SRC_IN));
+                bg.setAlpha((int) (opacity * 255));
+                day.setBackground(bg);
+            } else {
+                day.getBackground().setColorFilter(new PorterDuffColorFilter(colorBlack, PorterDuff.Mode.SRC_IN));
+                day.getBackground().setAlpha((int) (opacity * 255)); //Following the material specification, disabled buttons have opacity 26%
+            }
+        }
+    }
+
+    private void activateDay(int index, LinearLayout dayLayout, boolean check) {
         weekdays[index] = true;
 
         dayLayout.setTag(true);
         Drawable bg = ContextCompat.getDrawable(getBaseContext(), R.drawable.circle_step);
-        int colorPrimary = ContextCompat.getColor(getBaseContext(), R.color.primary);
+        int colorPrimary = ContextCompat.getColor(getBaseContext(), R.color.accent);
         bg.setColorFilter(new PorterDuffColorFilter(colorPrimary, PorterDuff.Mode.SRC_IN));
         dayLayout.setBackground(bg);
-
         TextView day = (TextView) dayLayout.findViewById(R.id.day);
         day.setTextColor(ContextCompat.getColor(getBaseContext(),R.color.md_white_1000));
+        if(check) {
+            checkDays();
+        }
     }
 
     private void deactivateDay(int index, LinearLayout dayLayout, boolean check) {
@@ -226,11 +246,50 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
             case DATE_STEP:
                 verticalStepper.setActiveStepAsCompleted();
                 break;
+            case REPETITION_STEP:
+                break;
         }
     }
 
     @Override
     public void sendData() {
 
+
+    }
+
+    public void onRadioButtonPressed(View view) {
+        switch (view.getId()) {
+            case R.id.singleRep_radio:
+                //TODO: Uncheck radio buttons
+                disableDays();
+                break;
+            case R.id.multipleRep_radio:
+                enableDays();
+                break;
+        }
+    }
+
+    private void enableDays() {
+        for (int i = 0; i < weekdays.length; i++) {
+            final int index = i ;
+            final LinearLayout dayLayout = getDayLayout(i);
+            dayLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(!(boolean) v.getTag()) {
+                        activateDay(index, dayLayout, true);
+                    } else {
+                        deactivateDay(index, dayLayout, true);
+                    }
+                }
+            });
+            if ((boolean) dayLayout.getTag()) {
+                dayLayout.getBackground().setAlpha(255);
+                activateDay(index, dayLayout, true);
+            } else {
+                deactivateDay(index, dayLayout, true);
+            }
+
+        }
     }
 }
