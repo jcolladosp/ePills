@@ -1,5 +1,7 @@
 package devs.erasmus.epills.model;
 
+import org.litepal.crud.DataSupport;
+
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -7,28 +9,19 @@ import java.util.Date;
  * Created by jcolladosp on 28/10/2017.
  */
 
-public class IntakeMoment {
-    private int id;
+public class IntakeMoment extends DataSupport {
+
     private Date intakeDate;
-    private User user;
     private Receipt receipt;
     private ArrayList<MedicineQuantity> medicineQuantityList;
 
-    public IntakeMoment(int id, Date intakeDate, User user, MedicineQuantity medicineQuantity) {
-        this.id = id;
+    public IntakeMoment(Date intakeDate, MedicineQuantity medicineQuantity) {
+
         this.intakeDate = intakeDate;
-        this.user = user;
         medicineQuantityList = new ArrayList<>();
         medicineQuantityList.add(medicineQuantity);
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public Date getIntakeDate() {
         return intakeDate;
@@ -38,13 +31,7 @@ public class IntakeMoment {
         this.intakeDate = intakeDate;
     }
 
-    public User getUser() {
-        return user;
-    }
 
-    public void setUser(User user) {
-        this.user = user;
-    }
 
     public Receipt getReceipt() {
         return receipt;
@@ -61,5 +48,9 @@ public class IntakeMoment {
 
     public void removeMedicineQuantity(MedicineQuantity medicineQuantity) {
         medicineQuantityList.remove(medicineQuantity);
+    }
+
+    public ArrayList<MedicineQuantity> getMedicineQuantityList() {
+        return medicineQuantityList;
     }
 }

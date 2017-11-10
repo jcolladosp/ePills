@@ -1,32 +1,26 @@
 package devs.erasmus.epills.model;
 
+import org.litepal.crud.DataSupport;
+
 import java.util.ArrayList;
 
 /**
  * Created by jcolladosp on 28/10/2017.
  */
 
-public class Medicine {
-    private int id;
+public class Medicine extends DataSupport {
+
     private String name;
     private String description;
     private ArrayList<MedicineQuantity> medicineQuantityList;
     private String image;
 
-    public Medicine(int id, String name,String image) {
-        this.id = id;
+    public Medicine(String name,String image) {
+
         this.name = name;
         medicineQuantityList = new ArrayList<>();
         this.image = image;
 
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -54,5 +48,9 @@ public class Medicine {
 
     public void removeMedicineQuantity(MedicineQuantity o) {
         medicineQuantityList.remove(o);
+    }
+
+    public ArrayList<MedicineQuantity> getMedicineQuantityList() {
+        return medicineQuantityList;
     }
 }
