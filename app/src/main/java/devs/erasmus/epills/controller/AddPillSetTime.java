@@ -4,6 +4,10 @@ import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.TimePickerDialog;
+import android.content.Context;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
@@ -11,6 +15,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.Layout;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,9 +52,11 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
     //Stepper
     TextView timeTextView;
     TextView dateTextView;
+    ConstraintLayout repetitionContent;
 
     private TimePickerDialog timePicker;
     private Pair<Integer, Integer> time;
+    private boolean[] weekdays = new boolean[7];
     private Drawer drawer;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,8 +108,89 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
             case DATE_STEP:
                 view = createDateStep();
                 break;
+            case REPETITION_STEP:
+                view = createRepetitionStep();
+                break;
         }
         return view;
+    }
+
+    private View createRepetitionStep() {
+        LayoutInflater inflater = LayoutInflater.from(getBaseContext());
+        repetitionContent =
+                (ConstraintLayout) inflater.inflate(R.layout.stepper_repetition,null, false);
+
+        //TODO: Extract into ressource file
+        String[] weekdays = {"Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"};
+
+        for(int i = 0; i < weekdays.length; i++) {
+            final LinearLayout dayLayout = getDayLayout(i);
+            final int index = i;
+            activateDay(i, dayLayout, false);
+
+            dayLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if((boolean) v.getTag()) {
+                        activateDay(index, dayLayout, true);
+                    } else {
+                        deactivateDay(index, dayLayout, true);
+                    }
+                }
+            });
+
+            TextView dayText = dayLayout.findViewById(R.id.day);
+            dayText.setText(weekdays[i]);
+        }
+        return repetitionContent;
+    }
+
+    private void activateDay(int index, LinearLayout dayLayout, boolean b) {
+        weekdays[index] = true;
+
+        dayLayout.setTag(true);
+        Drawable bg = ContextCompat.getDrawable(getBaseContext(), R.drawable.circle_step);
+        int colorPrimary = ContextCompat.getColor(getBaseContext(), R.color.primary);
+        bg.setColorFilter(new PorterDuffColorFilter(colorPrimary, PorterDuff.Mode.SRC_IN));
+        dayLayout.setBackground(bg);
+
+        TextView day = (TextView) dayLayout.findViewById(R.id.day);
+        day.setTextColor(ContextCompat.getColor(getBaseContext(),R.color.md_white_1000));
+    }
+
+    private void deactivateDay(int index, LinearLayout dayLayout, boolean check) {
+        weekdays[index] = false;
+
+        dayLayout.setTag(false);
+
+        dayLayout.setBackgroundResource(0);
+
+        TextView textView = dayLayout.findViewById(R.id.day);
+        textView.setTextColor(ContextCompat.getColor(getBaseContext(),R.color.primary));
+
+        if (check) {
+            checkDays();
+        }
+    }
+
+    private boolean checkDays() {
+       boolean thereIsAtLeastOneDaySelected = false;
+          for(int i = 0; i < weekdays.length && !thereIsAtLeastOneDaySelected; i++) {
+                if(weekdays[i]) {
+                    verticalStepper.setStepAsCompleted(REPETITION_STEP);
+                    thereIsAtLeastOneDaySelected = true;
+                }
+            }
+            if(!thereIsAtLeastOneDaySelected) {
+                verticalStepper.setStepAsUncompleted(REPETITION_STEP, getResources().getString(R.string.no_days_Error));
+            }
+
+            return thereIsAtLeastOneDaySelected;
+    }
+
+    private LinearLayout getDayLayout(int i) {
+        int id = repetitionContent.getResources().getIdentifier("day_"+i, "id", getPackageName());
+        return (LinearLayout) repetitionContent.findViewById(id);
     }
 
     private View createDateStep() {

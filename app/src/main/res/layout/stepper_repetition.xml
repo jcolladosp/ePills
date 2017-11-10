@@ -21,12 +21,58 @@
     <RadioButton
         android:id="@+id/multipleRep_radio"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="32dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_weight="1"
         android:text="@string/multiple_intake"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/singleRep_radio" />
+
+    <ScrollView
+        android:id="@+id/scrollView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/multipleRep_radio">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <include
+                android:id="@+id/day_0"
+                layout="@layout/step_days_of_week_day_layout" />
+
+            <include
+                android:id="@+id/day_1"
+                layout="@layout/step_days_of_week_day_layout" />
+
+            <include
+                android:id="@+id/day_2"
+                layout="@layout/step_days_of_week_day_layout" />
+
+            <include
+                android:id="@+id/day_3"
+                layout="@layout/step_days_of_week_day_layout" />
+
+            <include
+                android:id="@+id/day_4"
+                layout="@layout/step_days_of_week_day_layout" />
+
+            <include
+                android:id="@+id/day_5"
+                layout="@layout/step_days_of_week_day_layout" />
+
+            <include
+                android:id="@+id/day_6"
+                layout="@layout/step_days_of_week_day_layout" />
+
+        </LinearLayout>
+
+    </ScrollView>
 
 </android.support.constraint.ConstraintLayout>

@@ -15,4 +15,5 @@
     <string name="pick_time">Choose Time</string>
     <string name="single_intake">Take medicine once</string>
     <string name="multiple_intake">Repeat intake for this time</string>
+    <string name = "no_days_Error">Choose at least one day</string>
 </resources>
