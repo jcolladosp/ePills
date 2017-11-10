@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.app.TimePickerDialog;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -33,16 +34,19 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
     final String EXTRA_MEDICINEID = PACKAGENAME + "medicine_id";
 
     //Stepnumbers of each element
+    String[] mySteps = {"Repetition","Time", "Date"};
     private final int REPETITION_STEP = 0;
-    private final int TIME_STEP = 0;
+    private final int TIME_STEP = 1;
     private final int DATE_STEP = 2;
     //Bind views
     @BindView(R.id.stepper)
     VerticalStepperFormLayout verticalStepper;
     @BindView(R.id.toolbar)
     Toolbar toolBar;
-    //Can't use butterKnife on this one..
+
+    //Stepper
     TextView timeTextView;
+    TextView dateTextView;
 
     private TimePickerDialog timePicker;
     private Pair<Integer, Integer> time;
@@ -59,7 +63,7 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
 
         setSupportActionBar(toolBar);
         //TODO: drawer: Yes or no? TOOLBAR: how?
-        String[] mySteps = {"Time"};
+
         VerticalStepperFormLayout.Builder.newInstance(verticalStepper, mySteps, this, this)
                 .primaryColor(ContextCompat.getColor(getApplicationContext(),R.color.primary))
                 .primaryDarkColor(ContextCompat.getColor(getApplicationContext(), R.color.primary_dark))
@@ -79,6 +83,7 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
                 }, hour, minute, true);
     }
 
+    @NonNull
     private String getTimeString() {
         String hourString = ((time.first<9) ? "0"+ time.first : String.valueOf(time.first));
         String minuteString = (time.second<9) ? "0" + time.second : String.valueOf(time.second);
@@ -93,8 +98,20 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
             case TIME_STEP:
                 view = createTimeStep();
                 break;
+            case DATE_STEP:
+                view = createDateStep();
+                break;
         }
         return view;
+    }
+
+    private View createDateStep() {
+        LayoutInflater inflater = LayoutInflater.from(getBaseContext());
+        ConstraintLayout dateStepContent =
+                (ConstraintLayout) inflater.inflate(R.layout.stepper_time,null, false);
+        dateTextView = dateStepContent.findViewById(R.id.time_label);
+        dateTextView.setText("iajsdoijaoisdu");
+        return dateStepContent;
     }
 
     private View createTimeStep() {
@@ -114,7 +131,14 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
 
     @Override
     public void onStepOpening(int stepNumber) {
-
+        switch (stepNumber) {
+            case TIME_STEP:
+                verticalStepper.setActiveStepAsCompleted();
+                break;
+            case DATE_STEP:
+                verticalStepper.setActiveStepAsCompleted();
+                break;
+        }
     }
 
     @Override

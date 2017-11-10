@@ -4,11 +4,15 @@
     <string name="action_settings">Settings</string>
     <string name="sync_google_calendar">Sync with Google Calendar</string>
     <string name="title_activity_addPill">Add a Medicine</string>
-    <string name="medicin_name">Name of Medicin</string>
+    <string name="medicin_name">Name of Medicine</string>
     <string name="medicin_description">Description</string>
     <string name="autofill_button">Auto-Fill</string>
     <string name="description_helper">Press Auto-fill to download description data.</string>
     <string name="empty_Name">Medicine´s name must not be empty</string>
+
+    <!-- Stepper  -->
     <string name="time_picker_title">Time</string>
     <string name="pick_time">Choose Time</string>
+    <string name="single_intake">Take medicine once</string>
+    <string name="multiple_intake">Repeat intake for this time</string>
 </resources>
