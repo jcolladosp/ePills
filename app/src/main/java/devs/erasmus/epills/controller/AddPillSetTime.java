@@ -26,6 +26,7 @@ import com.mikepenz.materialdrawer.Drawer;
 import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
 import org.litepal.crud.DataSupport;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import butterknife.BindView;
@@ -36,6 +37,17 @@ import ernestoyaquello.com.verticalstepperform.VerticalStepperFormLayout;
 import ernestoyaquello.com.verticalstepperform.interfaces.VerticalStepperForm;
 
 public class AddPillSetTime extends AppCompatActivity implements VerticalStepperForm{
+
+    //STATE STRINGS
+    private final String
+            STATE_TIME_Hour = "STATE_TIME_HOUR",
+            STATE_TIME_Minute = "STATE_TIME_MINUTE",
+            STATE_STARTDATE = "STATE_STARTDATE",
+            STATE_ENDDATE = "State_ENDDATE",
+            STATE_SUBTITLES = "STATE_SUBTITLES",
+            STATE_WEEK = "STATE_WEEK",
+            STATE_REP_Single= "STATE_REP_SINGLE";
+
     final static String PACKAGENAME = "devs.erasmus.epills.contoller";
     static final String EXTRA_MEDICINEID = PACKAGENAME + "medicine_id";
 
@@ -48,6 +60,7 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
     private final int TIME_STEP = 0;
     private final int DATE_STEP = 1;
     private final int QUANTITY_STEP = 2;
+    private final int TOTAL_STEPS = 4;
     //Bind views
     @BindView(R.id.stepper)
     VerticalStepperFormLayout verticalStepper;
@@ -91,21 +104,37 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
                 getResources().getString(R.string.startDate_Label),
                 getResources().getString(R.string.quantity_label),
                 getResources().getString(R.string.repetition_Label)};
-        stepSubTitles = new String[]{
-                getResources().getString(R.string.time_descr),
-                getResources().getString(R.string.startDate_descr),
-                getResources().getString(R.string.quantity_descr),
-                getResources().getString(R.string.repetition_descr)
-        };
 
-        Calendar calendar = Calendar.getInstance();
-        time = new Pair(calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE));
-        setTimePicker(calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE));
-        startDate = (Calendar) calendar.clone();
-        calendar.roll(Calendar.DAY_OF_MONTH,true);
-        endDate = calendar;
+        if (savedInstanceState == null) {
+            stepSubTitles = new String[]{
+                    getResources().getString(R.string.time_descr),
+                    getResources().getString(R.string.startDate_descr),
+                    getResources().getString(R.string.quantity_descr),
+                    getResources().getString(R.string.repetition_descr)
+            };
+
+            Calendar calendar = Calendar.getInstance();
+            time = new Pair(calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE));
+
+            startDate = (Calendar) calendar.clone();
+            calendar.roll(Calendar.DAY_OF_MONTH,true);
+            endDate = calendar;
+        } else {
+            ArrayList list =  savedInstanceState.getStringArrayList(STATE_SUBTITLES);
+            stepSubTitles = new String[list.size()];
+            for (int i = 0; i < list.size(); i++) {
+                stepSubTitles[i] = (String) list.get(i);
+            }
+
+            time = new Pair(savedInstanceState.getInt(STATE_TIME_Hour), savedInstanceState.getInt(STATE_TIME_Minute));
+            startDate = (Calendar)savedInstanceState.getSerializable(STATE_STARTDATE);
+            endDate = (Calendar) savedInstanceState.getSerializable(STATE_ENDDATE);
+        }
+
+        setTimePicker(time.first, time.second);
         setStartDatePicker(startDate.get(Calendar.YEAR), startDate.get(Calendar.MONTH), startDate.get(Calendar.DAY_OF_MONTH));
         setEndDatePicker(endDate.get(Calendar.YEAR), endDate.get(Calendar.MONTH), endDate.get(Calendar.DAY_OF_MONTH));
+
         VerticalStepperFormLayout.Builder.newInstance(verticalStepper, stepTitles, this, this)
                 .materialDesignInDisabledSteps(true)
                 .showVerticalLineWhenStepsAreCollapsed(true)
@@ -117,7 +146,18 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
 
 
     }
+/*
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
 
+        boolean singleSelected = savedInstanceState.getBoolean(STATE_REP_Single);
+        if (singleSelected) {
+            singleRadioButton.setChecked(true);
+            multiRadioButton.setChecked(false);
+        } else
+    }
+*/
     private void setEndDatePicker(int year, int month, int day) {
         endDatePicker = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
             @Override
@@ -445,5 +485,45 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
         } else {
             return getResources().getString(R.string.rep_severalTimesDescr);
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle state) {
+        state.putSerializable(STATE_ENDDATE,endDate);
+        state.putSerializable(STATE_STARTDATE,startDate);
+        state.putInt(STATE_TIME_Hour,time.first);
+        state.putInt(STATE_TIME_Minute, time.second);
+        ArrayList<String> subtitles = new ArrayList<>();
+        for (int i = 0; i < TOTAL_STEPS; i++ ) {
+            subtitles.add(verticalStepper.getStepsSubtitles(i));
+        }
+        state.putStringArrayList(STATE_SUBTITLES, subtitles);
+        boolean[] week_state = new boolean[weekdays.length];
+
+        for (int i = 0; i < week_state.length; i++) {
+            LinearLayout day = getDayLayout(i);
+            week_state[i] = (boolean) day.getTag();
+        }
+        state.putBooleanArray(STATE_WEEK,week_state);
+
+        super.onSaveInstanceState(state);
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle state) {
+        boolean[] weekstate = state.getBooleanArray(STATE_WEEK);
+        for (int i = 0; i < weekstate.length; i++) {
+            LinearLayout day = getDayLayout(i);
+
+            day.setTag(weekstate[i]);
+        }
+
+        if (singleRadioButton.isChecked()) {
+            disableDays();
+        } else {
+            enableDays();
+        }
+
+        super.onRestoreInstanceState(state);
     }
 }
