@@ -29,4 +29,5 @@
     <string name="rep_onlyOnce">Only once</string>
     <string name="rep_severalTimesDescr">Several Times</string>
     <string name="end_of_repition">End of Repition</string>
+    <string name="end_after_startDateError">Please choose an end date after the start date!</string>
 </resources>

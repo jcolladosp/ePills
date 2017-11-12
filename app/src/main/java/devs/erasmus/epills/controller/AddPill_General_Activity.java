@@ -116,6 +116,8 @@ public class AddPill_General_Activity extends AppCompatActivity {
             Glide.with(this)
                     .load(mCurrentPhotoPath)
                     .into(imageView);
+        } else {
+            finish();
         }
     }
 
@@ -149,6 +151,8 @@ public class AddPill_General_Activity extends AppCompatActivity {
             startActivity(intent);
         }
     }
+
+
 
     //AutoFill logic
     
