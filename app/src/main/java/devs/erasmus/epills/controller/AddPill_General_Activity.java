@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import butterknife.OnClick;
 import devs.erasmus.epills.model.Medicine;
 import devs.erasmus.epills.widget.SquareImageView;
 import android.widget.MultiAutoCompleteTextView;
@@ -62,41 +63,76 @@ public class AddPill_General_Activity extends AppCompatActivity {
     ProgressBar loading_indicator;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
+    @BindView(R.id.image_view)
+    SquareImageView imageView;
 
     private Drawer drawer;
+    static final int REQUEST_IMAGE_CAPTURE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_pill__general_);
         ButterKnife.bind(this);
-        mCurrentPhotoPath = getIntent().getStringExtra(EXTRA_PHOTO_URI);
 
         setSupportActionBar(toolbar);
 
         drawer = NavigationDrawer.getDrawerBuilder(this,this,toolbar).build();
 
-        SquareImageView imageView = findViewById(R.id.image_view);
-
-        Glide.with(this)
-                .load(mCurrentPhotoPath)
-                .into(imageView);
-
-        //Set onclicklistener
-        confirm_Button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                confirm();
-            }
-        });
-        autofill_button.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                makeSearchQuery();
-            }
-        });
+        dispatchPictureIntent();
     }
 
+    @OnClick(R.id.FAB)
+    void onConfirm(){
+        confirm();
+    }
+    @OnClick(R.id.autofill_button)
+    void onAutoFill(){
+        makeSearchQuery();
+    }
+    private void dispatchPictureIntent() {
+        Intent takepicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takepicture.resolveActivity(getPackageManager()) != null) {
+            File photoFile = null;
+            try {
+                photoFile = createPictureFile();
+            } catch (IOException ioE) {
+                ioE.printStackTrace();
+                System.exit(-1);
+            }
+
+            if(photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(this, "devs.erasmus.epills.FileProvider", photoFile);
+                takepicture.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takepicture, REQUEST_IMAGE_CAPTURE);
+            }
+
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Glide.with(this)
+                    .load(mCurrentPhotoPath)
+                    .into(imageView);
+        }
+    }
+
+    private File createPictureFile() throws IOException {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_"+timeStamp + R.string.app_name;
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,
+                ".jpg",
+                storageDir
+        );
+
+        //TODO: Save the path also in the DB
+        mCurrentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
     private void confirm() {
         //Check if the all Fields are filled out
         if(TextUtils.isEmpty(name_text.getText().toString())) {
@@ -187,4 +223,7 @@ public class AddPill_General_Activity extends AppCompatActivity {
             }
         }
     }
+
+
+
 }
