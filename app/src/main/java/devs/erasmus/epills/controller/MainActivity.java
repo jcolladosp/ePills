@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         ButterKnife.bind(this);
-        LitePal.initialize(this);
+        LitePal.initialize(getApplicationContext());
 
         setSupportActionBar(toolbar);
 

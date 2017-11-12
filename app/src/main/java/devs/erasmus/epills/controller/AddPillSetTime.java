@@ -34,8 +34,8 @@ import ernestoyaquello.com.verticalstepperform.VerticalStepperFormLayout;
 import ernestoyaquello.com.verticalstepperform.interfaces.VerticalStepperForm;
 
 public class AddPillSetTime extends AppCompatActivity implements VerticalStepperForm{
-    final String PACKAGENAME = "devs.erasmus.epills.contoller";
-    final String EXTRA_MEDICINEID = PACKAGENAME + "medicine_id";
+    final static String PACKAGENAME = "devs.erasmus.epills.contoller";
+    static final String EXTRA_MEDICINEID = PACKAGENAME + "medicine_id";
 
     //Stepnumbers of each element
     String[] stepTitles;

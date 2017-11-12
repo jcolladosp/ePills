@@ -16,6 +16,8 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+
+import devs.erasmus.epills.model.Medicine;
 import devs.erasmus.epills.widget.SquareImageView;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.ProgressBar;
@@ -27,6 +29,7 @@ import com.mikepenz.materialdrawer.Drawer;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.litepal.crud.DataSupport;
 
 import java.io.File;
 import java.io.IOException;
@@ -90,13 +93,8 @@ public class AddPill_General_Activity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 makeSearchQuery();
-                autoFill_Description();
             }
         });
-    }
-
-    private void autoFill_Description() {
-
     }
 
     private void confirm() {
@@ -105,10 +103,17 @@ public class AddPill_General_Activity extends AppCompatActivity {
             name_text.setError(getString(R.string.empty_Name));
         } else {
             //TODO: Save new data and make transition to next view.
+            Medicine medicine = new Medicine(name_text.getText().toString(), mCurrentPhotoPath);
+            medicine.save();
+            int id = DataSupport.count(Medicine.class); //Possible because of auto-increment.
+
+            //Start time activity
+            Intent intent = new Intent(this, AddPillSetTime.class);
+            intent.putExtra(AddPillSetTime.EXTRA_MEDICINEID, id);
+            startActivity(intent);
         }
     }
 
-    
     //AutoFill logic
     
     
