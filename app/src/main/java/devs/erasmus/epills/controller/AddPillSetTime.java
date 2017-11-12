@@ -52,7 +52,8 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
 
     //Stepper
     TextView timeTextView;
-    TextView dateTextView;
+    TextView startDateTextView;
+    TextView endDateTextView;
     ConstraintLayout repetitionContent;
     ConstraintLayout quantityContent;
     RadioButton singleRadioButton;
@@ -60,8 +61,10 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
     DiscreteSeekBar seekBar;
 
     private TimePickerDialog timePicker;
-    private int[] date = new int[3]; //Holds the current date.
-    private DatePickerDialog datePicker;
+    private int[] startDate = new int[3]; //Holds the current startDate.
+    private int[] endDate;
+    private DatePickerDialog startDatePicker;
+    private DatePickerDialog endDatePicker;
     private Pair<Integer, Integer> time;
     private boolean[] weekdays = new boolean[7];
     private Drawer drawer;
@@ -90,11 +93,13 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
         Calendar calendar = Calendar.getInstance();
         time = new Pair(calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE));
         setTimePicker(calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE));
-        date[0] = calendar.get(Calendar.YEAR);
-        date[1] = calendar.get(Calendar.MONTH);
-        date[2] = calendar.get(Calendar.DAY_OF_MONTH);
-        setDatePicker(date[0],date[1],date[2]);
-
+        startDate[0] = calendar.get(Calendar.YEAR);
+        startDate[1] = calendar.get(Calendar.MONTH);
+        startDate[2] = calendar.get(Calendar.DAY_OF_MONTH);
+        calendar.roll(Calendar.DAY_OF_MONTH,true);
+        endDate = new int[] {startDate[0], startDate[1], calendar.get(Calendar.DAY_OF_MONTH)};
+        setStartDatePicker(startDate[0], startDate[1], startDate[2]);
+        setEndDatePicker(endDate[0],endDate[1], endDate[2]);
         VerticalStepperFormLayout.Builder.newInstance(verticalStepper, stepTitles, this, this)
                 .materialDesignInDisabledSteps(true)
                 .showVerticalLineWhenStepsAreCollapsed(true)
@@ -107,17 +112,27 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
 
     }
 
-    private void setDatePicker(final int year, final int month, final int day) {
-        datePicker = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
+    private void setEndDatePicker(int year, int month, int day) {
+        endDatePicker = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                date = new int[]{year, month, dayOfMonth};
-                dateTextView.setText(getDateString());
+                endDate = new int[]{year, month, dayOfMonth};
+                endDateTextView.setText(getDateString(endDate));
             }
         }, year, month, day);
     }
 
-    private void setTimePicker(final int hour,final int minute) {
+    private void setStartDatePicker(int year, int month, int day) {
+        startDatePicker = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                startDate = new int[]{year, month, dayOfMonth};
+                startDateTextView.setText(getDateString(startDate));
+            }
+        }, year, month, day);
+    }
+
+    private void setTimePicker(int hour, int minute) {
         timePicker = new TimePickerDialog(this,
                 new TimePickerDialog.OnTimeSetListener() {
                     @Override
@@ -172,6 +187,8 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
 
         multiRadioButton = repetitionContent.findViewById(R.id.multipleRep_radio);
         singleRadioButton = repetitionContent.findViewById(R.id.singleRep_radio);
+        endDateTextView = repetitionContent.findViewById(R.id.endDateLabel);
+        endDateTextView.setText (getDateString(endDate));
 
         //TODO: Extract into ressource file
         String[] weekdays = {"Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"};
@@ -196,6 +213,13 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
             dayText.setText(weekdays[i]);
         }
 
+        endDateTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                endDatePicker.show();
+            }
+        });
+
         return repetitionContent;
     }
 
@@ -204,6 +228,8 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
         for (int i = 0; i < weekdays.length; i++) {
             LinearLayout day = getDayLayout(i);
             day.setOnClickListener(null);
+            endDateTextView.setOnClickListener(null);
+            endDateTextView.setAlpha( (float) (opacity * 255 /100));
             int colorBlack = ContextCompat.getColor(getBaseContext(), R.color.black);
             if (day.getBackground()== null) {
                 Drawable bg = ContextCompat.getDrawable(getBaseContext(), R.drawable.circle_step);
@@ -271,12 +297,12 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
         LayoutInflater inflater = LayoutInflater.from(getBaseContext());
         ConstraintLayout dateStepContent =
                 (ConstraintLayout) inflater.inflate(R.layout.stepper_time,null, false);
-        dateTextView = dateStepContent.findViewById(R.id.time_label);
-        dateTextView.setText(getDateString());
-        dateTextView.setOnClickListener(new View.OnClickListener() {
+        startDateTextView = dateStepContent.findViewById(R.id.time_label);
+        startDateTextView.setText(getDateString(startDate));
+        startDateTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                datePicker.show();
+                startDatePicker.show();
             }
         });
 
@@ -310,7 +336,7 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
                 break;
             case QUANTITY_STEP:
                 verticalStepper.setActiveStepAsCompleted();
-                verticalStepper.setStepSubtitle(stepNumber-1,getDateString());
+                verticalStepper.setStepSubtitle(stepNumber-1,getDateString(startDate));
                 break;
             case REPETITION_STEP:
                 verticalStepper.setStepSubtitle(stepNumber-1, seekBar.getProgress()+"");
@@ -371,9 +397,17 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
             }
 
         }
+        endDateTextView.setAlpha(1.0f);
+        endDateTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                endDatePicker.show();
+            }
+        });
+
     }
 
-    private String getDateString() {
+    private String getDateString(int[] date) {
         String dateString = "";
         if (date[2]<10) {
             dateString += "0"+ date[2];
