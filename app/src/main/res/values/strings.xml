@@ -15,5 +15,17 @@
     <string name="pick_time">Choose Time</string>
     <string name="single_intake">Take medicine once</string>
     <string name="multiple_intake">Repeat intake for this time</string>
-    <string name = "no_days_Error">Choose at least one day</string>
+    <string name="no_days_Error">Choose at least one day</string>
+
+    <string name="startDate_Label">Start Date</string>
+    <string name="repetition_Label">Repetition</string>
+    <string name="time_label">Time</string>
+    <string name="quantity_label">Quantity</string>
+
+    <string name="startDate_descr">Choose the first day of the intake</string>
+    <string name="repetition_descr">How often repeats the intake?</string>
+    <string name="time_descr">At what time do you take the medicine?</string>
+    <string name="quantity_descr">How much do you take in?</string>
+    <string name="rep_onlyOnce">Only once</string>
+    <string name="rep_severalTimesDescr">Several Times</string>
 </resources>
