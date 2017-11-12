@@ -30,4 +30,8 @@
     <string name="rep_severalTimesDescr">Several Times</string>
     <string name="end_of_repition">End of Repition</string>
     <string name="end_after_startDateError">Please choose an end date after the start date!</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="dialog_title">Do you wish....</string>
 </resources>
