@@ -78,6 +78,7 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
     RadioButton multiRadioButton;
     DiscreteSeekBar seekBar;
 
+
     private TimePickerDialog timePicker;
     private Calendar startDate; //Holds the current startDate.
     private Calendar endDate;
@@ -85,6 +86,7 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
     private DatePickerDialog endDatePicker;
     private Pair<Integer, Integer> time;
     private boolean[] weekdays = new boolean[7];
+    private boolean singleSelected = true; //First time the single button is selected.
     private Drawer drawer;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,8 +133,10 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
             time = new Pair(savedInstanceState.getInt(STATE_TIME_Hour), savedInstanceState.getInt(STATE_TIME_Minute));
             startDate = (Calendar)savedInstanceState.getSerializable(STATE_STARTDATE);
             endDate = (Calendar) savedInstanceState.getSerializable(STATE_ENDDATE);
+
+            singleSelected = savedInstanceState.getBoolean(STATE_REP_Single);
         }
-        String title = getString(R.string.timeactivity_title) + medicine.getName();
+        String title = getString(R.string.timeactivity_title) + " " + medicine.getName();
         setTitle(title);
         setTimePicker(time.first, time.second);
         setStartDatePicker(startDate.get(Calendar.YEAR), startDate.get(Calendar.MONTH), startDate.get(Calendar.DAY_OF_MONTH));
@@ -148,18 +152,17 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
                 .init();
 
     }
-/*
-    @Override
-    public void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
 
-        boolean singleSelected = savedInstanceState.getBoolean(STATE_REP_Single);
-        if (singleSelected) {
-            singleRadioButton.setChecked(true);
-            multiRadioButton.setChecked(false);
-        } else
+    @Override
+    public void onStart() {
+        if(singleSelected) { //Set the disable/enable when the verticalstepper exists.
+            disableDays();
+        } else {
+            enableDays();
+        }
+        super.onStart();
     }
-*/
+
     private void setEndDatePicker(int year, int month, int day) {
         endDatePicker = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
             @Override
@@ -242,7 +245,6 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
         singleRadioButton = repetitionContent.findViewById(R.id.singleRep_radio);
         endDateTextView = repetitionContent.findViewById(R.id.endDateLabel);
         endDateTextView.setText (getDateString(endDate));
-
         final String[] weekdays = {"Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"};
 
         for(int i = 0; i < weekdays.length; i++) {
@@ -272,6 +274,8 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
             }
         });
 
+        singleRadioButton.setChecked(singleSelected);
+        multiRadioButton.setChecked(!singleSelected);
         return repetitionContent;
     }
 
@@ -425,6 +429,7 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
                 multiRadioButton.setChecked(false);
                 disableDays();
                 verticalStepper.setActiveStepAsCompleted();
+                singleSelected = true;
                 break;
             case R.id.multipleRep_radio:
                 singleRadioButton.setChecked(false);
@@ -432,6 +437,7 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
                 if (endDate.before(startDate)) {
                     verticalStepper.setStepAsUncompleted(REPETITION_STEP,getResources().getString(R.string.end_after_startDateError));
                 }
+                singleSelected = false;
                 enableDays();
                 break;
         }
@@ -453,9 +459,9 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
             });
             if ((boolean) dayLayout.getTag()) {
                 dayLayout.getBackground().setAlpha(255);
-                activateDay(index, dayLayout, true);
+                activateDay(index, dayLayout, false);
             } else {
-                deactivateDay(index, dayLayout, true);
+                deactivateDay(index, dayLayout, false);
             }
 
         }
@@ -511,7 +517,7 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
             week_state[i] = (boolean) day.getTag();
         }
         state.putBooleanArray(STATE_WEEK,week_state);
-
+        state.putBoolean(STATE_REP_Single, singleSelected);
         super.onSaveInstanceState(state);
     }
 
@@ -520,11 +526,10 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
         boolean[] weekstate = state.getBooleanArray(STATE_WEEK);
         for (int i = 0; i < weekstate.length; i++) {
             LinearLayout day = getDayLayout(i);
-
             day.setTag(weekstate[i]);
         }
 
-        if (singleRadioButton.isChecked()) {
+        if (singleSelected) {
             disableDays();
         } else {
             enableDays();

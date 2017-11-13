@@ -16,7 +16,7 @@
     <string name="single_intake">Take medicine once</string>
     <string name="multiple_intake">Repeat intake several times</string>
     <string name="no_days_Error">Choose at least one day</string>
-    <string name="timeactivity_title">Set intake for </string>
+    <string name="timeactivity_title">Set intake for:</string>
 
     <string name="startDate_Label">Start Date</string>
     <string name="repetition_Label">Repetition</string>
