@@ -31,6 +31,6 @@
     <string name="rep_severalTimesDescr">Several Times</string>
     <string name="end_of_repition">End of Repition</string>
     <string name="end_after_startDateError">Please choose an end date after the start date!</string>
-
+    <string name="pill_added_success">Medicine added successfully</string>
     <string name="dialog_title">Do you wish....</string>
 </resources>

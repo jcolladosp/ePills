@@ -1,8 +1,6 @@
 package devs.erasmus.epills.controller;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
@@ -19,10 +17,10 @@ import android.widget.EditText;
 
 import butterknife.OnClick;
 import devs.erasmus.epills.model.Medicine;
+import devs.erasmus.epills.utils.AutoFillNetworkUtils;
 import devs.erasmus.epills.widget.SquareImageView;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.mikepenz.materialdrawer.Drawer;

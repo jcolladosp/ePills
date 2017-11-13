@@ -1,4 +1,4 @@
-package devs.erasmus.epills.controller;
+package devs.erasmus.epills.utils;
 
 import android.accounts.NetworkErrorException;
 import android.content.Context;
