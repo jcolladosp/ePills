@@ -44,10 +44,9 @@ import devs.erasmus.epills.R;
 import devs.erasmus.epills.widget.NavigationDrawer;
 
 public class AddPill_General_Activity extends AppCompatActivity {
-
+//TODO: Make responsive to orientation changes
     static final String EXTRA_PHOTO_URI = "devs.erasmus.epills.extra_photo_uri";
 
-    //TODO: STORE the picture path somewhere in the DB
     private String mCurrentPhotoPath;
 
     //Views
@@ -131,7 +130,6 @@ public class AddPill_General_Activity extends AppCompatActivity {
                 storageDir
         );
 
-        //TODO: Save the path also in the DB
         mCurrentPhotoPath = image.getAbsolutePath();
         return image;
     }
@@ -140,7 +138,6 @@ public class AddPill_General_Activity extends AppCompatActivity {
         if(TextUtils.isEmpty(name_text.getText().toString())) {
             name_text.setError(getString(R.string.empty_Name));
         } else {
-            //TODO: Save new data and make transition to next view.
             Medicine medicine = new Medicine(name_text.getText().toString(), mCurrentPhotoPath);
             medicine.save();
             int id = DataSupport.count(Medicine.class); //Possible because of auto-increment.
@@ -149,6 +146,7 @@ public class AddPill_General_Activity extends AppCompatActivity {
             Intent intent = new Intent(this, AddPillSetTime.class);
             intent.putExtra(AddPillSetTime.EXTRA_MEDICINEID, id);
             startActivity(intent);
+            finish();
         }
     }
 

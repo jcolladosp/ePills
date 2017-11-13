@@ -1,12 +1,15 @@
 package devs.erasmus.epills.controller;
 
 import android.app.DatePickerDialog;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.app.TimePickerDialog;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
+
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -31,6 +34,7 @@ import java.util.Calendar;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import devs.erasmus.epills.AddPillFinishDialog;
 import devs.erasmus.epills.R;
 import devs.erasmus.epills.model.Medicine;
 import ernestoyaquello.com.verticalstepperform.VerticalStepperFormLayout;
@@ -49,7 +53,7 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
             STATE_REP_Single= "STATE_REP_SINGLE";
 
     final static String PACKAGENAME = "devs.erasmus.epills.contoller";
-    static final String EXTRA_MEDICINEID = PACKAGENAME + "medicine_id";
+    public static final String EXTRA_MEDICINEID = PACKAGENAME + "medicine_id";
 
     Medicine medicine;
 
@@ -93,11 +97,12 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
 
         setSupportActionBar(toolBar);
         //TODO: drawer: Yes or no? TOOLBAR: how?
-        int id = getIntent().getIntExtra(EXTRA_MEDICINEID, -1);
-        if (id == -1) {
+        int medicineId = getIntent().getIntExtra(EXTRA_MEDICINEID, -1);
+        if (medicineId == -1) {
             throw new RuntimeException("No ID for medicine!");
         }
-        medicine = DataSupport.find(Medicine.class, id);
+        medicine = DataSupport.find(Medicine.class, medicineId);
+
         //load names of step in arrays
         stepTitles = new String[]{
                 getResources().getString(R.string.time_label),
@@ -130,7 +135,8 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
             startDate = (Calendar)savedInstanceState.getSerializable(STATE_STARTDATE);
             endDate = (Calendar) savedInstanceState.getSerializable(STATE_ENDDATE);
         }
-
+        String title = getString(R.string.timeactivity_title) + medicine.getName();
+        setTitle(title);
         setTimePicker(time.first, time.second);
         setStartDatePicker(startDate.get(Calendar.YEAR), startDate.get(Calendar.MONTH), startDate.get(Calendar.DAY_OF_MONTH));
         setEndDatePicker(endDate.get(Calendar.YEAR), endDate.get(Calendar.MONTH), endDate.get(Calendar.DAY_OF_MONTH));
@@ -143,7 +149,6 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
                 .stepsSubtitles(stepSubTitles)
                 .displayBottomNavigation(false)
                 .init();
-
 
     }
 /*
@@ -241,8 +246,7 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
         endDateTextView = repetitionContent.findViewById(R.id.endDateLabel);
         endDateTextView.setText (getDateString(endDate));
 
-        //TODO: Extract into ressource file
-        String[] weekdays = {"Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"};
+        final String[] weekdays = {"Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"};
 
         for(int i = 0; i < weekdays.length; i++) {
             final LinearLayout dayLayout = getDayLayout(i);
@@ -409,7 +413,12 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
     @Override
     public void sendData() {
 
-        //TODO: REMO?
+        //TODO: Save data! Remo.
+
+        //after data save show interface whether additional intake should be shown.
+        AddPillFinishDialog finishDialog = AddPillFinishDialog.newInstance();
+        finishDialog.show(getSupportFragmentManager(),AddPillFinishDialog.tag);
+
     }
 
     public void onRadioButtonPressed(View view) {
@@ -525,5 +534,9 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
         }
 
         super.onRestoreInstanceState(state);
+    }
+
+    public int getMedicineId () {
+        return getIntent().getIntExtra(EXTRA_MEDICINEID, -1);
     }
 }
