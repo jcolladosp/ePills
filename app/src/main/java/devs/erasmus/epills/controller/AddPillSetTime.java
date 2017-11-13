@@ -40,7 +40,7 @@ import ernestoyaquello.com.verticalstepperform.interfaces.VerticalStepperForm;
 public class AddPillSetTime extends AppCompatActivity implements VerticalStepperForm{
 
     //STATE STRINGS
-    private final String
+    private final static String
             STATE_TIME_Hour = "STATE_TIME_HOUR",
             STATE_TIME_Minute = "STATE_TIME_MINUTE",
             STATE_STARTDATE = "STATE_STARTDATE",
@@ -50,7 +50,7 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
             STATE_REP_Single= "STATE_REP_SINGLE";
 
     final static String PACKAGENAME = "devs.erasmus.epills.contoller";
-    public static final String EXTRA_MEDICINEID = PACKAGENAME + "medicine_id";
+    public final static String EXTRA_MEDICINEID = PACKAGENAME + "medicine_id";
 
     Medicine medicine;
 
@@ -62,45 +62,50 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
     private final int DATE_STEP = 1;
     private final int QUANTITY_STEP = 2;
     private final int TOTAL_STEPS = 4;
+
+    //Stepper-Views
+    private TextView timeTextView;
+    private TextView startDateTextView;
+    private TextView endDateTextView;
+    private ConstraintLayout repetitionContent;
+    private ConstraintLayout quantityContent;
+    private RadioButton singleRadioButton;
+    private RadioButton multiRadioButton;
+    private DiscreteSeekBar seekBar;
+    private TimePickerDialog timePicker;
+    private DatePickerDialog startDatePicker;
+    private DatePickerDialog endDatePicker;
+
+    //State variables
+    private Calendar startDate; //Holds the current startDate.
+    private Calendar endDate;
+    private Pair<Integer, Integer> time;
+    private boolean[] weekdaysSelection = new boolean[7];
+    private boolean singleSelected = true; //First time the single button is selected.
+
     //Bind views
     @BindView(R.id.stepper)
     VerticalStepperFormLayout verticalStepper;
     @BindView(R.id.toolbar)
     Toolbar toolBar;
 
-    //Stepper
-    TextView timeTextView;
-    TextView startDateTextView;
-    TextView endDateTextView;
-    ConstraintLayout repetitionContent;
-    ConstraintLayout quantityContent;
-    RadioButton singleRadioButton;
-    RadioButton multiRadioButton;
-    DiscreteSeekBar seekBar;
-
-
-    private TimePickerDialog timePicker;
-    private Calendar startDate; //Holds the current startDate.
-    private Calendar endDate;
-    private DatePickerDialog startDatePicker;
-    private DatePickerDialog endDatePicker;
-    private Pair<Integer, Integer> time;
-    private boolean[] weekdays = new boolean[7];
-    private boolean singleSelected = true; //First time the single button is selected.
-    private Drawer drawer;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_pill_set_time);
         ButterKnife.bind(this);
-
         setSupportActionBar(toolBar);
+
         //TODO: drawer: Yes or no? TOOLBAR: how?
+        //Get the medicine object from DB
         int medicineId = getIntent().getIntExtra(EXTRA_MEDICINEID, -1);
         if (medicineId == -1) {
             throw new RuntimeException("No ID for medicine!");
         }
         medicine = DataSupport.find(Medicine.class, medicineId);
+
+        String title = getString(R.string.timeactivity_title) + " " + medicine.getName();
+        setTitle(title);
 
         //load names of step in arrays
         stepTitles = new String[]{
@@ -109,7 +114,7 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
                 getResources().getString(R.string.quantity_label),
                 getResources().getString(R.string.repetition_Label)};
 
-        if (savedInstanceState == null) {
+        if (savedInstanceState == null) { //If the activity is shown the first time
             stepSubTitles = new String[]{
                     getResources().getString(R.string.time_descr),
                     getResources().getString(R.string.startDate_descr),
@@ -117,27 +122,28 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
                     getResources().getString(R.string.repetition_descr)
             };
 
+            //Set Time variables
             Calendar calendar = Calendar.getInstance();
             time = new Pair(calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE));
-
             startDate = (Calendar) calendar.clone();
             calendar.roll(Calendar.DAY_OF_MONTH,true);
             endDate = calendar;
         } else {
+            //Reload the subTitle names
             ArrayList list =  savedInstanceState.getStringArrayList(STATE_SUBTITLES);
             stepSubTitles = new String[list.size()];
             for (int i = 0; i < list.size(); i++) {
                 stepSubTitles[i] = (String) list.get(i);
             }
 
+            //Reload Time Variables
             time = new Pair(savedInstanceState.getInt(STATE_TIME_Hour), savedInstanceState.getInt(STATE_TIME_Minute));
             startDate = (Calendar)savedInstanceState.getSerializable(STATE_STARTDATE);
             endDate = (Calendar) savedInstanceState.getSerializable(STATE_ENDDATE);
 
             singleSelected = savedInstanceState.getBoolean(STATE_REP_Single);
         }
-        String title = getString(R.string.timeactivity_title) + " " + medicine.getName();
-        setTitle(title);
+
         setTimePicker(time.first, time.second);
         setStartDatePicker(startDate.get(Calendar.YEAR), startDate.get(Calendar.MONTH), startDate.get(Calendar.DAY_OF_MONTH));
         setEndDatePicker(endDate.get(Calendar.YEAR), endDate.get(Calendar.MONTH), endDate.get(Calendar.DAY_OF_MONTH));
@@ -155,7 +161,7 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
 
     @Override
     public void onStart() {
-        if(singleSelected) { //Set the disable/enable when the verticalstepper exists.
+        if(singleSelected) { //disable/enable when the verticalStepper exists.
             disableDays();
         } else {
             enableDays();
@@ -163,48 +169,43 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
         super.onStart();
     }
 
-    private void setEndDatePicker(int year, int month, int day) {
-        endDatePicker = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                endDate.set(year,month, dayOfMonth);
-                endDateTextView.setText(getDateString(endDate));
-                if (startDate.after(endDate)) {
-                    verticalStepper.setStepAsUncompleted(REPETITION_STEP,getResources().getString(R.string.end_after_startDateError));
-                } else if(checkDays()) {
-                    verticalStepper.setActiveStepAsCompleted();
-                }
-            }
-        }, year, month, day);
+    @Override
+    public void onRestoreInstanceState(Bundle state) {
+        boolean[] weekstate = state.getBooleanArray(STATE_WEEK);
+        for (int i = 0; i < weekstate.length; i++) {
+            LinearLayout day = getDayLayout(i);
+            day.setTag(weekstate[i]);
+        }
+
+        if (singleSelected) {
+            disableDays();
+        } else {
+            enableDays();
+        }
+
+        super.onRestoreInstanceState(state);
     }
 
-    private void setStartDatePicker(int year, int month, int day) {
-        startDatePicker = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                startDate.set(year, month, dayOfMonth);
-                startDateTextView.setText(getDateString(startDate));
-            }
-        }, year, month, day);
-    }
+    @Override
+    public void onSaveInstanceState(Bundle state) {
+        state.putSerializable(STATE_ENDDATE,endDate);
+        state.putSerializable(STATE_STARTDATE,startDate);
+        state.putInt(STATE_TIME_Hour,time.first);
+        state.putInt(STATE_TIME_Minute, time.second);
+        ArrayList<String> subtitles = new ArrayList<>();
+        for (int i = 0; i < TOTAL_STEPS; i++ ) {
+            subtitles.add(verticalStepper.getStepsSubtitles(i));
+        }
+        state.putStringArrayList(STATE_SUBTITLES, subtitles);
+        boolean[] week_state = new boolean[weekdaysSelection.length];
 
-    private void setTimePicker(int hour, int minute) {
-        timePicker = new TimePickerDialog(this,
-                new TimePickerDialog.OnTimeSetListener() {
-                    @Override
-                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                        time = new Pair<>(hourOfDay, minute);
-                        timeTextView.setText(getTimeString());
-                    }
-                }, hour, minute, true);
-    }
-
-    @NonNull
-    private String getTimeString() {
-        String hourString = ((time.first<9) ? "0"+ time.first : String.valueOf(time.first));
-        String minuteString = (time.second<9) ? "0" + time.second : String.valueOf(time.second);
-        String time = hourString + ":" + minuteString;
-        return hourString + ":" + minuteString;
+        for (int i = 0; i < week_state.length; i++) {
+            LinearLayout day = getDayLayout(i);
+            week_state[i] = (boolean) day.getTag();
+        }
+        state.putBooleanArray(STATE_WEEK,week_state);
+        state.putBoolean(STATE_REP_Single, singleSelected);
+        super.onSaveInstanceState(state);
     }
 
     @Override
@@ -225,6 +226,48 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
                 break;
         }
         return view;
+    }
+
+    @Override
+    public void onStepOpening(int stepNumber) {
+        switch (stepNumber) {
+            case TIME_STEP:
+                verticalStepper.setActiveStepAsCompleted();
+                break;
+            case DATE_STEP:
+                verticalStepper.setActiveStepAsCompleted();
+                verticalStepper.setStepSubtitle(stepNumber-1, getTimeString()); //Set Timesubtitle when we change.
+                break;
+            case QUANTITY_STEP:
+                verticalStepper.setActiveStepAsCompleted();
+                verticalStepper.setStepSubtitle(stepNumber-1,getDateString(startDate));
+                break;
+            case REPETITION_STEP:
+                verticalStepper.setStepSubtitle(stepNumber-1, seekBar.getProgress()+"");
+                if ((multiRadioButton.isChecked() && startDate.before(endDate))|| singleRadioButton.isChecked()) {
+                    verticalStepper.setActiveStepAsCompleted();
+                }
+                break;
+            default:
+                //Check whether the date is appropriate.
+                if (multiRadioButton.isChecked() && endDate.before(startDate)) {
+                    verticalStepper.setStepAsUncompleted(REPETITION_STEP,"Please choose an ending date after the starting date.");
+                } else {
+                    verticalStepper.setStepSubtitle(REPETITION_STEP, getRepetitionDescr());
+                }
+                break;
+        }
+    }
+
+    @Override
+    public void sendData() {
+
+        //TODO: Save data! Remo.
+
+        //after data save show interface whether additional intake should be shown.
+        AddPillFinishDialog finishDialog = AddPillFinishDialog.newInstance();
+        finishDialog.show(getSupportFragmentManager(),AddPillFinishDialog.tag);
+
     }
 
     private View createQuantityStep() {
@@ -274,95 +317,10 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
             }
         });
 
+        //Load the default or saved settings of selection
         singleRadioButton.setChecked(singleSelected);
         multiRadioButton.setChecked(!singleSelected);
         return repetitionContent;
-    }
-
-    private void disableDays() {
-        double opacity = 0.26;
-        for (int i = 0; i < weekdays.length; i++) {
-            LinearLayout day = getDayLayout(i);
-            day.setOnClickListener(null);
-            endDateTextView.setOnClickListener(null);
-            endDateTextView.setAlpha( (float) (opacity * 255 /100));
-            int colorBlack = ContextCompat.getColor(getBaseContext(), R.color.black);
-            if (day.getBackground()== null) {
-                Drawable bg = ContextCompat.getDrawable(getBaseContext(), R.drawable.circle_step);
-                bg.setColorFilter(new PorterDuffColorFilter(colorBlack, PorterDuff.Mode.SRC_IN));
-                bg.setAlpha((int) (opacity * 255));
-                day.setBackground(bg);
-            } else {
-                day.getBackground().setColorFilter(new PorterDuffColorFilter(colorBlack, PorterDuff.Mode.SRC_IN));
-                day.getBackground().setAlpha((int) (opacity * 255)); //Following the material specification, disabled buttons have opacity 26%
-            }
-        }
-    }
-
-    private void activateDay(int index, LinearLayout dayLayout, boolean check) {
-        weekdays[index] = true;
-
-        dayLayout.setTag(true);
-        Drawable bg = ContextCompat.getDrawable(getBaseContext(), R.drawable.circle_step);
-        int colorPrimary = ContextCompat.getColor(getBaseContext(), R.color.accent);
-        bg.setColorFilter(new PorterDuffColorFilter(colorPrimary, PorterDuff.Mode.SRC_IN));
-        dayLayout.setBackground(bg);
-        TextView day = (TextView) dayLayout.findViewById(R.id.day);
-        day.setTextColor(ContextCompat.getColor(getBaseContext(),R.color.md_white_1000));
-        if(check) {
-            checkDays();
-        }
-    }
-
-    private void deactivateDay(int index, LinearLayout dayLayout, boolean check) {
-        weekdays[index] = false;
-
-        dayLayout.setTag(false);
-
-        dayLayout.setBackgroundResource(0);
-
-        TextView textView = dayLayout.findViewById(R.id.day);
-        textView.setTextColor(ContextCompat.getColor(getBaseContext(),R.color.primary));
-
-        if (check) {
-            checkDays();
-        }
-    }
-
-    private boolean checkDays() {
-       boolean thereIsAtLeastOneDaySelected = false;
-          for(int i = 0; i < weekdays.length && !thereIsAtLeastOneDaySelected; i++) {
-                if(weekdays[i]) {
-                    verticalStepper.setStepAsCompleted(REPETITION_STEP);
-                    thereIsAtLeastOneDaySelected = true;
-                }
-            }
-            if(!thereIsAtLeastOneDaySelected) {
-                verticalStepper.setStepAsUncompleted(REPETITION_STEP, getResources().getString(R.string.no_days_Error));
-            }
-
-            return thereIsAtLeastOneDaySelected;
-    }
-
-    private LinearLayout getDayLayout(int i) {
-        int id = repetitionContent.getResources().getIdentifier("day_"+i, "id", getPackageName());
-        return (LinearLayout) repetitionContent.findViewById(id);
-    }
-
-    private View createDateStep() {
-        LayoutInflater inflater = LayoutInflater.from(getBaseContext());
-        ConstraintLayout dateStepContent =
-                (ConstraintLayout) inflater.inflate(R.layout.stepper_time,null, false);
-        startDateTextView = dateStepContent.findViewById(R.id.time_label);
-        startDateTextView.setText(getDateString(startDate));
-        startDateTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startDatePicker.show();
-            }
-        });
-
-        return dateStepContent;
     }
 
     private View createTimeStep() {
@@ -380,46 +338,20 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
         return timeStepContent;
     }
 
-    @Override
-    public void onStepOpening(int stepNumber) {
-        switch (stepNumber) {
-            case TIME_STEP:
-                verticalStepper.setActiveStepAsCompleted();
-                break;
-            case DATE_STEP:
-                verticalStepper.setActiveStepAsCompleted();
-                verticalStepper.setStepSubtitle(stepNumber-1, getTimeString()); //Set Timesubtitle when we change.
-                break;
-            case QUANTITY_STEP:
-                verticalStepper.setActiveStepAsCompleted();
-                verticalStepper.setStepSubtitle(stepNumber-1,getDateString(startDate));
-                break;
-            case REPETITION_STEP:
-                verticalStepper.setStepSubtitle(stepNumber-1, seekBar.getProgress()+"");
-                if ((multiRadioButton.isChecked() && startDate.before(endDate))|| singleRadioButton.isChecked()) {
-                    verticalStepper.setActiveStepAsCompleted();
-                }
-                break;
-            default:
-                //Check whether the date is appropriate.
-                if (multiRadioButton.isChecked() && endDate.before(startDate)) {
-                    verticalStepper.setStepAsUncompleted(REPETITION_STEP,"Please choose an ending date after the starting date.");
-                } else {
-                    verticalStepper.setStepSubtitle(REPETITION_STEP, getRepetitionDescr());
-                }
-                break;
-        }
-    }
+    private View createDateStep() {
+        LayoutInflater inflater = LayoutInflater.from(getBaseContext());
+        ConstraintLayout dateStepContent =
+                (ConstraintLayout) inflater.inflate(R.layout.stepper_time,null, false);
+        startDateTextView = dateStepContent.findViewById(R.id.time_label);
+        startDateTextView.setText(getDateString(startDate));
+        startDateTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startDatePicker.show();
+            }
+        });
 
-    @Override
-    public void sendData() {
-
-        //TODO: Save data! Remo.
-
-        //after data save show interface whether additional intake should be shown.
-        AddPillFinishDialog finishDialog = AddPillFinishDialog.newInstance();
-        finishDialog.show(getSupportFragmentManager(),AddPillFinishDialog.tag);
-
+        return dateStepContent;
     }
 
     public void onRadioButtonPressed(View view) {
@@ -443,8 +375,35 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
         }
     }
 
+    /**
+     * This view disables tapping on the day objects and on the endDate label. It also
+     * colors them following the material design specification.
+      */
+    private void disableDays() {
+        double opacity = 0.26; //Following the material specification, disabled buttons have opacity 26%
+        for (int i = 0; i < weekdaysSelection.length; i++) {
+            LinearLayout day = getDayLayout(i);
+            day.setOnClickListener(null);
+            endDateTextView.setOnClickListener(null);
+            endDateTextView.setAlpha( (float) (opacity * 255 /100));
+            int colorBlack = ContextCompat.getColor(getBaseContext(), R.color.black);
+            if (day.getBackground()== null) {
+                Drawable bg = ContextCompat.getDrawable(getBaseContext(), R.drawable.circle_step);
+                bg.setColorFilter(new PorterDuffColorFilter(colorBlack, PorterDuff.Mode.SRC_IN));
+                bg.setAlpha((int) (opacity * 255));
+                day.setBackground(bg);
+            } else {
+                day.getBackground().setColorFilter(new PorterDuffColorFilter(colorBlack, PorterDuff.Mode.SRC_IN));
+                day.getBackground().setAlpha((int) (opacity * 255));
+            }
+        }
+    }
+
+    /**
+     * This method colors the Day-circles and enables tapping. It also enables the End Date-label.
+     */
     private void enableDays() {
-        for (int i = 0; i < weekdays.length; i++) {
+        for (int i = 0; i < weekdaysSelection.length; i++) {
             final int index = i ;
             final LinearLayout dayLayout = getDayLayout(i);
             dayLayout.setOnClickListener(new View.OnClickListener() {
@@ -475,6 +434,128 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
 
     }
 
+    /**
+     * Selects the Day on position 'index'.
+     * @param index
+     * @param dayLayout
+     * @param check: True if checkDays() should be called.
+     */
+    private void activateDay(int index, LinearLayout dayLayout, boolean check) {
+        weekdaysSelection[index] = true;
+
+        dayLayout.setTag(true);
+        Drawable bg = ContextCompat.getDrawable(getBaseContext(), R.drawable.circle_step);
+        int colorPrimary = ContextCompat.getColor(getBaseContext(), R.color.accent);
+        bg.setColorFilter(new PorterDuffColorFilter(colorPrimary, PorterDuff.Mode.SRC_IN));
+        dayLayout.setBackground(bg);
+        TextView day = (TextView) dayLayout.findViewById(R.id.day);
+        day.setTextColor(ContextCompat.getColor(getBaseContext(),R.color.md_white_1000));
+        if(check) {
+            checkDays();
+        }
+    }
+
+    /**
+     * Deselects the day on position 'index'.
+     * @param index
+     * @param dayLayout
+     * @param check: True if method checkDays() should be called.
+     */
+    private void deactivateDay(int index, LinearLayout dayLayout, boolean check) {
+        weekdaysSelection[index] = false;
+
+        dayLayout.setTag(false);
+
+        dayLayout.setBackgroundResource(0);
+
+        TextView textView = dayLayout.findViewById(R.id.day);
+        textView.setTextColor(ContextCompat.getColor(getBaseContext(),R.color.primary));
+
+        if (check) {
+            checkDays();
+        }
+    }
+
+    /**
+     * Checks, whether at least one day is selected and sets the RepetitionStep completed or uncompleted
+     * accordingly.
+     * @return
+     */
+    private boolean checkDays() {
+        boolean thereIsAtLeastOneDaySelected = false;
+        for(int i = 0; i < weekdaysSelection.length && !thereIsAtLeastOneDaySelected; i++) {
+            if(weekdaysSelection[i]) {
+                verticalStepper.setStepAsCompleted(REPETITION_STEP);
+                thereIsAtLeastOneDaySelected = true;
+            }
+        }
+        if(!thereIsAtLeastOneDaySelected) {
+            verticalStepper.setStepAsUncompleted(REPETITION_STEP, getResources().getString(R.string.no_days_Error));
+        }
+
+        return thereIsAtLeastOneDaySelected;
+    }
+
+    private void setEndDatePicker(int year, int month, int day) {
+        endDatePicker = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                endDate.set(year,month, dayOfMonth);
+                endDateTextView.setText(getDateString(endDate));
+                if (startDate.after(endDate)) {
+                    verticalStepper.setStepAsUncompleted(REPETITION_STEP,getResources().getString(R.string.end_after_startDateError));
+                } else if(checkDays()) {
+                    verticalStepper.setActiveStepAsCompleted();
+                }
+            }
+        }, year, month, day);
+    }
+
+    private void setStartDatePicker(int year, int month, int day) {
+        startDatePicker = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                startDate.set(year, month, dayOfMonth);
+                startDateTextView.setText(getDateString(startDate));
+            }
+        }, year, month, day);
+    }
+
+    private void setTimePicker(int hour, int minute) {
+        timePicker = new TimePickerDialog(this,
+                new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                        time = new Pair<>(hourOfDay, minute);
+                        timeTextView.setText(getTimeString());
+                    }
+                }, hour, minute, true);
+    }
+
+    public String getRepetitionDescr() {
+        if (singleRadioButton.isChecked()) {
+            return getResources().getString(R.string.rep_onlyOnce);
+        } else {
+            return getResources().getString(R.string.rep_severalTimesDescr);
+        }
+    }
+
+    public int getMedicineId () {
+        return getIntent().getIntExtra(EXTRA_MEDICINEID, -1);
+    }
+
+    /**
+     * Returns a string representation of time.
+     * @return
+     */
+    @NonNull
+    private String getTimeString() {
+        String hourString = ((time.first<9) ? "0"+ time.first : String.valueOf(time.first));
+        String minuteString = (time.second<9) ? "0" + time.second : String.valueOf(time.second);
+        String time = hourString + ":" + minuteString;
+        return hourString + ":" + minuteString;
+    }
+
     private String getDateString(Calendar date) {
         String dateString = "";
         if (date.get(Calendar.DAY_OF_MONTH) <10) {
@@ -491,54 +572,13 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
         return dateString;
     }
 
-    public String getRepetitionDescr() {
-        if (singleRadioButton.isChecked()) {
-            return getResources().getString(R.string.rep_onlyOnce);
-        } else {
-            return getResources().getString(R.string.rep_severalTimesDescr);
-        }
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle state) {
-        state.putSerializable(STATE_ENDDATE,endDate);
-        state.putSerializable(STATE_STARTDATE,startDate);
-        state.putInt(STATE_TIME_Hour,time.first);
-        state.putInt(STATE_TIME_Minute, time.second);
-        ArrayList<String> subtitles = new ArrayList<>();
-        for (int i = 0; i < TOTAL_STEPS; i++ ) {
-            subtitles.add(verticalStepper.getStepsSubtitles(i));
-        }
-        state.putStringArrayList(STATE_SUBTITLES, subtitles);
-        boolean[] week_state = new boolean[weekdays.length];
-
-        for (int i = 0; i < week_state.length; i++) {
-            LinearLayout day = getDayLayout(i);
-            week_state[i] = (boolean) day.getTag();
-        }
-        state.putBooleanArray(STATE_WEEK,week_state);
-        state.putBoolean(STATE_REP_Single, singleSelected);
-        super.onSaveInstanceState(state);
-    }
-
-    @Override
-    public void onRestoreInstanceState(Bundle state) {
-        boolean[] weekstate = state.getBooleanArray(STATE_WEEK);
-        for (int i = 0; i < weekstate.length; i++) {
-            LinearLayout day = getDayLayout(i);
-            day.setTag(weekstate[i]);
-        }
-
-        if (singleSelected) {
-            disableDays();
-        } else {
-            enableDays();
-        }
-
-        super.onRestoreInstanceState(state);
-    }
-
-    public int getMedicineId () {
-        return getIntent().getIntExtra(EXTRA_MEDICINEID, -1);
+    /**
+     * Retrieves the Layout for the day on position i.
+     * @param i
+     * @return
+     */
+    private LinearLayout getDayLayout(int i) {
+        int id = repetitionContent.getResources().getIdentifier("day_"+i, "id", getPackageName());
+        return (LinearLayout) repetitionContent.findViewById(id);
     }
 }
