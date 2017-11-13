@@ -58,6 +58,7 @@ public class NavigationDrawer {
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
                         switch (position) {
                             case 1:
+                                context.startActivity(new Intent(context,ClockActivity.class));
                                 activity.finish();
 
                                 break;

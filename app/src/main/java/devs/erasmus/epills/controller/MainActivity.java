@@ -36,7 +36,6 @@ public class MainActivity extends AppCompatActivity {
         drawer = NavigationDrawer.getDrawerBuilder(this,this,toolbar).build();
         drawer.setSelection(-1);
 
-        pillAddedSuccess();
 
     }
 

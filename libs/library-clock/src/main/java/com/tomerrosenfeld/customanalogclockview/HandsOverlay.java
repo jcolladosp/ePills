@@ -14,9 +14,11 @@ public class HandsOverlay implements DialOverlay {
 
     private final Drawable mHour;
     private final Drawable mMinute;
+    private  Drawable mPill;
     private final boolean mUseLargeFace;
     private float mHourRot;
     private float mMinRot;
+    private float mPillRot;
     private boolean mShowSeconds;
     private float scale;
 
@@ -27,13 +29,15 @@ public class HandsOverlay implements DialOverlay {
 
         mHour = null;
         mMinute = null;
+
     }
 
-    public HandsOverlay(Drawable hourHand, Drawable minuteHand) {
+    public HandsOverlay(Drawable hourHand, Drawable minuteHand, Drawable pill) {
         mUseLargeFace = false;
 
         mHour = hourHand;
         mMinute = minuteHand;
+        mPill = pill;
     }
     public HandsOverlay withScale(float scale){
         this.scale = scale;
@@ -60,8 +64,11 @@ public class HandsOverlay implements DialOverlay {
         updateHands(calendar);
 
         canvas.save();
-        if (!CustomAnalogClock.hourOnTop)
+        if (!CustomAnalogClock.hourOnTop) {
             drawHours(canvas, cX, cY, w, h, calendar, sizeChanged);
+            drawPill(canvas, cX, cY, w, h, 12, sizeChanged);
+
+        }
         else
             drawMinutes(canvas, cX, cY, w, h, calendar, sizeChanged);
         canvas.restore();
@@ -69,8 +76,13 @@ public class HandsOverlay implements DialOverlay {
         canvas.save();
         if (!CustomAnalogClock.hourOnTop)
             drawMinutes(canvas, cX, cY, w, h, calendar, sizeChanged);
-        else
+        else {
             drawHours(canvas, cX, cY, w, h, calendar, sizeChanged);
+            drawPill(canvas, cX, cY, w, h, 12, sizeChanged);
+
+        }
+
+
         canvas.restore();
     }
 
@@ -96,6 +108,19 @@ public class HandsOverlay implements DialOverlay {
             mHour.setBounds(cX - (w / 2), cY - (h / 2), cX + (w / 2), cY + (h / 2));
         }
         mHour.draw(canvas);
+    }
+    private void drawPill(Canvas canvas, int cX, int cY, int w, int h,int m,
+                           boolean sizeChanged) {
+        mHourRot = getHourHandAngle(m, 0);
+
+        canvas.rotate(mHourRot, cX, cY);
+
+        if (sizeChanged) {
+            w = (int) (mPill.getIntrinsicWidth()* scale);
+            h = (int) (mPill.getIntrinsicHeight()* scale);
+            mPill.setBounds(cX - (w / 2), cY - (h / 2), cX + (w / 2), cY + (h / 2));
+        }
+        mPill.draw(canvas);
     }
 
     public void setShowSeconds(boolean showSeconds) {

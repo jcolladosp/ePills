@@ -52,7 +52,7 @@ public class ClockActivity extends AppCompatActivity {
 
         drawer = NavigationDrawer.getDrawerBuilder(this,this,toolbar).build();
 
-        analogClock.init(this, R.drawable.clock_face, R.drawable.hour_hand, R.drawable.minute_hand, 0, true, false);
+        analogClock.init(this, R.drawable.clock_face, R.drawable.hour_hand, R.drawable.minute_hand,R.drawable.pill_hand, 0, true, false);
         analogClock.setAutoUpdate(true);
         analogClock.setScale(1.1f);
 
