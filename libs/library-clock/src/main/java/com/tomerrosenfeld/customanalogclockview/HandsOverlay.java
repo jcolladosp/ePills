@@ -66,7 +66,6 @@ public class HandsOverlay implements DialOverlay {
         canvas.save();
         if (!CustomAnalogClock.hourOnTop) {
             drawHours(canvas, cX, cY, w, h, calendar, sizeChanged);
-            drawPill(canvas, cX, cY, w, h, 12, sizeChanged);
 
         }
         else
@@ -78,12 +77,13 @@ public class HandsOverlay implements DialOverlay {
             drawMinutes(canvas, cX, cY, w, h, calendar, sizeChanged);
         else {
             drawHours(canvas, cX, cY, w, h, calendar, sizeChanged);
-            drawPill(canvas, cX, cY, w, h, 12, sizeChanged);
 
         }
 
 
         canvas.restore();
+        drawPill(canvas, cX, cY, w, h, 18, sizeChanged);
+
     }
 
     private void drawMinutes(Canvas canvas, int cX, int cY, int w, int h, Calendar calendar,
@@ -109,11 +109,11 @@ public class HandsOverlay implements DialOverlay {
         }
         mHour.draw(canvas);
     }
-    private void drawPill(Canvas canvas, int cX, int cY, int w, int h,int m,
+    private void drawPill(Canvas canvas, int cX, int cY, int w, int h,int hour,
                            boolean sizeChanged) {
-        mHourRot = getHourHandAngle(m, 0);
+        mPillRot = getHourHandAngle(hour, 0);
 
-        canvas.rotate(mHourRot, cX, cY);
+        canvas.rotate(mPillRot, cX, cY);
 
         if (sizeChanged) {
             w = (int) (mPill.getIntrinsicWidth()* scale);
