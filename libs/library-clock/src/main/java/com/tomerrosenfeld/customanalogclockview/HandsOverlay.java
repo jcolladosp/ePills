@@ -22,6 +22,14 @@ public class HandsOverlay implements DialOverlay {
     private boolean mShowSeconds;
     private float scale;
 
+    private Canvas canvas;
+    private int cX;
+    private int cY;
+    private int w;
+    private int h;
+    private boolean sizeChanged;
+    private int hour;
+
     public HandsOverlay(Context context, boolean useLargeFace) {
         final Resources r = context.getResources();
 
@@ -61,6 +69,12 @@ public class HandsOverlay implements DialOverlay {
     public void onDraw(Canvas canvas, int cX, int cY, int w, int h, Calendar calendar,
                        boolean sizeChanged) {
 
+        this.canvas = canvas;
+        this.cX = cX;
+        this.cY = cY;
+        this.w = w;
+        this.h = h;
+        this.sizeChanged = sizeChanged;
         updateHands(calendar);
 
         canvas.save();
@@ -80,9 +94,9 @@ public class HandsOverlay implements DialOverlay {
 
         }
 
-
         canvas.restore();
-        drawPill(canvas, cX, cY, w, h, 18, sizeChanged);
+        if(hour !=0)
+        drawPill(hour);
 
     }
 
@@ -109,8 +123,7 @@ public class HandsOverlay implements DialOverlay {
         }
         mHour.draw(canvas);
     }
-    private void drawPill(Canvas canvas, int cX, int cY, int w, int h,int hour,
-                           boolean sizeChanged) {
+    private void drawPill(int hour) {
         mPillRot = getHourHandAngle(hour, 0);
 
         canvas.rotate(mPillRot, cX, cY);
@@ -122,7 +135,9 @@ public class HandsOverlay implements DialOverlay {
         }
         mPill.draw(canvas);
     }
-
+    public void setHourPill(int hour){
+        this.hour = hour;
+    }
     public void setShowSeconds(boolean showSeconds) {
         mShowSeconds = showSeconds;
     }

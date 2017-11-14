@@ -42,6 +42,12 @@ public class CustomAnalogClock extends View {
     private boolean mSizeChanged;
     private HandsOverlay mHandsOverlay;
     private boolean autoUpdate;
+    private Canvas canvas;
+    private int cX;
+    private int cY;
+    private int w;
+    private int h;
+
 
     public CustomAnalogClock(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
@@ -192,11 +198,11 @@ public class CustomAnalogClock extends View {
         final int availW = mRight - mLeft;
         final int availH = mBottom - mTop;
 
-        final int cX = availW / 2;
-        final int cY = availH / 2;
+        cX = availW / 2;
+        cY = availH / 2;
 
-        final int w = (int) (mDialWidth * sizeScale);
-        final int h = (int) (mDialHeight * sizeScale);
+         w = (int) (mDialWidth * sizeScale);
+         h = (int) (mDialHeight * sizeScale);
 
         boolean scaled = false;
 
@@ -224,6 +230,11 @@ public class CustomAnalogClock extends View {
         if (scaled) {
             canvas.restore();
         }
+    }
+
+    public void drawPill(int hour){
+        mHandsOverlay.setHourPill(hour);
+
     }
 
     // from AnalogClock.java

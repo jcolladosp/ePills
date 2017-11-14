@@ -51,18 +51,34 @@ public class ClockActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         drawer = NavigationDrawer.getDrawerBuilder(this,this,toolbar).build();
+        prepareAnalogClock();
+        preparePillsAdapter();
+        setExampleMedicines();
 
+        analogClock.drawPill(21);
+
+
+    }
+    private void prepareAnalogClock(){
         analogClock.init(this, R.drawable.clock_face, R.drawable.hour_hand, R.drawable.minute_hand,R.drawable.pill_hand, 0, true, false);
         analogClock.setAutoUpdate(true);
         analogClock.setScale(1.1f);
-
-
+    }
+    private void preparePillsAdapter(){
         medicineQuantities = new ArrayList<>();
+
         pillCardAdapter = new PillCardAdapter(this,medicineQuantities);
         LinearLayoutManager layout = new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false);
         mRecyclerView.setLayoutManager(layout);
         mRecyclerView.setAdapter(pillCardAdapter);
         mRecyclerView.setHorizontalScrollBarEnabled(false);
+        indicator.setViewPager(mRecyclerView);
+        indicator.setRadius(15);
+        indicator.setFillColor(Color.parseColor("#FF33B5E5"));
+
+
+    }
+    private void setExampleMedicines(){
 
         Date date =  new Date();
         IntakeMoment intake = new IntakeMoment(date,null);
@@ -83,11 +99,6 @@ public class ClockActivity extends AppCompatActivity {
         medicineQuantities.add(c);
 
         pillCardAdapter.notifyDataSetChanged();
-
-        indicator.setViewPager(mRecyclerView);
-        indicator.setRadius(15);
-        indicator.setFillColor(Color.parseColor("#FF33B5E5"));
-
     }
 
     @Override
