@@ -14,7 +14,6 @@ import com.bumptech.glide.Glide;
 import java.util.List;
 
 import devs.erasmus.epills.R;
-import devs.erasmus.epills.model.MedicineQuantity;
 
 /**
  * Created by colla on 06/11/2017.

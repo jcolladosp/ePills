@@ -6,19 +6,18 @@ import java.util.ArrayList;
 
 /**
  * Created by jcolladosp on 28/10/2017.
+ * Represents all pills, medicines blah.
  */
 
 public class Medicine extends DataSupport {
 
     private String name;
     private String description;
-    private ArrayList<MedicineQuantity> medicineQuantityList;
     private String image;
 
     public Medicine(String name,String image) {
 
         this.name = name;
-        medicineQuantityList = new ArrayList<>();
         this.image = image;
 
     }
@@ -39,18 +38,7 @@ public class Medicine extends DataSupport {
         this.description = description;
     }
 
-    public void addMedicineQuantity(MedicineQuantity medicineQuantity) {
-        medicineQuantityList.add(medicineQuantity);
-    }
     public String getImage(){
         return this.image;
-    }
-
-    public void removeMedicineQuantity(MedicineQuantity o) {
-        medicineQuantityList.remove(o);
-    }
-
-    public ArrayList<MedicineQuantity> getMedicineQuantityList() {
-        return medicineQuantityList;
     }
 }
