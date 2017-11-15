@@ -1,7 +1,11 @@
 package devs.erasmus.epills.controller;
 
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
@@ -21,8 +25,6 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-import com.mikepenz.materialdrawer.Drawer;
-
 import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
 import org.litepal.crud.DataSupport;
 
@@ -31,6 +33,7 @@ import java.util.Calendar;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import devs.erasmus.epills.broadcast_receiver.AlarmBroadcastReceiver;
 import devs.erasmus.epills.widget.AddPillFinishDialog;
 import devs.erasmus.epills.R;
 import devs.erasmus.epills.model.Medicine;
@@ -57,10 +60,11 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
     //Stepnumbers of each element
     String[] stepTitles;
     String[] stepSubTitles;
-    private final int REPETITION_STEP = 3;
+
     private final int TIME_STEP = 0;
     private final int DATE_STEP = 1;
     private final int QUANTITY_STEP = 2;
+    private final int REPETITION_STEP = 3;
     private final int TOTAL_STEPS = 4;
 
     //Stepper-Views
@@ -77,11 +81,15 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
     private DatePickerDialog endDatePicker;
 
     //State variables
+    private Pair<Integer, Integer> time;
     private Calendar startDate; //Holds the current startDate.
     private Calendar endDate;
-    private Pair<Integer, Integer> time;
     private boolean[] weekdaysSelection = new boolean[7];
     private boolean singleSelected = true; //First time the single button is selected.
+
+    //alarm variables
+    AlarmManager alarmManager;
+
 
     //Bind views
     @BindView(R.id.stepper)
@@ -263,13 +271,53 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
     public void sendData() {
 
         //TODO: Save data! Remo.
+        //time.first HOUR
+        //time.second MINUTE
+        //singleTime    IF TRUE I TAKE THE PILL ONLY ONCE IN MY LIFE, ELSE WEEK INTERVALS AND END DATE
+        //weekdaysSelected[] INDEX 0 MONDAY, INDEX 1 THUSDAY ...
+        //startDate / endDate.get(Calendar.DAY_OF_MONTH) DATE OF START/END
+        //seekBar.getProgress() HOW MANY PILLS TO TAKE AT ONCE
 
         //after data save show interface whether additional intake should be shown.
         AddPillFinishDialog finishDialog = AddPillFinishDialog.newInstance();
         finishDialog.show(getSupportFragmentManager(),AddPillFinishDialog.tag);
 
+        setAlarm();
     }
 
+    public void setAlarm(){
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(System.currentTimeMillis());
+        cal.clear();
+
+        int hourOfDay = time.first;
+        int minuteOfDay = time.second;
+        int Day = this.startDate.get(Calendar.DAY_OF_MONTH);
+        int Month=this.startDate.get(Calendar.MONTH);
+        int Year=this.startDate.get(Calendar.YEAR);
+        cal.set(Year,Month,Day,hourOfDay,minuteOfDay);
+
+        alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, AlarmBroadcastReceiver.class);
+        int id = (int)System.currentTimeMillis(); //it creates an unique id
+
+        if(singleSelected){
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, id, intent, 0);
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,
+                    cal.getTimeInMillis(),
+                    pendingIntent);
+        } else {
+            for(int i=0;i<weekdaysSelection.length;i++) {
+                if(weekdaysSelection[i]) {
+                    PendingIntent pendingIntent = PendingIntent.getBroadcast(this, id + i, intent, 0);
+                    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
+                            cal.getTimeInMillis(),
+                            AlarmManager.INTERVAL_DAY * 7, //once a week
+                            pendingIntent);
+                }
+            }
+        }
+    }
     private View createQuantityStep() {
         LayoutInflater inflater = LayoutInflater.from(getBaseContext());
         quantityContent = (ConstraintLayout) inflater.inflate(R.layout.stepper_quantity, null, false);
@@ -550,8 +598,8 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
      */
     @NonNull
     private String getTimeString() {
-        String hourString = ((time.first<9) ? "0"+ time.first : String.valueOf(time.first));
-        String minuteString = (time.second<9) ? "0" + time.second : String.valueOf(time.second);
+        String hourString = ((time.first<=9) ? "0"+ time.first : String.valueOf(time.first));
+        String minuteString = (time.second<=9) ? "0" + time.second : String.valueOf(time.second);
         String time = hourString + ":" + minuteString;
         return hourString + ":" + minuteString;
     }

@@ -87,6 +87,7 @@ public class AddPill_General_Activity extends AppCompatActivity {
     void onAutoFill(){
         makeSearchQuery();
     }
+
     private void dispatchPictureIntent() {
         Intent takepicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takepicture.resolveActivity(getPackageManager()) != null) {
