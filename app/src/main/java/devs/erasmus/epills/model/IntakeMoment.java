@@ -2,7 +2,6 @@ package devs.erasmus.epills.model;
 
 import org.litepal.crud.DataSupport;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 
 /**
@@ -13,8 +12,8 @@ import java.util.Calendar;
 public class IntakeMoment extends DataSupport {
 
     private Calendar intakeDate;
-    private Receipt receiptId;
-    private Medicine medicineId;
+    private Receipt receipt;
+    private Medicine medicine;
     private int quantity;
     private int alarmRequestCode;
     /**
@@ -22,10 +21,10 @@ public class IntakeMoment extends DataSupport {
      */
     private int weekDay;
 
-    public IntakeMoment(Calendar intakeDate, Receipt receiptId, Medicine medicineId, int quantity, int alarmRequestCode, int weekDay) {
+    public IntakeMoment(Calendar intakeDate, Receipt receipt, Medicine medicineId, int quantity, int alarmRequestCode, int weekDay) {
         this.intakeDate = intakeDate;
-        this.receiptId = receiptId;
-        this.medicineId = medicineId;
+        this.receipt = receipt;
+        this.medicine = medicineId;
         this.quantity = quantity;
         this.alarmRequestCode = alarmRequestCode;
         this.weekDay = weekDay;
@@ -39,20 +38,20 @@ public class IntakeMoment extends DataSupport {
         this.intakeDate = intakeDate;
     }
 
-    public Receipt getReceiptId() {
-        return receiptId;
+    public Receipt getReceipt() {
+        return receipt;
     }
 
-    public void setReceiptId(Receipt receiptId) {
-        this.receiptId = receiptId;
+    public void setReceipt(Receipt receipt) {
+        this.receipt = receipt;
     }
 
-    public Medicine getMedicineId() {
-        return medicineId;
+    public Medicine getMedicine     () {
+        return medicine;
     }
 
-    public void setMedicineId(Medicine medicineId) {
-        this.medicineId = medicineId;
+    public void setMedicine(Medicine medicineId) {
+        this.medicine = medicineId;
     }
 
     public int getQuantity() {
