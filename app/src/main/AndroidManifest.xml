@@ -50,7 +50,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".controller.AddPillSetTime"
-            android:label="@style/AppTheme.NoActionBar"></activity>
+            android:label="@style/AppTheme.NoActionBar"/>
 
         <receiver
             android:name=".broadcast_receiver.AlarmBroadcastReceiver"

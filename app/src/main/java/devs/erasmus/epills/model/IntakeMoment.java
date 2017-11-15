@@ -2,36 +2,41 @@ package devs.erasmus.epills.model;
 
 import org.litepal.crud.DataSupport;
 
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.Calendar;
 
 /**
  * Created by jcolladosp on 28/10/2017.
+ * Represents the intake of a specific medicine on a specific day in a week at a certain time. It may be repeated in the next week or it may not be repeated.
  */
 
 public class IntakeMoment extends DataSupport {
 
-    private Date intakeDate;
+    private Calendar intakeDate;
     private Receipt receipt;
-    private ArrayList<MedicineQuantity> medicineQuantityList;
+    private Medicine medicine;
+    private int quantity;
+    private int alarmRequestCode;
+    /**
+     * Represents the weekDay for this certain event. Mon = 0, ..., Sun = 7.
+     */
+    private int weekDay;
 
-    public IntakeMoment(Date intakeDate, MedicineQuantity medicineQuantity) {
-
+    public IntakeMoment(Calendar intakeDate, Receipt receipt, Medicine medicine, int quantity, int alarmRequestCode, int weekDay) {
         this.intakeDate = intakeDate;
-        medicineQuantityList = new ArrayList<>();
-        medicineQuantityList.add(medicineQuantity);
+        this.receipt = receipt;
+        this.medicine = medicine;
+        this.quantity = quantity;
+        this.alarmRequestCode = alarmRequestCode;
+        this.weekDay = weekDay;
     }
 
-
-    public Date getIntakeDate() {
+    public Calendar getIntakeDate() {
         return intakeDate;
     }
 
-    public void setIntakeDate(Date intakeDate) {
+    public void setIntakeDate(Calendar intakeDate) {
         this.intakeDate = intakeDate;
     }
-
-
 
     public Receipt getReceipt() {
         return receipt;
@@ -41,16 +46,35 @@ public class IntakeMoment extends DataSupport {
         this.receipt = receipt;
     }
 
-
-    public void addMedicineQuantity(MedicineQuantity medicineQuantity) {
-        medicineQuantityList.add(medicineQuantity);
+    public Medicine getMedicine     () {
+        return medicine;
     }
 
-    public void removeMedicineQuantity(MedicineQuantity medicineQuantity) {
-        medicineQuantityList.remove(medicineQuantity);
+    public void setMedicine(Medicine medicineId) {
+        this.medicine = medicineId;
     }
 
-    public ArrayList<MedicineQuantity> getMedicineQuantityList() {
-        return medicineQuantityList;
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public int getAlarmRequestCode() {
+        return alarmRequestCode;
+    }
+
+    public void setAlarmRequestCode(int alarmRequestCode) {
+        this.alarmRequestCode = alarmRequestCode;
+    }
+
+    public int getWeekDay() {
+        return weekDay;
+    }
+
+    public void setWeekDay(int weekDay) {
+        this.weekDay = weekDay;
     }
 }
