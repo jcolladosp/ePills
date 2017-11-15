@@ -61,18 +61,12 @@ public class ClockActivity extends AppCompatActivity {
         analogClock.init(this, R.drawable.clock_face, R.drawable.hour_hand, R.drawable.minute_hand,R.drawable.pill_hand, 0, true, false);
         analogClock.setAutoUpdate(true);
         analogClock.setScale(1.1f);
-<<<<<<< HEAD
     }
     private void preparePillsAdapter(){
-        medicineQuantities = new ArrayList<>();
-
-        pillCardAdapter = new PillCardAdapter(this,medicineQuantities);
-=======
 
 
         intakeMomentList = new ArrayList<>();
         pillCardAdapter = new PillCardAdapter(this,intakeMomentList);
->>>>>>> 59a1c77e88970a1eae5694ecd948ee5c6d35817b
         LinearLayoutManager layout = new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false);
         mRecyclerView.setLayoutManager(layout);
         mRecyclerView.setAdapter(pillCardAdapter);
