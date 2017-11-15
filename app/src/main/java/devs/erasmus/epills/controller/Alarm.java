@@ -14,7 +14,7 @@ import devs.erasmus.epills.broadcast_receiver.AlarmBroadcastReceiver;
  */
 
 public class Alarm {
-    /*private AlarmManager alarmManager;
+   /* private AlarmManager alarmManager;
     private PendingIntent alarmIntent;
     private Calendar calendar;
     public Alarm(Context context){
@@ -22,6 +22,13 @@ public class Alarm {
         calendar.setTimeInMillis(System.currentTimeMillis());
         calendar.clear();
         alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+    }
+
+    public setAlarm(int hourOfDay, int minute, int year, int month, int day){
+        calendar.set(year,month,day,hourOfDay,minute);
+
         Intent intent = new Intent(this, AlarmBroadcastReceiver.class);
-    }*/
+        int id = (int)System.currentTimeMillis(); //it creates an unique id
+    }
+    */
 }

@@ -29,6 +29,7 @@ import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
 import org.litepal.crud.DataSupport;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 
 import butterknife.BindView;
@@ -112,7 +113,7 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
         int medicineId = getIntent().getIntExtra(EXTRA_MEDICINEID, -1);
         int receiptId = getIntent().getIntExtra(EXTRA_RECEIPTID, -1);
         if (medicineId == -1 || receiptId == -1) {
-            throw new RuntimeException("No ID for medicine!");
+            throw new RuntimeException("No ID for medicine or receipt!");
         }
 
         receipt = DataSupport.where("id = ? ", receiptId+"").find(Receipt.class).get(0);
@@ -314,6 +315,7 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
                     pendingIntent);
         } else {
             for(int i=0;i<weekdaysSelection.length;i++) {
+                cal.set(Calendar.DAY_OF_WEEK, Arrays.asList(weekdaysSelection).indexOf(i-1));
                 if(weekdaysSelection[i]) {
                     PendingIntent pendingIntent = PendingIntent.getBroadcast(this, id + i, intent, 0);
                     alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
