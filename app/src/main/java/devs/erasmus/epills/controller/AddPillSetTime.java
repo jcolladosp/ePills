@@ -103,8 +103,8 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
         //TODO: drawer: Yes or no? TOOLBAR: how?
         //Get the medicine object from DB
         int medicineId = getIntent().getIntExtra(EXTRA_MEDICINEID, -1);
-        int receiptId = getIntent().getIntExtra(EXTRA_RECEIPTID, -1);
-        if (medicineId == -1 || receiptId == -1) {
+        long receiptId = getIntent().getLongExtra(EXTRA_RECEIPTID, -1);
+        if (medicineId == -1 || receiptId == -1l) {
             throw new RuntimeException("No ID for medicine!");
         }
 

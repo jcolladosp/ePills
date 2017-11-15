@@ -147,8 +147,8 @@ public class AddPill_General_Activity extends AppCompatActivity {
 
             //Start time activity
             Intent intent = new Intent(this, AddPillSetTime.class);
-            intent.putExtra(AddPillSetTime.EXTRA_MEDICINEID, id);
-            intent.putExtra(AddPillSetTime.EXTRA_RECEIPTID, receipt.getId());
+            intent.putExtra(AddPillSetTime.EXTRA_MEDICINEID, id)
+                    .putExtra(AddPillSetTime.EXTRA_RECEIPTID, receipt.getId());
             startActivity(intent);
             finish();
         }
