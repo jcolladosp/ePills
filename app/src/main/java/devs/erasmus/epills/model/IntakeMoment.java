@@ -21,10 +21,10 @@ public class IntakeMoment extends DataSupport {
      */
     private int weekDay;
 
-    public IntakeMoment(Calendar intakeDate, Receipt receipt, Medicine medicineId, int quantity, int alarmRequestCode, int weekDay) {
+    public IntakeMoment(Calendar intakeDate, Receipt receipt, Medicine medicine, int quantity, int alarmRequestCode, int weekDay) {
         this.intakeDate = intakeDate;
         this.receipt = receipt;
-        this.medicine = medicineId;
+        this.medicine = medicine;
         this.quantity = quantity;
         this.alarmRequestCode = alarmRequestCode;
         this.weekDay = weekDay;

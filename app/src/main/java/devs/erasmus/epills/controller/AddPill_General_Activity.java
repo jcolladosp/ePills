@@ -17,6 +17,7 @@ import android.widget.EditText;
 
 import butterknife.OnClick;
 import devs.erasmus.epills.model.Medicine;
+import devs.erasmus.epills.model.Receipt;
 import devs.erasmus.epills.utils.AutoFillNetworkUtils;
 import devs.erasmus.epills.widget.SquareImageView;
 import android.widget.MultiAutoCompleteTextView;
@@ -140,9 +141,14 @@ public class AddPill_General_Activity extends AppCompatActivity {
             medicine.save();
             int id = DataSupport.count(Medicine.class); //Possible because of auto-increment.
 
+            //Create new Receipt
+            Receipt receipt = new Receipt();
+            receipt.save();
+
             //Start time activity
             Intent intent = new Intent(this, AddPillSetTime.class);
             intent.putExtra(AddPillSetTime.EXTRA_MEDICINEID, id);
+            intent.putExtra(AddPillSetTime.EXTRA_RECEIPTID, receipt.getId());
             startActivity(intent);
             finish();
         }
