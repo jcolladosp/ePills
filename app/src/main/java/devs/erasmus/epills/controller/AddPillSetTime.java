@@ -31,6 +31,7 @@ import java.util.Calendar;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import devs.erasmus.epills.model.Receipt;
 import devs.erasmus.epills.widget.AddPillFinishDialog;
 import devs.erasmus.epills.R;
 import devs.erasmus.epills.model.Medicine;
@@ -51,8 +52,11 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
 
     final static String PACKAGENAME = "devs.erasmus.epills.contoller";
     public final static String EXTRA_MEDICINEID = PACKAGENAME + "medicine_id";
+    public final static String EXTRA_RECEIPTID = PACKAGENAME +"receipt_id";
 
+    //Database variables
     Medicine medicine;
+    Receipt receipt;
 
     //Stepnumbers of each element
     String[] stepTitles;
@@ -99,9 +103,12 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
         //TODO: drawer: Yes or no? TOOLBAR: how?
         //Get the medicine object from DB
         int medicineId = getIntent().getIntExtra(EXTRA_MEDICINEID, -1);
-        if (medicineId == -1) {
+        int receiptId = getIntent().getIntExtra(EXTRA_RECEIPTID, -1);
+        if (medicineId == -1 || receiptId == -1) {
             throw new RuntimeException("No ID for medicine!");
         }
+
+        receipt = DataSupport.where("id = ? ", receiptId+"").find(Receipt.class).get(0);
         medicine = DataSupport.find(Medicine.class, medicineId);
 
         String title = getString(R.string.timeactivity_title) + " " + medicine.getName();

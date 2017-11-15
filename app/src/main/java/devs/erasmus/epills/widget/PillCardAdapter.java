@@ -14,7 +14,7 @@ import com.bumptech.glide.Glide;
 import java.util.List;
 
 import devs.erasmus.epills.R;
-import devs.erasmus.epills.model.MedicineQuantity;
+import devs.erasmus.epills.model.IntakeMoment;
 
 /**
  * Created by colla on 06/11/2017.
@@ -22,7 +22,7 @@ import devs.erasmus.epills.model.MedicineQuantity;
 
 public class PillCardAdapter extends RecyclerView.Adapter<PillCardAdapter.MyViewHolder> {
     private Context mContext;
-    private List<MedicineQuantity> pillList;
+    private List<IntakeMoment> pillList;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView title, count;
@@ -38,7 +38,7 @@ public class PillCardAdapter extends RecyclerView.Adapter<PillCardAdapter.MyView
     }
 
 
-    public PillCardAdapter(Context mContext, List<MedicineQuantity> pillList) {
+    public PillCardAdapter(Context mContext, List<IntakeMoment> pillList) {
         this.mContext = mContext;
         this.pillList = pillList;
     }
@@ -53,9 +53,9 @@ public class PillCardAdapter extends RecyclerView.Adapter<PillCardAdapter.MyView
 
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
-        MedicineQuantity medicineQuantity = pillList.get(position);
+        IntakeMoment medicineQuantity = pillList.get(position);
         holder.title.setText(medicineQuantity.getMedicine().getName());
-        holder.count.setText(medicineQuantity.getIntakeMoment().getIntakeDate().toString());
+        holder.count.setText(medicineQuantity.getIntakeDate().getTime().toString());
 
         // loading album cover using Glide library
         Glide.with(mContext).load(medicineQuantity.getMedicine().getImage()).into(holder.thumbnail);

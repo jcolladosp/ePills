@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 
@@ -29,6 +30,7 @@ public class HandsOverlay implements DialOverlay {
     private int h;
     private boolean sizeChanged;
     private int hour;
+    private ArrayList<Integer> hourPillsList;
 
     public HandsOverlay(Context context, boolean useLargeFace) {
         final Resources r = context.getResources();
@@ -46,6 +48,7 @@ public class HandsOverlay implements DialOverlay {
         mHour = hourHand;
         mMinute = minuteHand;
         mPill = pill;
+        hourPillsList = new ArrayList<>();
     }
     public HandsOverlay withScale(float scale){
         this.scale = scale;
@@ -136,7 +139,7 @@ public class HandsOverlay implements DialOverlay {
         mPill.draw(canvas);
     }
     public void setHourPill(int hour){
-        this.hour = hour;
+        hourPillsList.add(hour);
     }
     public void setShowSeconds(boolean showSeconds) {
         mShowSeconds = showSeconds;
