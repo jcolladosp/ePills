@@ -305,11 +305,11 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
         int Month=this.startDate.get(Calendar.MONTH);
         int Year=this.startDate.get(Calendar.YEAR);
         String medicineName = medicine.getName();
-
+        Log.e("day:",String.valueOf(Day));
         if(singleSelected) {
-            Alarm alarm = new Alarm(this, medicineName, alarmId, hourOfDay, minuteOfDay, Year, Month, Day);
+            Alarm alarm = new Alarm(this, medicineName, alarmId, hourOfDay, minuteOfDay, Day, Month, Year);
         } else {
-            Alarm alarm = new Alarm(this, medicineName, alarmId, hourOfDay, minuteOfDay, Year, Month, Day, weekdaysSelection);
+            Alarm alarm = new Alarm(this, medicineName, alarmId, hourOfDay, minuteOfDay, Day, Month, Year, weekdaysSelection);
         }
 
     }

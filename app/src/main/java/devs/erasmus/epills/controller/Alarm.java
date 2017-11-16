@@ -56,7 +56,7 @@ public class Alarm {
     }
 
     //alarm created without occurences
-    public Alarm(Context context, String medicineName, int alarmId, int hourOfDay, int minute, int year, int month, int day){
+    public Alarm(Context context, String medicineName, int alarmId, int hourOfDay, int minute, int day, int month, int year){
         this.context = context;
         this.alarmId = alarmId;
         alarmTitle = medicineName;
@@ -75,7 +75,7 @@ public class Alarm {
     }
 
     //alarm created with occurences
-    public Alarm(Context context, String medicineName, int alarmId, int hourOfDay, int minute, int year, int month, int day, boolean[] weekdaysSelection){
+    public Alarm(Context context, String medicineName, int alarmId, int hourOfDay, int minute, int day, int month, int year, boolean[] weekdaysSelection){
         this.context = context;
         this.alarmId = alarmId;
         alarmTitle = medicineName;
@@ -93,22 +93,20 @@ public class Alarm {
 
         updateCalendar();
     }
-
-    //TODO: implement
+    
     public void updateCalendar(){
         Calendar calendar = Calendar.getInstance();
         calendar.set(year,month,day,hourOfDay,minute);
 
         Intent intent = new Intent(context, AlarmBroadcastReceiver.class);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        //Intent intent = new Intent(this, AlarmBroadcastReceiver.class);
 
         if(isOnce){
             PendingIntent pendingIntent = PendingIntent.getBroadcast(context, alarmId, intent, 0);
             alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,
                     calendar.getTimeInMillis(),
                     pendingIntent);
-            Log.e("Alarm started",String.valueOf(hourOfDay)+":"+String.valueOf(minute)+"-"+ String.valueOf(Calendar.DAY_OF_MONTH)+" "+String.valueOf(Calendar.DAY_OF_WEEK));
+            Log.e("Alarm started",String.valueOf(hourOfDay)+":"+String.valueOf(minute)+"- Day of month:"+ String.valueOf(Calendar.DAY_OF_MONTH)+" Day of week:"+String.valueOf(Calendar.DAY_OF_WEEK));
         } else {
             for(int i=0;i<weekdaysSelection.length;i++) {
                 if(weekdaysSelection[i]) {
@@ -118,6 +116,8 @@ public class Alarm {
                             calendar.getTimeInMillis(),
                             AlarmManager.INTERVAL_DAY * 7, //once a week
                             pendingIntent);
+
+                    Log.e("Alarm started",String.valueOf(hourOfDay)+":"+String.valueOf(minute)+"- Day of month:"+ String.valueOf(Calendar.DAY_OF_MONTH)+" Day of week:"+String.valueOf(Calendar.DAY_OF_WEEK));
                 }
             }
         }
