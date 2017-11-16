@@ -17,7 +17,7 @@ public class IntakeMoment extends DataSupport {
     private int quantity;
     private int alarmRequestCode;
     /**
-     * Represents the weekDay for this certain event. Mon = 0, ..., Sun = 7.
+     * Represents the weekDay for this certain event. Sun = 0, Mon = 1;
      */
     private int weekDay;
 

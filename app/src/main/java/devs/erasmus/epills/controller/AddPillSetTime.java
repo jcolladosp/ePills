@@ -348,7 +348,7 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
         singleRadioButton = repetitionContent.findViewById(R.id.singleRep_radio);
         endDateTextView = repetitionContent.findViewById(R.id.endDateLabel);
         endDateTextView.setText (getDateString(endDate));
-        final String[] weekdays = {"Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"};
+        final String[] weekdays = {"Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"};
 
         for(int i = 0; i < weekdays.length; i++) {
             final LinearLayout dayLayout = getDayLayout(i);
