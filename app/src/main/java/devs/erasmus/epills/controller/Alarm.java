@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import java.util.Arrays;
 import java.util.Calendar;
@@ -107,6 +108,7 @@ public class Alarm {
             alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,
                     calendar.getTimeInMillis(),
                     pendingIntent);
+            Log.e("Alarm started",String.valueOf(hourOfDay)+":"+String.valueOf(minute)+"-"+ String.valueOf(Calendar.DAY_OF_MONTH)+" "+String.valueOf(Calendar.DAY_OF_WEEK));
         } else {
             for(int i=0;i<weekdaysSelection.length;i++) {
                 if(weekdaysSelection[i]) {
