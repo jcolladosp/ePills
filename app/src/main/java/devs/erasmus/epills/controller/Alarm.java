@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 
+import java.util.Arrays;
 import java.util.Calendar;
 
 import devs.erasmus.epills.broadcast_receiver.AlarmBroadcastReceiver;
@@ -26,7 +27,8 @@ public class Alarm {
     private int month;
     private int year;
 
-    private int occurence; //it's 0 if singleTime=true
+    private boolean isOnce; //true if the alarms is needed only once
+    private boolean[] weekdaysSelection; //index 0: Sunday, index 1: Monday ...
     private boolean enabled;
 
 
@@ -46,7 +48,7 @@ public class Alarm {
         month = defaultCal.get(Calendar.MONTH);
         year = defaultCal.get(Calendar.YEAR);
 
-        occurence = 0;
+        isOnce = true;
         enabled = true;
 
         updateCalendar();
@@ -65,14 +67,14 @@ public class Alarm {
         this.month = month;
         this.year = year;
 
-        this.occurence = 0;
+        this.isOnce = true;
         this.enabled = true;
 
         updateCalendar();
     }
 
-    //TODO: alarm created with occurences
-    /*public Alarm(Context context, String medicineName, int alarmId, int hourOfDay, int minute, int year, int month, int day){
+    //alarm created with occurences
+    public Alarm(Context context, String medicineName, int alarmId, int hourOfDay, int minute, int year, int month, int day, boolean[] weekdaysSelection){
         this.context = context;
         this.alarmId = alarmId;
         alarmTitle = medicineName;
@@ -84,18 +86,39 @@ public class Alarm {
         this.month = month;
         this.year = year;
 
-        this.occurence = 0;
+        this.isOnce = false;
+        this.weekdaysSelection=weekdaysSelection;
         this.enabled = true;
 
         updateCalendar();
-    }*/
+    }
 
     //TODO: implement
     public void updateCalendar(){
-        /*Calendar calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance();
         calendar.set(year,month,day,hourOfDay,minute);
 
-        Intent intent = new Intent(this, AlarmBroadcastReceiver.class);*/
+        Intent intent = new Intent(context, AlarmBroadcastReceiver.class);
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        //Intent intent = new Intent(this, AlarmBroadcastReceiver.class);
+
+        if(isOnce){
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(context, alarmId, intent, 0);
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,
+                    calendar.getTimeInMillis(),
+                    pendingIntent);
+        } else {
+            for(int i=0;i<weekdaysSelection.length;i++) {
+                if(weekdaysSelection[i]) {
+                    calendar.set(Calendar.DAY_OF_WEEK, Arrays.asList(weekdaysSelection).indexOf(i));
+                    PendingIntent pendingIntent = PendingIntent.getBroadcast(context, alarmId + i, intent, 0);
+                    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
+                            calendar.getTimeInMillis(),
+                            AlarmManager.INTERVAL_DAY * 7, //once a week
+                            pendingIntent);
+                }
+            }
+        }
     }
 
     // GETTERS / SETTERS
@@ -166,12 +189,12 @@ public class Alarm {
         updateCalendar();
     }
 
-    public int getOccurence() {
-        return occurence;
+    public boolean getIsOnce() {
+        return isOnce;
     }
 
-    public void setOccurence(int occurence) {
-        this.occurence = occurence;
+    public void setIsOnce(boolean isOnce) {
+        this.isOnce = isOnce;
         updateCalendar();
     }
 

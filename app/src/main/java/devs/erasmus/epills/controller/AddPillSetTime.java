@@ -306,29 +306,12 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
         int Year=this.startDate.get(Calendar.YEAR);
         String medicineName = medicine.getName();
 
-        Alarm alarm = new Alarm(this, medicineName, alarmId, hourOfDay, minuteOfDay, Year, Month, Day);
-
-        cal.set(Year,Month,Day,hourOfDay,minuteOfDay);
-        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(this, AlarmBroadcastReceiver.class);
-
-        if(singleSelected){
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, alarmId, intent, 0);
-            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,
-                    cal.getTimeInMillis(),
-                    pendingIntent);
+        if(singleSelected) {
+            Alarm alarm = new Alarm(this, medicineName, alarmId, hourOfDay, minuteOfDay, Year, Month, Day);
         } else {
-            for(int i=0;i<weekdaysSelection.length;i++) {
-                cal.set(Calendar.DAY_OF_WEEK, Arrays.asList(weekdaysSelection).indexOf(i-1));
-                if(weekdaysSelection[i]) {
-                    PendingIntent pendingIntent = PendingIntent.getBroadcast(this, alarmId + i, intent, 0);
-                    alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
-                            cal.getTimeInMillis(),
-                            AlarmManager.INTERVAL_DAY * 7, //once a week
-                            pendingIntent);
-                }
-            }
+            Alarm alarm = new Alarm(this, medicineName, alarmId, hourOfDay, minuteOfDay, Year, Month, Day, weekdaysSelection);
         }
+
     }
     private View createQuantityStep() {
         LayoutInflater inflater = LayoutInflater.from(getBaseContext());
