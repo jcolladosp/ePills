@@ -4,6 +4,7 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 
 import java.util.Calendar;
 
@@ -14,21 +15,172 @@ import devs.erasmus.epills.broadcast_receiver.AlarmBroadcastReceiver;
  */
 
 public class Alarm {
-   /* private AlarmManager alarmManager;
-    private PendingIntent alarmIntent;
-    private Calendar calendar;
+    private Context context;
+    private int alarmId; //requestcode
+    private String alarmTitle; //name of the pill
+
+    private int hourOfDay;
+    private int minute;
+
+    private int day;
+    private int month;
+    private int year;
+
+    private int occurence; //it's 0 if singleTime=true
+    private boolean enabled;
+
+
+    //default values, probably you shouldn't be here
     public Alarm(Context context){
-        calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.clear();
-        alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        Calendar defaultCal = Calendar.getInstance();
+        defaultCal.setTimeInMillis(System.currentTimeMillis());
+
+        this.context = context;
+        alarmId = 0; //it creates an unique id
+        alarmTitle = "defaultTitle";
+
+        hourOfDay = defaultCal.get(Calendar.HOUR_OF_DAY);
+        minute = defaultCal.get(Calendar.MINUTE);
+
+        day = defaultCal.get(Calendar.DAY_OF_MONTH);
+        month = defaultCal.get(Calendar.MONTH);
+        year = defaultCal.get(Calendar.YEAR);
+
+        occurence = 0;
+        enabled = true;
+
+        updateCalendar();
     }
 
-    public setAlarm(int hourOfDay, int minute, int year, int month, int day){
+    //alarm created without occurences
+    public Alarm(Context context, String medicineName, int alarmId, int hourOfDay, int minute, int year, int month, int day){
+        this.context = context;
+        this.alarmId = alarmId;
+        alarmTitle = medicineName;
+
+        this.hourOfDay = hourOfDay;
+        this.minute = minute;
+
+        this.day = day;
+        this.month = month;
+        this.year = year;
+
+        this.occurence = 0;
+        this.enabled = true;
+
+        updateCalendar();
+    }
+
+    //TODO: alarm created with occurences
+    /*public Alarm(Context context, String medicineName, int alarmId, int hourOfDay, int minute, int year, int month, int day){
+        this.context = context;
+        this.alarmId = alarmId;
+        alarmTitle = medicineName;
+
+        this.hourOfDay = hourOfDay;
+        this.minute = minute;
+
+        this.day = day;
+        this.month = month;
+        this.year = year;
+
+        this.occurence = 0;
+        this.enabled = true;
+
+        updateCalendar();
+    }*/
+
+    //TODO: implement
+    public void updateCalendar(){
+        /*Calendar calendar = Calendar.getInstance();
         calendar.set(year,month,day,hourOfDay,minute);
 
-        Intent intent = new Intent(this, AlarmBroadcastReceiver.class);
-        int id = (int)System.currentTimeMillis(); //it creates an unique id
+        Intent intent = new Intent(this, AlarmBroadcastReceiver.class);*/
     }
-    */
+
+    // GETTERS / SETTERS
+    public int getId() {
+        return alarmId;
+    }
+
+    public void setId(int id) {
+        alarmId = id;
+    }
+
+    public String getTitle() {
+        return alarmTitle;
+    }
+
+    public void setTitle(String title) {
+        alarmTitle = title;
+    }
+
+    public int getHourOfDay() {
+        return hourOfDay;
+    }
+
+    public void setHourOfDay(int hour) {
+        this.hourOfDay = hour;
+        updateCalendar();
+    }
+
+    public int getMinute() {
+        return minute;
+    }
+
+    public void setMinute(int minute) {
+        this.minute = minute;
+        updateCalendar();
+    }
+
+    public void setHourMinute(int hour, int minute) {
+        this.hourOfDay = hour;
+        this.minute = minute;
+        updateCalendar();
+    }
+
+    public int getDay() {
+        return day;
+    }
+
+    public void setDay(int day) {
+        this.day = day;
+        updateCalendar();
+    }
+
+    public int getMonth() {
+        return month;
+    }
+
+    public void setMonth(int month) {
+        this.month = month;
+        updateCalendar();
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
+        updateCalendar();
+    }
+
+    public int getOccurence() {
+        return occurence;
+    }
+
+    public void setOccurence(int occurence) {
+        this.occurence = occurence;
+        updateCalendar();
+    }
+
+    public boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+        updateCalendar();
+    }
 }

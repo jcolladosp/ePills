@@ -11,7 +11,7 @@ public class AlarmBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.e("Receiver","okay");
-        Toast.makeText(context, "IT'S TIME"+ intent.getDataString(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, "IT'S TIME YOU MORON", Toast.LENGTH_SHORT).show();
         //create intent goto NotificationService
         //Intent serviceIntent=new Intent(context,NotificationService.class);
         //context.startService(serviceIntent);

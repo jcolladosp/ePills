@@ -16,6 +16,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -91,9 +92,8 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
     private boolean[] weekdaysSelection = new boolean[7];
     private boolean singleSelected = true; //First time the single button is selected.
 
-    //alarm variables
-    AlarmManager alarmManager;
 
+    Alarm alarm;
 
     //Bind views
     @BindView(R.id.stepper)
@@ -288,28 +288,32 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
         //after data save show interface whether additional intake should be shown.
         AddPillFinishDialog finishDialog = AddPillFinishDialog.newInstance();
         finishDialog.show(getSupportFragmentManager(),AddPillFinishDialog.tag);
-
-        setAlarm();
     }
 
+
     public void setAlarm(){
+        Log.e("alarm","setting");
+
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(System.currentTimeMillis());
         cal.clear();
 
+        int alarmId = (int)System.currentTimeMillis(); //it creates an unique id
         int hourOfDay = time.first;
         int minuteOfDay = time.second;
         int Day = this.startDate.get(Calendar.DAY_OF_MONTH);
         int Month=this.startDate.get(Calendar.MONTH);
         int Year=this.startDate.get(Calendar.YEAR);
-        cal.set(Year,Month,Day,hourOfDay,minuteOfDay);
+        String medicineName = medicine.getName();
 
-        alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Alarm alarm = new Alarm(this, medicineName, alarmId, hourOfDay, minuteOfDay, Year, Month, Day);
+
+        cal.set(Year,Month,Day,hourOfDay,minuteOfDay);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(this, AlarmBroadcastReceiver.class);
-        int id = (int)System.currentTimeMillis(); //it creates an unique id
 
         if(singleSelected){
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, id, intent, 0);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, alarmId, intent, 0);
             alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,
                     cal.getTimeInMillis(),
                     pendingIntent);
@@ -317,7 +321,7 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
             for(int i=0;i<weekdaysSelection.length;i++) {
                 cal.set(Calendar.DAY_OF_WEEK, Arrays.asList(weekdaysSelection).indexOf(i-1));
                 if(weekdaysSelection[i]) {
-                    PendingIntent pendingIntent = PendingIntent.getBroadcast(this, id + i, intent, 0);
+                    PendingIntent pendingIntent = PendingIntent.getBroadcast(this, alarmId + i, intent, 0);
                     alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
                             cal.getTimeInMillis(),
                             AlarmManager.INTERVAL_DAY * 7, //once a week
