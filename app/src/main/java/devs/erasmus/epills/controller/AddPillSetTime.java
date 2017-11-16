@@ -624,4 +624,8 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
         int id = repetitionContent.getResources().getIdentifier("day_"+i, "id", getPackageName());
         return (LinearLayout) repetitionContent.findViewById(id);
     }
+
+    public long getReceiptID() {
+        return receipt.getId();
+    }
 }
