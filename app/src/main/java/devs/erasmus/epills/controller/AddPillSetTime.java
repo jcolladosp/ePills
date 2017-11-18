@@ -32,6 +32,7 @@ import org.litepal.crud.DataSupport;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -94,6 +95,7 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
 
 
     Alarm alarm;
+
 
     //Bind views
     @BindView(R.id.stepper)
@@ -298,18 +300,25 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
         cal.setTimeInMillis(System.currentTimeMillis());
         cal.clear();
 
-        int alarmId = (int)System.currentTimeMillis(); //it creates an unique id
-        int hourOfDay = time.first;
-        int minuteOfDay = time.second;
-        int Day = this.startDate.get(Calendar.DAY_OF_MONTH);
-        int Month=this.startDate.get(Calendar.MONTH);
-        int Year=this.startDate.get(Calendar.YEAR);
-        String medicineName = medicine.getName();
-        Log.e("day:",String.valueOf(Day));
+        int hourOfDay = time.first; //HOUR
+        int minuteOfDay = time.second; //MINUTE
+        int Day = this.startDate.get(Calendar.DAY_OF_MONTH); //DAY OF START
+        int Month=this.startDate.get(Calendar.MONTH); //MONTH OF START
+        int Year=this.startDate.get(Calendar.YEAR); //YEAR OF START
+        String medicineName = medicine.getName(); // MEDICINE NAME
+        int quantity = seekBar.getProgress(); //HOW MANY PILLS TO TAKE AT ONCE
+        Date endDate =this.endDate.getTime();
+
         if(singleSelected) {
-            Alarm alarm = new Alarm(this, medicineName, alarmId, hourOfDay, minuteOfDay, Day, Month, Year);
+            int alarmId = (int)System.currentTimeMillis(); //it creates an unique id
+            Alarm alarm = new Alarm(this, medicineName, quantity, endDate, alarmId, hourOfDay, minuteOfDay, Day, Month, Year);
         } else {
-            Alarm alarm = new Alarm(this, medicineName, alarmId, hourOfDay, minuteOfDay, Day, Month, Year, weekdaysSelection);
+            for(int weekday=0; weekday<weekdaysSelection.length; weekday++) {
+                if(weekdaysSelection[weekday]) {
+                    int alarmId = (int)System.currentTimeMillis(); //it creates an unique id
+                    Alarm alarm = new Alarm(this, medicineName, quantity, endDate, alarmId, hourOfDay, minuteOfDay, Day, Month, Year, weekday+1); //because Calendar counts from 1
+                }
+            }
         }
 
     }
