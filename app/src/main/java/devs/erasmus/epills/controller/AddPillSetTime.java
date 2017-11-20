@@ -42,8 +42,6 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
 
     //STATE STRINGS
     private final static String
-            STATE_TIME_Hour = "STATE_TIME_HOUR",
-            STATE_TIME_Minute = "STATE_TIME_MINUTE",
             STATE_STARTDATE = "STATE_STARTDATE",
             STATE_ENDDATE = "State_ENDDATE",
             STATE_SUBTITLES = "STATE_SUBTITLES",
@@ -83,7 +81,6 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
     //State variables
     private Calendar startDate; //Holds the current startDate.
     private Calendar endDate;
-    private Pair<Integer, Integer> time;
     private boolean[] weekdaysSelection = new boolean[7];
     private boolean singleSelected = true; //First time the single button is selected.
 
@@ -131,7 +128,6 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
 
             //Set Time variables
             Calendar calendar = Calendar.getInstance();
-            time = new Pair(calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE));
             startDate = (Calendar) calendar.clone();
             calendar.roll(Calendar.DAY_OF_MONTH,true);
             endDate = calendar;
@@ -144,14 +140,13 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
             }
 
             //Reload Time Variables
-            time = new Pair(savedInstanceState.getInt(STATE_TIME_Hour), savedInstanceState.getInt(STATE_TIME_Minute));
             startDate = (Calendar)savedInstanceState.getSerializable(STATE_STARTDATE);
             endDate = (Calendar) savedInstanceState.getSerializable(STATE_ENDDATE);
 
             singleSelected = savedInstanceState.getBoolean(STATE_REP_Single);
         }
 
-        setTimePicker(time.first, time.second);
+        setTimePicker(startDate.get(Calendar.HOUR_OF_DAY),startDate.get(Calendar.MINUTE));
         setStartDatePicker(startDate.get(Calendar.YEAR), startDate.get(Calendar.MONTH), startDate.get(Calendar.DAY_OF_MONTH));
         setEndDatePicker(endDate.get(Calendar.YEAR), endDate.get(Calendar.MONTH), endDate.get(Calendar.DAY_OF_MONTH));
 
@@ -197,8 +192,6 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
     public void onSaveInstanceState(Bundle state) {
         state.putSerializable(STATE_ENDDATE,endDate);
         state.putSerializable(STATE_STARTDATE,startDate);
-        state.putInt(STATE_TIME_Hour,time.first);
-        state.putInt(STATE_TIME_Minute, time.second);
         ArrayList<String> subtitles = new ArrayList<>();
         for (int i = 0; i < TOTAL_STEPS; i++ ) {
             subtitles.add(verticalStepper.getStepsSubtitles(i));
@@ -533,8 +526,9 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
                 new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                        time = new Pair<>(hourOfDay, minute);
-                        timeTextView.setText(getTimeString());
+                       startDate.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                       startDate.set(Calendar.MINUTE, minute);
+                       timeTextView.setText(getTimeString());
                     }
                 }, hour, minute, true);
     }
@@ -557,8 +551,10 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
      */
     @NonNull
     private String getTimeString() {
-        String hourString = ((time.first<9) ? "0"+ time.first : String.valueOf(time.first));
-        String minuteString = (time.second<9) ? "0" + time.second : String.valueOf(time.second);
+        int minute = startDate.get(Calendar.MINUTE);
+        int hour = startDate.get(Calendar.HOUR_OF_DAY);
+        String hourString = ((hour<9) ? "0"+ hour : String.valueOf(hour));
+        String minuteString = (minute<9) ? "0" + minute : String.valueOf(minute);
         String time = hourString + ":" + minuteString;
         return hourString + ":" + minuteString;
     }
