@@ -21,11 +21,13 @@
             app:expandedTitleMarginEnd="64dp"
             app:expandedTitleMarginStart="48dp"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
             <devs.erasmus.epills.widget.SquareImageView
                 android:id="@+id/image_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:scaleType="centerCrop"
+                android:scaleY="1.2"
                 app:layout_collapseMode="parallax" />
 
             <android.support.v7.widget.Toolbar
