@@ -44,8 +44,7 @@ import devs.erasmus.epills.R;
 import devs.erasmus.epills.widget.NavigationDrawer;
 
 public class AddPill_General_Activity extends AppCompatActivity {
-//TODO: Make responsive to orientation changes
-    static final String EXTRA_PHOTO_URI = "devs.erasmus.epills.extra_photo_uri";
+    private static final String STATE_PHOTO = "STATE_PHOTOURL";
 
     private String mCurrentPhotoPath;
 
@@ -74,11 +73,13 @@ public class AddPill_General_Activity extends AppCompatActivity {
         setContentView(R.layout.activity_add_pill__general_);
         ButterKnife.bind(this);
 
-         setSupportActionBar(toolbar);
+        setSupportActionBar(toolbar);
 
+        if (savedInstanceState != null) {
+            mCurrentPhotoPath = savedInstanceState.getString(STATE_PHOTO, null) ; //TODO: Change to default photo URL!
+            Glide.with(this).load(mCurrentPhotoPath).into(imageView);
+        }
       //  drawer = NavigationDrawer.getDrawerBuilder(this,this,toolbar).build();
-
-      //  dispatchPictureIntent();
     }
 
     @OnClick(R.id.FAB)
@@ -122,6 +123,14 @@ public class AddPill_General_Activity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle instance) {
+        super.onSaveInstanceState(instance);
+        if (mCurrentPhotoPath != null) {
+            instance.putString(STATE_PHOTO,mCurrentPhotoPath);
+        }
+    }
+
     private File createPictureFile() throws IOException {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_"+timeStamp + R.string.app_name;
@@ -159,8 +168,7 @@ public class AddPill_General_Activity extends AppCompatActivity {
 
 
 
-    //AutoFill logic
-    
+    //--------------------------------AutoFill logic------------------------------@author{REMO}
     
     //Retrieves the substance name from name_text, constructs the URL with AutoFillNetworkUtils.buildUrl
     //and finally fires an AsyncTask to perform the GET request using queryTask
@@ -232,7 +240,5 @@ public class AddPill_General_Activity extends AppCompatActivity {
             }
         }
     }
-
-
 
 }
