@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TooManyListenersException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -73,11 +74,11 @@ public class AddPill_General_Activity extends AppCompatActivity {
         setContentView(R.layout.activity_add_pill__general_);
         ButterKnife.bind(this);
 
-        setSupportActionBar(toolbar);
+         setSupportActionBar(toolbar);
 
-        drawer = NavigationDrawer.getDrawerBuilder(this,this,toolbar).build();
+      //  drawer = NavigationDrawer.getDrawerBuilder(this,this,toolbar).build();
 
-        dispatchPictureIntent();
+      //  dispatchPictureIntent();
     }
 
     @OnClick(R.id.FAB)
@@ -85,10 +86,12 @@ public class AddPill_General_Activity extends AppCompatActivity {
         confirm();
     }
     @OnClick(R.id.autofill_button)
-    void onAutoFill(){
+    void onAutoFill() {
         makeSearchQuery();
     }
-    private void dispatchPictureIntent() {
+
+    @OnClick(R.id.image_view)
+    public void dispatchPictureIntent() {
         Intent takepicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takepicture.resolveActivity(getPackageManager()) != null) {
             File photoFile = null;
