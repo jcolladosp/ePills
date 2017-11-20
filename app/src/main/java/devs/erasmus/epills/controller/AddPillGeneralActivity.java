@@ -5,6 +5,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
@@ -36,14 +38,12 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.TooManyListenersException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import devs.erasmus.epills.R;
-import devs.erasmus.epills.widget.NavigationDrawer;
 
-public class AddPill_General_Activity extends AppCompatActivity {
+public class AddPillGeneralActivity extends AppCompatActivity {
     private static final String STATE_PHOTO = "STATE_PHOTOURL";
 
     private String mCurrentPhotoPath;
@@ -63,6 +63,10 @@ public class AddPill_General_Activity extends AppCompatActivity {
     Toolbar toolbar;
     @BindView(R.id.image_view)
     SquareImageView imageView;
+    @BindView(R.id.app_bar_layout)
+    AppBarLayout appBarLayout;
+    @BindView(R.id.coordinator_layout)
+    CoordinatorLayout coordinatorLayout;
 
     private Drawer drawer;
     static final int REQUEST_IMAGE_CAPTURE = 1;
@@ -70,16 +74,43 @@ public class AddPill_General_Activity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_pill__general_);
+        setContentView(R.layout.activity_add_pill_general);
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
+
+        appBarLayout.post(new Runnable() {
+            //Following https://stackoverflow.com/questions/33058496/set-starting-height-of-collapsingtoolbarlayout
+            @Override
+            public void run() {
+                int offset = toolbar.getHeight()/2;
+                setAppBarOffset(offset);
+            }
+        });
 
         if (savedInstanceState != null) {
             mCurrentPhotoPath = savedInstanceState.getString(STATE_PHOTO, null) ; //TODO: Change to default photo URL!
             Glide.with(this).load(mCurrentPhotoPath).into(imageView);
         }
-      //  drawer = NavigationDrawer.getDrawerBuilder(this,this,toolbar).build();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Glide.with(this)
+                    .load(mCurrentPhotoPath)
+                    .into(imageView);
+        } else {
+            finish();
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle instance) {
+        super.onSaveInstanceState(instance);
+        if (mCurrentPhotoPath != null) {
+            instance.putString(STATE_PHOTO,mCurrentPhotoPath);
+        }
     }
 
     @OnClick(R.id.FAB)
@@ -112,23 +143,10 @@ public class AddPill_General_Activity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Glide.with(this)
-                    .load(mCurrentPhotoPath)
-                    .into(imageView);
-        } else {
-            finish();
-        }
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle instance) {
-        super.onSaveInstanceState(instance);
-        if (mCurrentPhotoPath != null) {
-            instance.putString(STATE_PHOTO,mCurrentPhotoPath);
-        }
+    private void setAppBarOffset(int offset) {
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) appBarLayout.getLayoutParams();
+        AppBarLayout.Behavior behavior = (AppBarLayout.Behavior) params.getBehavior();
+        behavior.onNestedScroll(coordinatorLayout, appBarLayout, null, 0 ,offset,0,0, 0);
     }
 
     private File createPictureFile() throws IOException {

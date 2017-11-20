@@ -29,7 +29,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".controller.AddPill_General_Activity"
+        <activity android:name=".controller.AddPillGeneralActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:label="@string/title_activity_addPill"></activity>
         
