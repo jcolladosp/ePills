@@ -94,9 +94,6 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
     private boolean singleSelected = true; //First time the single button is selected.
 
 
-    Alarm alarm;
-
-
     //Bind views
     @BindView(R.id.stepper)
     VerticalStepperFormLayout verticalStepper;
