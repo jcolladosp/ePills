@@ -22,7 +22,8 @@ public class AlarmUtil {
     private Context context;
     private int alarmId; //requestcode
     private String medicineName; //name of the pill
-    private int quantity; //how many pills to take 
+    private int quantity; //how many pills to take
+    Date startDate;
     Date endDate;
     private int hourOfDay;
     private int minute;
@@ -43,20 +44,20 @@ public class AlarmUtil {
     }
 
     //alarm created without occurences
-    public AlarmUtil(Context context, String medicineName, int quantity, Date endDate, int alarmId, int hourOfDay, int minute, int day, int month, int year){
+    public AlarmUtil(Context context, String medicineName, int quantity, Date startDate, int alarmId){
         this.context = context;
         this.medicineName = medicineName;
         this.quantity = quantity;
-        this.endDate = endDate;
+        this.startDate = startDate;
         this.alarmId = alarmId;
-
+        /*
         this.hourOfDay = hourOfDay;
         this.minute = minute;
 
         this.day = day;
         this.month = month;
         this.year = year;
-
+        */
         this.isOnce = true;
         this.enabled = true;
 
@@ -66,20 +67,22 @@ public class AlarmUtil {
     }
 
     //alarm created with occurences
-    public AlarmUtil(Context context, String medicineName, int quantity, Date endDate, int alarmId, int hourOfDay, int minute, int day, int month, int year, int weekDay){
+    public AlarmUtil(Context context, String medicineName, int quantity, Date startDate, Date endDate, int alarmId, int weekDay){
         this.context = context;
         this.medicineName = medicineName;
         this.quantity = quantity;
+        this.startDate = startDate;
         this.endDate = endDate;
         this.alarmId = alarmId;
 
+        /*
         this.hourOfDay = hourOfDay;
         this.minute = minute;
 
         this.day = day;
         this.month = month;
         this.year = year;
-
+        */
         this.isOnce = false;
         this.weekDay = weekDay;
         this.enabled = true;
@@ -99,35 +102,32 @@ public class AlarmUtil {
         calendar.setTimeInMillis(System.currentTimeMillis());
 
         pendingIntent = PendingIntent.getBroadcast(context, alarmId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        calendar.setTime(startDate);
 
         if(getIsOnce()){
-            calendar.set(getYear(),getMonth(),getDay(),getHourOfDay(),getMinute());
-
-
             alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,
                     calendar.getTimeInMillis(),
                     pendingIntent);
 
             Log.e("set alarm:",String.valueOf(calendar.getTime()) +" ("+ String.valueOf(alarmId) + ")");
         } else {
-                calendar.set(getYear(),getMonth(),getDay(),getHourOfDay(),getMinute());
-
+                Calendar occurenceCalendar = Calendar.getInstance();
+                occurenceCalendar.setTime(startDate);
                 //set the weekDay(NOTE: redundant passage if weekday is the same as start day
-                calendar.set(Calendar.DAY_OF_WEEK, getWeekDay());
-
+                occurenceCalendar.set(Calendar.DAY_OF_WEEK, getWeekDay());
                 //if we are starting an alarm for the next week(e.g today is friday and i want an alarm for monday)
-                 if(calendar.get(Calendar.DAY_OF_MONTH) < getDay()) {
+                 if(occurenceCalendar.get(Calendar.DAY_OF_MONTH) < calendar.get(Calendar.DAY_OF_MONTH)) {
                      //NOTE: trying to update the alarms variable here cause overflow
                      //this means that the variable arent reliable anymore after this set
-                    calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH) + 7);
+                    occurenceCalendar.set(Calendar.DAY_OF_MONTH, occurenceCalendar.get(Calendar.DAY_OF_MONTH) + 7);
                 }
 
                 alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
-                        calendar.getTimeInMillis(),
+                        occurenceCalendar.getTimeInMillis(),
                         AlarmManager.INTERVAL_DAY * 7, //once a week
                         pendingIntent);
 
-            Log.e("set alarm:",String.valueOf(calendar.getTime()) +" ("+ String.valueOf(alarmId) + ")");
+            Log.e("set occurent alarm:",String.valueOf(occurenceCalendar.getTime()) +" ("+ String.valueOf(alarmId) + ")");
                 //set the end date alarm
                 calendar.setTime(endDate);
                 intent.putExtra("end",1);
