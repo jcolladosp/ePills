@@ -1,4 +1,4 @@
-package devs.erasmus.epills.controller;
+package devs.erasmus.epills.utils;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -18,7 +18,7 @@ import devs.erasmus.epills.broadcast_receiver.AlarmBroadcastReceiver;
  * Created by Remo Andreoli on 15/11/2017.
  */
 
-public class Alarm {
+public class AlarmUtil {
     private Context context;
     private int alarmId; //requestcode
     private String medicineName; //name of the pill
@@ -38,12 +38,12 @@ public class Alarm {
     private AlarmManager alarmManager;
     private PendingIntent pendingIntent;
 
-    public Alarm(Context context){
+    public AlarmUtil(Context context){
        this.context = context;
     }
 
     //alarm created without occurences
-    public Alarm(Context context, String medicineName, int quantity, Date endDate, int alarmId, int hourOfDay, int minute, int day, int month, int year){
+    public AlarmUtil(Context context, String medicineName, int quantity, Date endDate, int alarmId, int hourOfDay, int minute, int day, int month, int year){
         this.context = context;
         this.medicineName = medicineName;
         this.quantity = quantity;
@@ -66,7 +66,7 @@ public class Alarm {
     }
 
     //alarm created with occurences
-    public Alarm(Context context, String medicineName, int quantity, Date endDate, int alarmId, int hourOfDay, int minute, int day, int month, int year, int weekDay){
+    public AlarmUtil(Context context, String medicineName, int quantity, Date endDate, int alarmId, int hourOfDay, int minute, int day, int month, int year, int weekDay){
         this.context = context;
         this.medicineName = medicineName;
         this.quantity = quantity;

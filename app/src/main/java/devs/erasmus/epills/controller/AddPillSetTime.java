@@ -1,11 +1,7 @@
 package devs.erasmus.epills.controller;
 
-import android.app.AlarmManager;
 import android.app.DatePickerDialog;
-import android.app.PendingIntent;
 import android.app.TimePickerDialog;
-import android.content.Context;
-import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
@@ -30,14 +26,13 @@ import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
 import org.litepal.crud.DataSupport;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import devs.erasmus.epills.broadcast_receiver.AlarmBroadcastReceiver;
 import devs.erasmus.epills.model.Receipt;
+import devs.erasmus.epills.utils.AlarmUtil;
 import devs.erasmus.epills.widget.AddPillFinishDialog;
 import devs.erasmus.epills.R;
 import devs.erasmus.epills.model.Medicine;
@@ -308,12 +303,12 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
 
         if(singleSelected) {
             int alarmId = (int)System.currentTimeMillis(); //it creates an unique id
-            Alarm alarm = new Alarm(this, medicineName, quantity, endDate, alarmId, hourOfDay, minuteOfDay, Day, Month, Year);
+            AlarmUtil alarm = new AlarmUtil(this, medicineName, quantity, endDate, alarmId, hourOfDay, minuteOfDay, Day, Month, Year);
         } else {
             for(int weekday=0; weekday<weekdaysSelection.length; weekday++) {
                 if(weekdaysSelection[weekday]) {
                     int alarmId = (int)System.currentTimeMillis(); //it creates an unique id
-                    Alarm alarm = new Alarm(this, medicineName, quantity, endDate, alarmId, hourOfDay, minuteOfDay, Day, Month, Year, weekday+1); //because Calendar counts from 1
+                    AlarmUtil alarm = new AlarmUtil(this, medicineName, quantity, endDate, alarmId, hourOfDay, minuteOfDay, Day, Month, Year, weekday+1); //because Calendar counts from 1
                 }
             }
         }

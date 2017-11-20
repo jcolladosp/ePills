@@ -11,7 +11,8 @@ import java.util.Calendar;
 
 public class IntakeMoment extends DataSupport {
 
-    private Calendar intakeDate;
+    private Calendar startDate;
+    private Calendar endDate;
     private Receipt receipt;
     private Medicine medicine;
     private int quantity;
@@ -21,8 +22,9 @@ public class IntakeMoment extends DataSupport {
      */
     private int weekDay;
 
-    public IntakeMoment(Calendar intakeDate, Receipt receipt, Medicine medicine, int quantity, int alarmRequestCode, int weekDay) {
-        this.intakeDate = intakeDate;
+    public IntakeMoment(Calendar startDate, Calendar endDate, Receipt receipt, Medicine medicine, int quantity, int alarmRequestCode, int weekDay) {
+        this.startDate = startDate;
+        this.endDate = endDate;
         this.receipt = receipt;
         this.medicine = medicine;
         this.quantity = quantity;
@@ -30,12 +32,12 @@ public class IntakeMoment extends DataSupport {
         this.weekDay = weekDay;
     }
 
-    public Calendar getIntakeDate() {
-        return intakeDate;
+    public Calendar getStartDate() {
+        return startDate;
     }
 
-    public void setIntakeDate(Calendar intakeDate) {
-        this.intakeDate = intakeDate;
+    public void setStartDate(Calendar startDate) {
+        this.startDate = startDate;
     }
 
     public Receipt getReceipt() {
@@ -76,5 +78,13 @@ public class IntakeMoment extends DataSupport {
 
     public void setWeekDay(int weekDay) {
         this.weekDay = weekDay;
+    }
+
+    public Calendar getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Calendar endDate) {
+        this.endDate = endDate;
     }
 }

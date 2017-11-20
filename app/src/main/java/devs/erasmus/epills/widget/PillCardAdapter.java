@@ -55,7 +55,7 @@ public class PillCardAdapter extends RecyclerView.Adapter<PillCardAdapter.MyView
     public void onBindViewHolder(final MyViewHolder holder, int position) {
         IntakeMoment medicineQuantity = pillList.get(position);
         holder.title.setText(medicineQuantity.getMedicine().getName());
-        holder.count.setText(medicineQuantity.getIntakeDate().getTime().toString());
+        holder.count.setText(medicineQuantity.getStartDate().getTime().toString());
 
         // loading album cover using Glide library
         Glide.with(mContext).load(medicineQuantity.getMedicine().getImage()).into(holder.thumbnail);
