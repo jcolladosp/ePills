@@ -80,7 +80,6 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
     private DatePickerDialog endDatePicker;
 
     //State variables
-    private Pair<Integer, Integer> time;
     private Calendar startDate; //Holds the current startDate.
     private Calendar endDate;
     private boolean[] weekdaysSelection = new boolean[7];
@@ -286,8 +285,8 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
         cal.setTimeInMillis(System.currentTimeMillis());
         cal.clear();
 
-        int hourOfDay = time.first; //HOUR
-        int minuteOfDay = time.second; //MINUTE
+        int hourOfDay = startDate.get(Calendar.HOUR_OF_DAY); //HOUR
+        int minuteOfDay = startDate.get(Calendar.MINUTE); //MINUTE
         int Day = this.startDate.get(Calendar.DAY_OF_MONTH); //DAY OF START
         int Month=this.startDate.get(Calendar.MONTH); //MONTH OF START
         int Year=this.startDate.get(Calendar.YEAR); //YEAR OF START
