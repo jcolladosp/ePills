@@ -62,8 +62,8 @@ public class ClockActivity extends AppCompatActivity {
         mRecyclerView.setAdapter(pillCardAdapter);
         mRecyclerView.setHorizontalScrollBarEnabled(false);
 
-        Calendar startDate =  Calendar.getInstance();
-        Calendar endDate =  Calendar.getInstance();
+        Date startDate =  Calendar.getInstance().getTime();
+        Date endDate =  Calendar.getInstance().getTime();
 
         Medicine medicine = new Medicine("Ibuprofeno","http://omicrono.elespanol.com/wp-content/uploads/2015/05/ibuprofeno.jpg");
         Medicine medicine2 = new Medicine("Paracetamol","https://www.supermadre.net/wp-content/uploads/2016/05/paracetamol.jpg");

@@ -31,6 +31,7 @@ import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import devs.erasmus.epills.model.IntakeMoment;
 import devs.erasmus.epills.model.Receipt;
 import devs.erasmus.epills.utils.AlarmUtil;
 import devs.erasmus.epills.widget.AddPillFinishDialog;
@@ -271,6 +272,13 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
         //weekdaysSelected[] INDEX 0 MONDAY, INDEX 1 THUSDAY ...
         //startDate / endDate.get(Calendar.DAY_OF_MONTH) DATE OF START/END
         //seekBar.getProgress() HOW MANY PILLS TO TAKE AT ONCE
+        /*IntakeMoment intakeMoment = new IntakeMoment();
+        intakeMoment.setStartDate(startDate);
+        intakeMoment.setEndDate(endDate);
+        intakeMoment.setReceipt(receipt);
+        intakeMoment.setMedicine(medicine);
+        intakeMoment.setQuantity(seekBar.getProgress());
+        */
 
         //after data save show interface whether additional intake should be shown.
         AddPillFinishDialog finishDialog = AddPillFinishDialog.newInstance();
@@ -285,11 +293,6 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
         cal.setTimeInMillis(System.currentTimeMillis());
         cal.clear();
 
-        int hourOfDay = startDate.get(Calendar.HOUR_OF_DAY); //HOUR
-        int minuteOfDay = startDate.get(Calendar.MINUTE); //MINUTE
-        int Day = this.startDate.get(Calendar.DAY_OF_MONTH); //DAY OF START
-        int Month=this.startDate.get(Calendar.MONTH); //MONTH OF START
-        int Year=this.startDate.get(Calendar.YEAR); //YEAR OF START
         String medicineName = medicine.getName(); // MEDICINE NAME
         int quantity = seekBar.getProgress(); //HOW MANY PILLS TO TAKE AT ONCE
 

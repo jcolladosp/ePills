@@ -3,6 +3,7 @@ package devs.erasmus.epills.model;
 import org.litepal.crud.DataSupport;
 
 import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by jcolladosp on 28/10/2017.
@@ -11,8 +12,8 @@ import java.util.Calendar;
 
 public class IntakeMoment extends DataSupport {
 
-    private Calendar startDate;
-    private Calendar endDate;
+    private Date startDate;
+    private Date endDate;
     private Receipt receipt;
     private Medicine medicine;
     private int quantity;
@@ -22,7 +23,7 @@ public class IntakeMoment extends DataSupport {
      */
     private int weekDay;
 
-    public IntakeMoment(Calendar startDate, Calendar endDate, Receipt receipt, Medicine medicine, int quantity, int alarmRequestCode, int weekDay) {
+    public IntakeMoment(Date startDate, Date endDate, Receipt receipt, Medicine medicine, int quantity, int alarmRequestCode, int weekDay) {
         this.startDate = startDate;
         this.endDate = endDate;
         this.receipt = receipt;
@@ -32,13 +33,20 @@ public class IntakeMoment extends DataSupport {
         this.weekDay = weekDay;
     }
 
-    public Calendar getStartDate() {
-        return startDate;
-    }
+    public Date getStartDate() { return startDate; }
 
-    public void setStartDate(Calendar startDate) {
+    public void setStartDate(Date startDate) {
         this.startDate = startDate;
     }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
+
 
     public Receipt getReceipt() {
         return receipt;
@@ -78,13 +86,5 @@ public class IntakeMoment extends DataSupport {
 
     public void setWeekDay(int weekDay) {
         this.weekDay = weekDay;
-    }
-
-    public Calendar getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(Calendar endDate) {
-        this.endDate = endDate;
     }
 }

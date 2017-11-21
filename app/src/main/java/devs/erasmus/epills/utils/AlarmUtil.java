@@ -128,6 +128,7 @@ public class AlarmUtil {
                         pendingIntent);
 
             Log.e("set occurent alarm:",String.valueOf(occurenceCalendar.getTime()) +" ("+ String.valueOf(alarmId) + ")");
+
                 //set the end date alarm
                 calendar.setTime(endDate);
                 intent.putExtra("end",1);
