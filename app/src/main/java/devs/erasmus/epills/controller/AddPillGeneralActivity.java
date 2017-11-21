@@ -1,11 +1,15 @@
 package devs.erasmus.epills.controller;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.FileProvider;
@@ -25,7 +29,9 @@ import devs.erasmus.epills.widget.SquareImageView;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.ProgressBar;
 
+
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.mikepenz.materialdrawer.Drawer;
 
 import org.json.JSONArray;
@@ -42,6 +48,8 @@ import java.util.Date;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import devs.erasmus.epills.R;
+
+import static android.content.res.Configuration.ORIENTATION_LANDSCAPE;
 
 public class AddPillGeneralActivity extends AppCompatActivity {
     private static final String STATE_PHOTO = "STATE_PHOTOURL";
@@ -79,19 +87,23 @@ public class AddPillGeneralActivity extends AppCompatActivity {
 
         setSupportActionBar(toolbar);
 
-        appBarLayout.post(new Runnable() {
-            //Following https://stackoverflow.com/questions/33058496/set-starting-height-of-collapsingtoolbarlayout
-            @Override
-            public void run() {
-                int offset = toolbar.getHeight()/2;
-                setAppBarOffset(offset);
-            }
-        });
-
         if (savedInstanceState != null) {
-            mCurrentPhotoPath = savedInstanceState.getString(STATE_PHOTO, null) ; //TODO: Change to default photo URL!
-            Glide.with(this).load(mCurrentPhotoPath).into(imageView);
+            mCurrentPhotoPath = savedInstanceState.getString(STATE_PHOTO, null) ;
+
         }
+
+        if(getResources().getConfiguration().orientation == ORIENTATION_LANDSCAPE) {
+            appBarLayout.setExpanded(false,true);
+        } else {
+            appBarLayout.setExpanded(true, true);
+        }
+
+        Glide.with(this)
+                .load(mCurrentPhotoPath)
+                .error(
+                        Glide.with(this).load(R.mipmap.ic_picture)
+                )
+                .into(imageView);
     }
 
     @Override
