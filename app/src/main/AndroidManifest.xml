@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
     <uses-feature
         android:name="android.hardware.camera2"
@@ -62,7 +63,14 @@
             android:enabled="true"
             android:exported="false" />
 
-        <activity android:name=".controller.PillBoxActivity"></activity>
+        <activity android:name=".controller.PillBoxActivity" />
+
+        <receiver android:name=".broadcast_receiver.BootReceiver"
+            android:enabled="false"> <!-- this way the receiver is called only when necessary, when setting an alarm-->
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"></action>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
