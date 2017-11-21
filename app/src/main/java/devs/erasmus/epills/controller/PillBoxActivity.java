@@ -2,6 +2,7 @@ package devs.erasmus.epills.controller;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
@@ -17,6 +18,8 @@ public class PillBoxActivity extends AppCompatActivity {
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     private Drawer drawer;
+    private RecyclerView
+    private PillboxAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
