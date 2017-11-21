@@ -143,7 +143,7 @@
         android:foregroundGravity="bottom|right"
         android:src="@drawable/ic_check_mark"
         app:fabSize="normal"
-        app:layout_anchor="@id/constraintLayout"
-        app:layout_anchorGravity="bottom|right" />
+        app:layout_anchor="@id/nestedScrollView"
+        app:layout_anchorGravity="right" />
 
 </android.support.design.widget.CoordinatorLayout>
