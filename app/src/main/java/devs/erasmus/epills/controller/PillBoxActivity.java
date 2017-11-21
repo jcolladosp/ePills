@@ -18,8 +18,6 @@ public class PillBoxActivity extends AppCompatActivity {
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     private Drawer drawer;
-    private RecyclerView
-    private PillboxAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
