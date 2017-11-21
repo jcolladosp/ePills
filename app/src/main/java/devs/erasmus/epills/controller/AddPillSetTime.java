@@ -265,19 +265,6 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
 
     @Override
     public void sendData() {
-        //after data save show interface whether additional intake should be shown.
-        AddPillFinishDialog finishDialog = AddPillFinishDialog.newInstance();
-        finishDialog.show(getSupportFragmentManager(),AddPillFinishDialog.tag);
-    }
-
-
-    public void saveIntakeMoment(){
-        Log.e("alarm","setting");
-
-        Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(System.currentTimeMillis());
-        cal.clear();
-
         String medicineName = medicine.getName(); // MEDICINE NAME
         int quantity = seekBar.getProgress(); //HOW MANY PILLS TO TAKE AT ONCE
 
@@ -290,44 +277,48 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
             IntakeMoment intakeMoment = new IntakeMoment(dateToStart, dateToStart, receipt, medicine, seekBar.getProgress(), alarmId);
             intakeMoment.save();
 
+            /*
             AlarmUtil alarm = new AlarmUtil(this, intakeMoment.getMedicine().getName(),
-                                                          intakeMoment.getQuantity(),
-                                                          intakeMoment.getStartDate(),
-                                                          intakeMoment.getEndDate(),
-                                                          intakeMoment.getAlarmRequestCode());
+                    intakeMoment.getQuantity(),
+                    intakeMoment.getStartDate(),
+                    intakeMoment.getEndDate(),
+                    intakeMoment.getAlarmRequestCode());
+                    */
+
         }
         //intake for alarm with occurences
         else {
             for(int weekday=0; weekday<weekdaysSelection.length; weekday++) {
                 if(weekdaysSelection[weekday]) {
-                    Date newDateToStart = fixDate(weekday+1); //if we are starting an alarm for the next week(e.g today is friday and i want an alarm for monday)
-                                                               //we have to fix the date
-                    int alarmId = (int) System.currentTimeMillis(); //unique id
-                    IntakeMoment intakeMoment = new IntakeMoment(newDateToStart, dateToEnd, receipt, medicine, seekBar.getProgress(), alarmId);
-                    intakeMoment.save();
+                    Date newDateToStart = fixDate(weekday+1); //fix date if starting an alarm for next week(e.g today is friday and i want an alarm for monday)
 
+                    if(dateToEnd.after(newDateToStart)) {
+                        int alarmId = (int) System.currentTimeMillis(); //unique id
+                        IntakeMoment intakeMoment = new IntakeMoment(newDateToStart, dateToEnd, receipt, medicine, seekBar.getProgress(), alarmId);
+                        intakeMoment.save();
+                    /*
                     AlarmUtil alarm = new AlarmUtil(this, intakeMoment.getMedicine().getName(),
-                                                                  intakeMoment.getQuantity(),
-                                                                  intakeMoment.getStartDate(),
-                                                                  intakeMoment.getEndDate(),
-                                                                  intakeMoment.getAlarmRequestCode());
+                            intakeMoment.getQuantity(),
+                            intakeMoment.getStartDate(),
+                            intakeMoment.getEndDate(),
+                            intakeMoment.getAlarmRequestCode());
+                            */
+
+                    }
                 }
             }
         }
 
-        /*
-        if(singleSelected) {
-            int alarmId = (int)System.currentTimeMillis(); //it creates an unique id
-            AlarmUtil alarm = new AlarmUtil(this, medicineName, quantity, startDate, alarmId);
-        } else {
-            for(int weekday=0; weekday<weekdaysSelection.length; weekday++) {
-                if(weekdaysSelection[weekday]) {
-                    int alarmId = (int)System.currentTimeMillis(); //it creates an unique id
-                    AlarmUtil alarm = new AlarmUtil(this, medicineName, quantity, startDate, endDate, alarmId, weekday+1); //because Calendar counts from 1
-                }
-            }
-        }
-        */
+        //after data save show interface whether additional intake should be shown.
+        AddPillFinishDialog finishDialog = AddPillFinishDialog.newInstance();
+        finishDialog.show(getSupportFragmentManager(),AddPillFinishDialog.tag);
+
+    }
+
+
+    public void setAlarm(){
+        int c = DataSupport.count("IntakeMoment");
+        Log.e("count",String.valueOf(c));
     }
 
     private Date fixDate(int weekday){

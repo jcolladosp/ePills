@@ -54,6 +54,10 @@ public class AlarmUtil {
         updateCalendar();
     }
 
+    public static void setAlarm(){
+
+    }
+
     public void updateCalendar(){
         Intent intent = new Intent(context, AlarmBroadcastReceiver.class);
         intent.putExtra("medicineName", medicineName);

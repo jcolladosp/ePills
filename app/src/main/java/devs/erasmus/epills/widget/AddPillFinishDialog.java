@@ -69,13 +69,13 @@ public class AddPillFinishDialog extends DialogFragment {
                                 intent.putExtra(AddPillSetTime.EXTRA_MEDICINEID, activity.getMedicineId())
                                         .putExtra(AddPillSetTime.EXTRA_RECEIPTID, activity.getReceiptID());
 
-                                setAlarmActivity.saveIntakeMoment();
+                                setAlarmActivity.setAlarm();
                                 startActivity(intent);
                                 activity.finish();
                                 break;
                             case 1:
                                 MainActivity.pillAddedSuccess();
-                                setAlarmActivity.saveIntakeMoment();
+                                setAlarmActivity.setAlarm();
                                 getActivity().finish();
                                 break;
                             default:
