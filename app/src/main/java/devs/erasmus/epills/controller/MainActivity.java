@@ -45,6 +45,8 @@ public class MainActivity extends AppCompatActivity {
         Snackbar mySnackbar = Snackbar.make(parentLayout,
                 R.string.pill_added_success, Snackbar.LENGTH_SHORT);
         mySnackbar.show();
+
+
     }
 
 

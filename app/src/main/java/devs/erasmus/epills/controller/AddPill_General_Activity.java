@@ -88,6 +88,7 @@ public class AddPill_General_Activity extends AppCompatActivity {
     void onAutoFill(){
         makeSearchQuery();
     }
+
     private void dispatchPictureIntent() {
         Intent takepicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takepicture.resolveActivity(getPackageManager()) != null) {
@@ -225,7 +226,7 @@ public class AddPill_General_Activity extends AppCompatActivity {
                 description_text.setText(drugDescription);
 
             } else {
-                name_text.setError("INCORRECT SUBSTANCE NAME");
+                name_text.setError("INCORRECT SUBSTANCE NAME OR NO INTERNET CONNECTION");
             }
         }
     }

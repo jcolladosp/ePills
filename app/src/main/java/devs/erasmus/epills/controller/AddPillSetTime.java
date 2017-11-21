@@ -2,6 +2,7 @@ package devs.erasmus.epills.controller;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
@@ -12,6 +13,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,17 +23,18 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-import com.mikepenz.materialdrawer.Drawer;
-
 import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
 import org.litepal.crud.DataSupport;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import devs.erasmus.epills.model.IntakeMoment;
 import devs.erasmus.epills.model.Receipt;
+import devs.erasmus.epills.utils.AlarmUtil;
 import devs.erasmus.epills.widget.AddPillFinishDialog;
 import devs.erasmus.epills.R;
 import devs.erasmus.epills.model.Medicine;
@@ -39,7 +42,6 @@ import ernestoyaquello.com.verticalstepperform.VerticalStepperFormLayout;
 import ernestoyaquello.com.verticalstepperform.interfaces.VerticalStepperForm;
 
 public class AddPillSetTime extends AppCompatActivity implements VerticalStepperForm{
-
     //STATE STRINGS
     private final static String
             STATE_STARTDATE = "STATE_STARTDATE",
@@ -59,10 +61,11 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
     //Stepnumbers of each element
     String[] stepTitles;
     String[] stepSubTitles;
-    private final int REPETITION_STEP = 3;
+
     private final int TIME_STEP = 0;
     private final int DATE_STEP = 1;
     private final int QUANTITY_STEP = 2;
+    private final int REPETITION_STEP = 3;
     private final int TOTAL_STEPS = 4;
 
     //Stepper-Views
@@ -83,6 +86,7 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
     private Calendar endDate;
     private boolean[] weekdaysSelection = new boolean[7];
     private boolean singleSelected = true; //First time the single button is selected.
+
 
     //Bind views
     @BindView(R.id.stepper)
@@ -261,13 +265,80 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
 
     @Override
     public void sendData() {
-
-        //TODO: Save data! Remo.
-
         //after data save show interface whether additional intake should be shown.
         AddPillFinishDialog finishDialog = AddPillFinishDialog.newInstance();
         finishDialog.show(getSupportFragmentManager(),AddPillFinishDialog.tag);
+    }
 
+
+    public void saveIntakeMoment(){
+        Log.e("alarm","setting");
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(System.currentTimeMillis());
+        cal.clear();
+
+        String medicineName = medicine.getName(); // MEDICINE NAME
+        int quantity = seekBar.getProgress(); //HOW MANY PILLS TO TAKE AT ONCE
+
+        Date dateToStart = this.startDate.getTime();
+        Date dateToEnd =this.endDate.getTime();
+
+        //intake for alarm without occurences
+        if(singleSelected){
+            int alarmId = (int) System.currentTimeMillis(); //unique id
+            IntakeMoment intakeMoment = new IntakeMoment(dateToStart, dateToStart, receipt, medicine, seekBar.getProgress(), alarmId);
+            intakeMoment.save();
+
+            AlarmUtil alarm = new AlarmUtil(this, intakeMoment.getMedicine().getName(),
+                                                          intakeMoment.getQuantity(),
+                                                          intakeMoment.getStartDate(),
+                                                          intakeMoment.getEndDate(),
+                                                          intakeMoment.getAlarmRequestCode());
+        }
+        //intake for alarm with occurences
+        else {
+            for(int weekday=0; weekday<weekdaysSelection.length; weekday++) {
+                if(weekdaysSelection[weekday]) {
+                    Date newDateToStart = fixDate(weekday+1); //if we are starting an alarm for the next week(e.g today is friday and i want an alarm for monday)
+                                                               //we have to fix the date
+                    int alarmId = (int) System.currentTimeMillis(); //unique id
+                    IntakeMoment intakeMoment = new IntakeMoment(newDateToStart, dateToEnd, receipt, medicine, seekBar.getProgress(), alarmId);
+                    intakeMoment.save();
+
+                    AlarmUtil alarm = new AlarmUtil(this, intakeMoment.getMedicine().getName(),
+                                                                  intakeMoment.getQuantity(),
+                                                                  intakeMoment.getStartDate(),
+                                                                  intakeMoment.getEndDate(),
+                                                                  intakeMoment.getAlarmRequestCode());
+                }
+            }
+        }
+
+        /*
+        if(singleSelected) {
+            int alarmId = (int)System.currentTimeMillis(); //it creates an unique id
+            AlarmUtil alarm = new AlarmUtil(this, medicineName, quantity, startDate, alarmId);
+        } else {
+            for(int weekday=0; weekday<weekdaysSelection.length; weekday++) {
+                if(weekdaysSelection[weekday]) {
+                    int alarmId = (int)System.currentTimeMillis(); //it creates an unique id
+                    AlarmUtil alarm = new AlarmUtil(this, medicineName, quantity, startDate, endDate, alarmId, weekday+1); //because Calendar counts from 1
+                }
+            }
+        }
+        */
+    }
+
+    private Date fixDate(int weekday){
+        Calendar occurenceCalendar = Calendar.getInstance();
+        occurenceCalendar.setTime(startDate.getTime());
+        occurenceCalendar.set(Calendar.DAY_OF_WEEK, weekday);
+
+        if(occurenceCalendar.get(Calendar.DAY_OF_MONTH) < startDate.get(Calendar.DAY_OF_MONTH)) {
+            occurenceCalendar.set(Calendar.DAY_OF_MONTH, occurenceCalendar.get(Calendar.DAY_OF_MONTH) + 7);
+        }
+        return occurenceCalendar.getTime();
     }
 
     private View createQuantityStep() {
@@ -556,7 +627,8 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
         String hourString = ((hour<9) ? "0"+ hour : String.valueOf(hour));
         String minuteString = (minute<9) ? "0" + minute : String.valueOf(minute);
         String time = hourString + ":" + minuteString;
-        return hourString + ":" + minuteString;
+
+        return time;
     }
 
     private String getDateString(Calendar date) {
@@ -583,5 +655,9 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
     private LinearLayout getDayLayout(int i) {
         int id = repetitionContent.getResources().getIdentifier("day_"+i, "id", getPackageName());
         return (LinearLayout) repetitionContent.findViewById(id);
+    }
+
+    public long getReceiptID() {
+        return receipt.getId();
     }
 }
