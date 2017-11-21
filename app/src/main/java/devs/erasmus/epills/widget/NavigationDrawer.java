@@ -19,6 +19,7 @@ import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import devs.erasmus.epills.R;
 import devs.erasmus.epills.controller.AddPill_General_Activity;
 import devs.erasmus.epills.controller.ClockActivity;
+import devs.erasmus.epills.controller.PillBoxActivity;
 
 /**
  * Created by colla on 07/11/2017.
@@ -42,7 +43,8 @@ public class NavigationDrawer {
 
 
         PrimaryDrawerItem item1 = new PrimaryDrawerItem().withIdentifier(1).withName(activity.getApplicationContext().getString(R.string.title_activity_clock));
-        SecondaryDrawerItem item2 = new SecondaryDrawerItem().withIdentifier(2).withName("Add a Medicine");
+        SecondaryDrawerItem item2 = new SecondaryDrawerItem().withIdentifier(2).withName("Pillbox");
+        SecondaryDrawerItem item3 = new SecondaryDrawerItem().withIdentifier(2).withName("Add a Medicine");
         return  drawerBuilder =  new DrawerBuilder()
                 .withActivity(activity)
                 .withToolbar(toolbar)
@@ -50,6 +52,7 @@ public class NavigationDrawer {
                 .addDrawerItems(
                         item1,
                         item2,
+                        item3,
                         new DividerDrawerItem(),
                         new SecondaryDrawerItem().withName("Settings")
                 )
@@ -63,6 +66,9 @@ public class NavigationDrawer {
 
                                 break;
                             case 2:
+                                context.startActivity(new Intent(context,PillBoxActivity.class));
+                                break;
+                            case 3:
                                 context.startActivity(new Intent(context,AddPill_General_Activity.class));
                                 break;
                         }

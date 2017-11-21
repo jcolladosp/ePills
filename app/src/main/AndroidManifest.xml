@@ -60,7 +60,9 @@
         <service
             android:name=".widget.NotificationService"
             android:enabled="true"
-            android:exported="false"></service>
+            android:exported="false" />
+
+        <activity android:name=".controller.PillBoxActivity"></activity>
     </application>
 
 </manifest>

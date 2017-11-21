@@ -1,8 +1,6 @@
 package devs.erasmus.epills.model;
 
 import org.litepal.crud.DataSupport;
-
-import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -18,19 +16,14 @@ public class IntakeMoment extends DataSupport {
     private Medicine medicine;
     private int quantity;
     private int alarmRequestCode;
-    /**
-     * Represents the weekDay for this certain event. Sun = 0, Mon = 1;
-     */
-    private int weekDay;
 
-    public IntakeMoment(Date startDate, Date endDate, Receipt receipt, Medicine medicine, int quantity, int alarmRequestCode, int weekDay) {
+    public IntakeMoment(Date startDate, Date endDate, Receipt receipt, Medicine medicine, int quantity, int alarmRequestCode) {
         this.startDate = startDate;
         this.endDate = endDate;
         this.receipt = receipt;
         this.medicine = medicine;
         this.quantity = quantity;
         this.alarmRequestCode = alarmRequestCode;
-        this.weekDay = weekDay;
     }
 
     public Date getStartDate() { return startDate; }
@@ -78,13 +71,5 @@ public class IntakeMoment extends DataSupport {
 
     public void setAlarmRequestCode(int alarmRequestCode) {
         this.alarmRequestCode = alarmRequestCode;
-    }
-
-    public int getWeekDay() {
-        return weekDay;
-    }
-
-    public void setWeekDay(int weekDay) {
-        this.weekDay = weekDay;
     }
 }

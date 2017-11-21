@@ -70,9 +70,9 @@ public class ClockActivity extends AppCompatActivity {
         Medicine medicine3 = new Medicine("Strepsils","http://www.londondrugs.com/dw/image/v2/AAJI_PRD/on/demandware.static/-/Sites-londondrugs-master/default/dw39a84b23/products/L7861065/large/L7861065.JPG?sw=556&sh=680&sm=fit");
 
 
-        IntakeMoment a = new IntakeMoment(startDate, endDate, new Receipt(), medicine,3, 98,0);
-        IntakeMoment b = new IntakeMoment(startDate, endDate, new Receipt(), medicine2,3, 98,0);
-        IntakeMoment c = new IntakeMoment(startDate, endDate, new Receipt(), medicine3,3, 98,0);
+        IntakeMoment a = new IntakeMoment(startDate, endDate, new Receipt(), medicine,3, 98);
+        IntakeMoment b = new IntakeMoment(startDate, endDate, new Receipt(), medicine2,3, 96);
+        IntakeMoment c = new IntakeMoment(startDate, endDate, new Receipt(), medicine3,3, 97);
 
         intakeMomentList.add(a);
         intakeMomentList.add(b);
