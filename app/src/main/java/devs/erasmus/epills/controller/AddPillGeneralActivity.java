@@ -101,8 +101,9 @@ public class AddPillGeneralActivity extends AppCompatActivity {
         Glide.with(this)
                 .load(mCurrentPhotoPath)
                 .error(
-                        Glide.with(this).load(R.mipmap.ic_picture)
+                        Glide.with(this).load(R.mipmap.ic_picture_foreground)
                 )
+                .apply(RequestOptions.centerCropTransform())
                 .into(imageView);
     }
 
@@ -111,9 +112,8 @@ public class AddPillGeneralActivity extends AppCompatActivity {
         if(requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Glide.with(this)
                     .load(mCurrentPhotoPath)
+                    .apply(RequestOptions.centerCropTransform())
                     .into(imageView);
-        } else {
-            finish();
         }
     }
 
