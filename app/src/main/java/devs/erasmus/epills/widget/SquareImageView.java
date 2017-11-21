@@ -17,6 +17,7 @@
 package devs.erasmus.epills.widget;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.util.AttributeSet;
 
 public class SquareImageView  extends android.support.v7.widget.AppCompatImageView {
@@ -38,6 +39,10 @@ public class SquareImageView  extends android.support.v7.widget.AppCompatImageVi
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
         int width = getMeasuredWidth();
-        setMeasuredDimension(width, width);
+
+        int height = (int)((double)Resources.getSystem().getDisplayMetrics().heightPixels * 0.3 );
+        //The picture should cover a third of the screen by default.
+
+        setMeasuredDimension(width, height);
     }
 }
