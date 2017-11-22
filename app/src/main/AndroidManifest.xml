@@ -51,7 +51,9 @@
         <activity
             android:name=".controller.AddPillSetTime"
             android:label="@style/AppTheme.NoActionBar"></activity>
-        <activity android:name=".controller.PillBoxActivity"></activity>
+        <activity android:name=".controller.MedicineNameActivity"
+            android:label="@string/medicinBox_Title"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
