@@ -16,6 +16,7 @@ public class IntakeMoment extends DataSupport {
     private Medicine medicine;
     private int quantity;
     private int alarmRequestCode;
+    private boolean isAlarmSet;
 
     public IntakeMoment(Date startDate, Date endDate, Receipt receipt, Medicine medicine, int quantity, int alarmRequestCode) {
         this.startDate = startDate;
@@ -24,6 +25,8 @@ public class IntakeMoment extends DataSupport {
         this.medicine = medicine;
         this.quantity = quantity;
         this.alarmRequestCode = alarmRequestCode;
+
+        isAlarmSet = false; //default value
     }
 
     public Date getStartDate() { return startDate; }
@@ -49,7 +52,7 @@ public class IntakeMoment extends DataSupport {
         this.receipt = receipt;
     }
 
-    public Medicine getMedicine     () {
+    public Medicine getMedicine() {
         return medicine;
     }
 
@@ -71,5 +74,13 @@ public class IntakeMoment extends DataSupport {
 
     public void setAlarmRequestCode(int alarmRequestCode) {
         this.alarmRequestCode = alarmRequestCode;
+    }
+
+    public boolean getIsAlarmSet() {
+        return isAlarmSet;
+    }
+
+    public void setIsAlarmSet(boolean isAlarmSet) {
+        this.isAlarmSet = isAlarmSet;
     }
 }

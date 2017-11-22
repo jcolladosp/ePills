@@ -75,7 +75,7 @@ public class AddPillFinishDialog extends DialogFragment {
                                 break;
                             case 1:
                                 MainActivity.pillAddedSuccess();
-                                setAlarmActivity.setAlarm();
+                                setAlarmActivity.setNewAlarms();
                                 getActivity().finish();
                                 break;
                             default:

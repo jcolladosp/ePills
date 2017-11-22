@@ -20,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
 import org.litepal.crud.DataSupport;
@@ -33,6 +34,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import devs.erasmus.epills.model.IntakeMoment;
 import devs.erasmus.epills.model.Receipt;
+import devs.erasmus.epills.utils.SetAlarmUtil;
 import devs.erasmus.epills.widget.AddPillFinishDialog;
 import devs.erasmus.epills.R;
 import devs.erasmus.epills.model.Medicine;
@@ -262,6 +264,10 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
 
     @Override
     public void sendData() {
+        //after data save show interface whether additional intake should be shown.
+        AddPillFinishDialog finishDialog = AddPillFinishDialog.newInstance();
+        finishDialog.show(getSupportFragmentManager(),AddPillFinishDialog.tag);
+
         String medicineName = medicine.getName(); // MEDICINE NAME
         int quantity = seekBar.getProgress(); //HOW MANY PILLS TO TAKE AT ONCE
 
@@ -273,14 +279,13 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
             int alarmId = (int) System.currentTimeMillis(); //unique id
             IntakeMoment intakeMoment = new IntakeMoment(dateToStart, dateToStart, receipt, medicine, seekBar.getProgress(), alarmId);
             intakeMoment.save();
-
             /*
-            SetAlarmUtil alarm = new SetAlarmUtil(this, intakeMoment.getMedicine().getName(),
+            SetAlarmUtil_DEPRECATED alarm = new SetAlarmUtil_DEPRECATED(this, intakeMoment.getMedicine().getName(),
                     intakeMoment.getQuantity(),
                     intakeMoment.getStartDate(),
                     intakeMoment.getEndDate(),
-                    intakeMoment.getAlarmRequestCode());
-                    */
+                    intakeMoment.getAlarmRequestCode());*/
+
 
         }
         //intake for alarm with occurences
@@ -292,44 +297,49 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
                     if(dateToEnd.after(newDateToStart)) {
                         int alarmId = (int) System.currentTimeMillis(); //unique id
                         IntakeMoment intakeMoment = new IntakeMoment(newDateToStart, dateToEnd, receipt, medicine, seekBar.getProgress(), alarmId);
-                        intakeMoment.save();
-                    /*
-                    SetAlarmUtil alarm = new SetAlarmUtil(this, intakeMoment.getMedicine().getName(),
+                        intakeMoment.save();/*
+                    SetAlarmUtil_DEPRECATED alarm = new SetAlarmUtil_DEPRECATED(this, intakeMoment.getMedicine().getName(),
                             intakeMoment.getQuantity(),
                             intakeMoment.getStartDate(),
                             intakeMoment.getEndDate(),
-                            intakeMoment.getAlarmRequestCode());
-                            */
+                            intakeMoment.getAlarmRequestCode());*/
 
                     }
                 }
             }
-        }
 
-        //after data save show interface whether additional intake should be shown.
-        AddPillFinishDialog finishDialog = AddPillFinishDialog.newInstance();
-        finishDialog.show(getSupportFragmentManager(),AddPillFinishDialog.tag);
+            //When finish button it's pressed, setAlarm is called
+        }
 
     }
 
 
-    public void setAlarm(){
-
-        List<Medicine> medicines = DataSupport.findAll(Medicine.class);
-        Log.e("medicine count", String.valueOf(medicines.size()));
-
+    public void setNewAlarms(){
+        //DISABLE INSTANT RUN OR IT'S NOT GOING TO WORK PROPERLY
         List<IntakeMoment> allIntake = DataSupport.findAll(IntakeMoment.class);
         Log.e("intakes",String.valueOf(allIntake.size()));
+        Toast.makeText(this, "intake count: " + String.valueOf(allIntake.size()), Toast.LENGTH_SHORT).show();
 
+        for(int i = 0; i<allIntake.size(); i++){
+            if(!allIntake.get(i).getIsAlarmSet()) {
+                SetAlarmUtil alarm = new SetAlarmUtil();
+                alarm.setAlarm(this, allIntake.get(i).getMedicine().getName(),
+                        allIntake.get(i).getQuantity(),
+                        allIntake.get(i).getStartDate(),
+                        allIntake.get(i).getEndDate(),
+                        allIntake.get(i).getAlarmRequestCode());
 
-        /*
-        IntakeMoment Intake = DataSupport.find(IntakeMoment.class, 0);
-        Log.e("intake", String.valueOf(Intake.getAlarmRequestCode()));
-        */
-        /*
-        int c = DataSupport.count("IntakeMoment");
-        Log.e("count intakemoments", String.valueOf(c));
-        */
+                /*SetAlarmUtil_DEPRECATED alarm = new SetAlarmUtil_DEPRECATED(this, allIntake.get(i).getMedicine().getName(),
+                        allIntake.get(i).getQuantity(),
+                        allIntake.get(i).getStartDate(),
+                        allIntake.get(i).getEndDate(),
+                        allIntake.get(i).getAlarmRequestCode());*/
+
+                allIntake.get(i).setIsAlarmSet(true);
+                allIntake.get(i).save();
+            }
+        }
+
     }
 
     private Date fixDate(int weekday){

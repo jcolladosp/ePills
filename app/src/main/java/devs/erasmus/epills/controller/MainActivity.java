@@ -7,6 +7,8 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
 
 import com.mikepenz.materialdrawer.Drawer;
 
@@ -25,19 +27,25 @@ public class MainActivity extends AppCompatActivity {
 
     private static Drawer drawer;
     private static View parentLayout;
+    private static Button panicButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         parentLayout = findViewById(android.R.id.content);
-
+        panicButton = (Button) findViewById(R.id.panic_button);
 
         ButterKnife.bind(this);
         LitePal.initialize(getApplicationContext());
         enableBootReceiver(true);
 
-        //TODO: remember to remove it, it's only for debug purpose
-        DataSupport.deleteAll("intakeMoment");
+        panicButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DataSupport.deleteAll("intakeMoment");
+                Toast.makeText(MainActivity.this, "Restart device now", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         setSupportActionBar(toolbar);
 
