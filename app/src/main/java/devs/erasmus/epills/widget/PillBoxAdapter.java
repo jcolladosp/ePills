@@ -14,6 +14,8 @@ import com.bumptech.glide.request.RequestOptions;
 
 import org.litepal.crud.DataSupport;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import butterknife.BindView;
@@ -33,6 +35,13 @@ public class PillBoxAdapter extends RecyclerView.Adapter <PillBoxAdapter.ViewHol
     public PillBoxAdapter(MedicineBoxActivity medicineBoxActivity) {
         this.medicines = DataSupport.findAll(Medicine.class);
         this.medicineBoxActivity = medicineBoxActivity;
+
+        Collections.sort(medicines, new Comparator<Medicine>() {
+            @Override
+            public int compare(Medicine o1, Medicine o2) {
+                return o1.getName().compareTo(o2.getName()) ;
+            }
+        });
     }
 
     @Override
@@ -56,7 +65,7 @@ public class PillBoxAdapter extends RecyclerView.Adapter <PillBoxAdapter.ViewHol
 
         Glide.with(medicineBoxActivity)
                 .load(med.getImage())
-                .apply(RequestOptions.circleCropTransform().fallback(R.mipmap.ic_picture_round))
+                .apply(RequestOptions.circleCropTransform().fallback(R.mipmap.ic_picture_round).error(R.mipmap.ic_picture_round))
                 .into(holder.imageView);
     }
 
