@@ -37,7 +37,7 @@ public class MedicineBoxActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);//Improve Performance
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
-        adapter = new PillBoxAdapter();
+        adapter = new PillBoxAdapter(this);
         recyclerView.setAdapter(adapter);
     }
 }
