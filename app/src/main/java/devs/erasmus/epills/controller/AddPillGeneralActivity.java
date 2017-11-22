@@ -12,6 +12,8 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -62,9 +64,9 @@ public class AddPillGeneralActivity extends AppCompatActivity {
     @BindView(R.id.FAB)
     FloatingActionButton confirm_Button;
     @BindView(R.id.name_text)
-    EditText name_text;
+    TextInputEditText name_text;
     @BindView(R.id.description_text)
-    MultiAutoCompleteTextView description_text;
+    TextInputEditText description_text;
     @BindView(R.id.loading_indicator)
     ProgressBar loading_indicator;
     @BindView(R.id.toolbar)
@@ -75,6 +77,11 @@ public class AddPillGeneralActivity extends AppCompatActivity {
     AppBarLayout appBarLayout;
     @BindView(R.id.coordinator_layout)
     CoordinatorLayout coordinatorLayout;
+    @BindView(R.id.name_layout)
+    TextInputLayout nameLayout;
+    @BindView(R.id.description_layout)
+    TextInputLayout descriptionLayout;
+
 
     private Drawer drawer;
     static final int REQUEST_IMAGE_CAPTURE = 1;
@@ -165,7 +172,7 @@ public class AddPillGeneralActivity extends AppCompatActivity {
     private void confirm() {
         //Check if the all Fields are filled out
         if(TextUtils.isEmpty(name_text.getText().toString())) {
-            name_text.setError(getString(R.string.empty_Name));
+            nameLayout.setError(getString(R.string.empty_Name));
         } else {
             Medicine medicine = new Medicine(name_text.getText().toString(), mCurrentPhotoPath);
             medicine.save();
@@ -255,7 +262,7 @@ public class AddPillGeneralActivity extends AppCompatActivity {
                 description_text.setText(drugDescription);
 
             } else {
-                name_text.setError("INCORRECT SUBSTANCE NAME");
+                nameLayout.setError("INCORRECT SUBSTANCE NAME");
             }
         }
     }
