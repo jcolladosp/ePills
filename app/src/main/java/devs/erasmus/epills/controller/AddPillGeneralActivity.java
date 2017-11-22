@@ -174,7 +174,7 @@ public class AddPillGeneralActivity extends AppCompatActivity {
         if(TextUtils.isEmpty(name_text.getText().toString())) {
             nameLayout.setError(getString(R.string.empty_Name));
         } else {
-            Medicine medicine = new Medicine(name_text.getText().toString(), mCurrentPhotoPath);
+            Medicine medicine = new Medicine(name_text.getText().toString(), description_text.getText().toString(), mCurrentPhotoPath);
             medicine.save();
             int id = DataSupport.count(Medicine.class); //Possible because of auto-increment.
 
