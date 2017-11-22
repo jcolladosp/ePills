@@ -37,4 +37,5 @@
     <!-- PillBox -->
     <string name="medicinBox_Title">Medicin Box</string>
     <string name="empty_description">No description</string>
+    <string name="delete_button">delete</string>
 </resources>

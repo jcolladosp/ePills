@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-android:layout_width="fill_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="fill_parent"
 android:layout_height="?android:attr/listPreferredItemHeight"
 android:padding="6dip" >
 
@@ -14,29 +15,40 @@ android:padding="6dip" >
     android:contentDescription="Medicine"
     android:src="@mipmap/ic_picture_round" />
 
-<TextView
-    android:id="@+id/medicine_description"
-    android:layout_width="fill_parent"
-    android:layout_height="26dip"
-    android:layout_alignParentBottom="true"
-    android:layout_alignParentRight="true"
-    android:layout_toRightOf="@id/imageView"
-    android:singleLine="true"
-    android:text="Description"
-    android:textSize="12sp" />
+    <TextView
+        android:id="@+id/medicine_description"
+        android:layout_width="fill_parent"
+        android:layout_height="26dip"
+        android:layout_alignParentBottom="true"
+        android:layout_toEndOf="@+id/imageView"
+        android:layout_toStartOf="@+id/imageButton"
+        android:singleLine="true"
+        android:text="Description"
+        android:textSize="12sp" />
 
-<TextView
-    android:id="@+id/medicine_name"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:layout_above="@id/medicine_description"
-    android:layout_alignParentRight="true"
-    android:layout_alignParentTop="true"
-    android:layout_alignWithParentIfMissing="true"
-    android:layout_toRightOf="@id/imageView"
-    android:gravity="center_vertical"
-    android:text="Example application"
-    android:textSize="16sp" />
+    <TextView
+        android:id="@+id/medicine_name"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/medicine_description"
+        android:layout_alignParentTop="true"
+        android:layout_alignWithParentIfMissing="true"
+        android:layout_toEndOf="@+id/imageView"
+        android:layout_toStartOf="@+id/imageButton"
+        android:gravity="center_vertical"
+        android:text="Example application"
+        android:textSize="16sp" />
+
+    <ImageButton
+        android:id="@+id/imageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:adjustViewBounds="true"
+        android:background="@color/cardview_shadow_end_color"
+        android:tint="@color/md_red_A700"
+        app:srcCompat="@android:drawable/ic_menu_delete" />
 
 </RelativeLayout>
 
