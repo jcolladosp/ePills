@@ -18,7 +18,7 @@ import devs.erasmus.epills.broadcast_receiver.AlarmBroadcastReceiver;
  * Created by Remo Andreoli on 15/11/2017.
  */
 
-public class AlarmUtil {
+public class SetAlarmUtil {
     private Context context;
     private int alarmId; //requestcode
     private String medicineName; //name of the pill
@@ -33,7 +33,7 @@ public class AlarmUtil {
     private PendingIntent pendingIntent;
 
     //alarm created without occurences
-    public AlarmUtil(Context context, String medicineName, int quantity, Date startDate, Date endDate, int alarmId){
+    public SetAlarmUtil(Context context, String medicineName, int quantity, Date startDate, Date endDate, int alarmId){
         this.context = context;
         this.medicineName = medicineName;
         this.quantity = quantity;
@@ -55,7 +55,6 @@ public class AlarmUtil {
     }
 
     public static void setAlarm(){
-
     }
 
     public void updateCalendar(){

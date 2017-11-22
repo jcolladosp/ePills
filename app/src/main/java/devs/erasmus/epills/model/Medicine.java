@@ -2,7 +2,6 @@ package devs.erasmus.epills.model;
 
 import org.litepal.crud.DataSupport;
 
-import java.util.ArrayList;
 
 /**
  * Created by jcolladosp on 28/10/2017.

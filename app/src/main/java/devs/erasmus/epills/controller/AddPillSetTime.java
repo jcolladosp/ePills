@@ -2,7 +2,6 @@ package devs.erasmus.epills.controller;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
-import android.content.Context;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
@@ -14,7 +13,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.DatePicker;
@@ -29,12 +27,12 @@ import org.litepal.crud.DataSupport;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import devs.erasmus.epills.model.IntakeMoment;
 import devs.erasmus.epills.model.Receipt;
-import devs.erasmus.epills.utils.AlarmUtil;
 import devs.erasmus.epills.widget.AddPillFinishDialog;
 import devs.erasmus.epills.R;
 import devs.erasmus.epills.model.Medicine;
@@ -86,7 +84,6 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
     private Calendar endDate;
     private boolean[] weekdaysSelection = new boolean[7];
     private boolean singleSelected = true; //First time the single button is selected.
-
 
     //Bind views
     @BindView(R.id.stepper)
@@ -278,7 +275,7 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
             intakeMoment.save();
 
             /*
-            AlarmUtil alarm = new AlarmUtil(this, intakeMoment.getMedicine().getName(),
+            SetAlarmUtil alarm = new SetAlarmUtil(this, intakeMoment.getMedicine().getName(),
                     intakeMoment.getQuantity(),
                     intakeMoment.getStartDate(),
                     intakeMoment.getEndDate(),
@@ -297,7 +294,7 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
                         IntakeMoment intakeMoment = new IntakeMoment(newDateToStart, dateToEnd, receipt, medicine, seekBar.getProgress(), alarmId);
                         intakeMoment.save();
                     /*
-                    AlarmUtil alarm = new AlarmUtil(this, intakeMoment.getMedicine().getName(),
+                    SetAlarmUtil alarm = new SetAlarmUtil(this, intakeMoment.getMedicine().getName(),
                             intakeMoment.getQuantity(),
                             intakeMoment.getStartDate(),
                             intakeMoment.getEndDate(),
@@ -317,8 +314,22 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
 
 
     public void setAlarm(){
+
+        List<Medicine> medicines = DataSupport.findAll(Medicine.class);
+        Log.e("medicine count", String.valueOf(medicines.size()));
+
+        List<IntakeMoment> allIntake = DataSupport.findAll(IntakeMoment.class);
+        Log.e("intakes",String.valueOf(allIntake.size()));
+
+
+        /*
+        IntakeMoment Intake = DataSupport.find(IntakeMoment.class, 0);
+        Log.e("intake", String.valueOf(Intake.getAlarmRequestCode()));
+        */
+        /*
         int c = DataSupport.count("IntakeMoment");
-        Log.e("count",String.valueOf(c));
+        Log.e("count intakemoments", String.valueOf(c));
+        */
     }
 
     private Date fixDate(int weekday){

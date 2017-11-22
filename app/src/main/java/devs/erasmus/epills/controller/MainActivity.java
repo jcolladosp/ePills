@@ -1,5 +1,7 @@
 package devs.erasmus.epills.controller;
 
+import android.content.ComponentName;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -9,10 +11,12 @@ import android.view.View;
 import com.mikepenz.materialdrawer.Drawer;
 
 import org.litepal.LitePal;
+import org.litepal.crud.DataSupport;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import devs.erasmus.epills.R;
+import devs.erasmus.epills.broadcast_receiver.BootReceiver;
 import devs.erasmus.epills.widget.NavigationDrawer;
 
 public class MainActivity extends AppCompatActivity {
@@ -30,6 +34,10 @@ public class MainActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
         LitePal.initialize(getApplicationContext());
+        enableBootReceiver(true);
+
+        //TODO: remember to remove it, it's only for debug purpose
+        DataSupport.deleteAll("intakeMoment");
 
         setSupportActionBar(toolbar);
 
@@ -49,10 +57,25 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
     @Override
     public void onBackPressed() {
         drawer.openDrawer();
+    }
+
+    private void enableBootReceiver(boolean b) {
+        ComponentName receiver = new ComponentName(this, BootReceiver.class);
+        PackageManager pm = this.getPackageManager();
+
+        if(b){
+            pm.setComponentEnabledSetting(receiver,
+                    PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                    PackageManager.DONT_KILL_APP);
+        }
+        else{
+            pm.setComponentEnabledSetting(receiver,
+                    PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                    PackageManager.DONT_KILL_APP);
+        }
     }
 
 }
