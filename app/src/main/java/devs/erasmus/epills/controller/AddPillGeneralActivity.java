@@ -92,11 +92,11 @@ public class AddPillGeneralActivity extends AppCompatActivity {
 
         }
 
-        if(getResources().getConfiguration().orientation == ORIENTATION_LANDSCAPE) {
+       /* if(getResources().getConfiguration().orientation == ORIENTATION_LANDSCAPE) {
             appBarLayout.setExpanded(false,true);
         } else {
             appBarLayout.setExpanded(true, true);
-        }
+        }*/
 
         Glide.with(this)
                 .load(mCurrentPhotoPath)
@@ -155,12 +155,6 @@ public class AddPillGeneralActivity extends AppCompatActivity {
         }
     }
 
-    private void setAppBarOffset(int offset) {
-        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) appBarLayout.getLayoutParams();
-        AppBarLayout.Behavior behavior = (AppBarLayout.Behavior) params.getBehavior();
-        behavior.onNestedScroll(coordinatorLayout, appBarLayout, null, 0 ,offset,0,0, 0);
-    }
-
     private File createPictureFile() throws IOException {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_"+timeStamp + R.string.app_name;
@@ -194,6 +188,7 @@ public class AddPillGeneralActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         }
+
     }
 
 
