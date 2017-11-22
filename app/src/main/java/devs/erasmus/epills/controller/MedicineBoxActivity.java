@@ -5,7 +5,7 @@ import android.os.Bundle;
 
 import devs.erasmus.epills.R;
 
-public class MedicineNameActivity extends AppCompatActivity {
+public class MedicineBoxActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

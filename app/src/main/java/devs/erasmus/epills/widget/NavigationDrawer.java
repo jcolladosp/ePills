@@ -3,7 +3,6 @@ package devs.erasmus.epills.widget;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
@@ -20,7 +19,7 @@ import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import devs.erasmus.epills.R;
 import devs.erasmus.epills.controller.AddPillGeneralActivity;
 import devs.erasmus.epills.controller.ClockActivity;
-import devs.erasmus.epills.controller.MedicineNameActivity;
+import devs.erasmus.epills.controller.MedicineBoxActivity;
 
 /**
  * Created by colla on 07/11/2017.
@@ -72,7 +71,7 @@ public class NavigationDrawer {
 
                                 break;
                             case 3:
-                                context.startActivity(new Intent(context, MedicineNameActivity.class));
+                                context.startActivity(new Intent(context, MedicineBoxActivity.class));
                                 activity.finish();
 
                                 break;
