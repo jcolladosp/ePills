@@ -92,12 +92,6 @@ public class AddPillGeneralActivity extends AppCompatActivity {
 
         }
 
-       /* if(getResources().getConfiguration().orientation == ORIENTATION_LANDSCAPE) {
-            appBarLayout.setExpanded(false,true);
-        } else {
-            appBarLayout.setExpanded(true, true);
-        }*/
-
         Glide.with(this)
                 .load(mCurrentPhotoPath)
                 .error(
