@@ -38,10 +38,10 @@ public class MedicineBoxActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);//Improve Performance
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
-        adapter = new PillBoxAdapter(this);
+        adapter = new PillBoxAdapter(getBaseContext());
         recyclerView.setAdapter(adapter);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext()
-        ,layoutManager.getOrientation());
+            ,layoutManager.getOrientation());
         recyclerView.addItemDecoration(dividerItemDecoration);
 
     }

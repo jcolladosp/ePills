@@ -1,11 +1,12 @@
 package devs.erasmus.epills.widget;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.text.Layout;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -21,7 +22,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import devs.erasmus.epills.R;
-import devs.erasmus.epills.controller.MedicineBoxActivity;
 import devs.erasmus.epills.model.Medicine;
 
 /**
@@ -30,11 +30,11 @@ import devs.erasmus.epills.model.Medicine;
 
 public class PillBoxAdapter extends RecyclerView.Adapter <PillBoxAdapter.ViewHolder> {
     private List<Medicine> medicines;
-    private MedicineBoxActivity medicineBoxActivity;
+    private Context context;
 
-    public PillBoxAdapter(MedicineBoxActivity medicineBoxActivity) {
+    public PillBoxAdapter(Context context) {
         this.medicines = DataSupport.findAll(Medicine.class);
-        this.medicineBoxActivity = medicineBoxActivity;
+        this.context = context;
 
         Collections.sort(medicines, new Comparator<Medicine>() {
             @Override
@@ -58,12 +58,12 @@ public class PillBoxAdapter extends RecyclerView.Adapter <PillBoxAdapter.ViewHol
 
         holder.medicineName.setText(med.getName());
         if (TextUtils.isEmpty(med.getDescription())) {
-            holder.medicineDescription.setText(medicineBoxActivity.getString(R.string.empty_description));
+            holder.medicineDescription.setText(context.getString(R.string.empty_description));
         } else {
             holder.medicineDescription.setText(med.getDescription());
         }
 
-        Glide.with(medicineBoxActivity)
+        Glide.with(context)
                 .load(med.getImage())
                 .apply(RequestOptions.circleCropTransform().fallback(R.mipmap.ic_picture_round).error(R.mipmap.ic_picture_round))
                 .into(holder.imageView);
@@ -74,17 +74,32 @@ public class PillBoxAdapter extends RecyclerView.Adapter <PillBoxAdapter.ViewHol
         return medicines.size();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public void delete(int position) {
+        medicines.remove(position);
+        notifyItemRemoved(position);
+        //TODO: Delete existing DB instances and alarms.
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder implements ImageButton.OnClickListener{
         @BindView(R.id.imageView)
         ImageView imageView;
         @BindView(R.id.medicine_name)
         TextView medicineName;
         @BindView(R.id.medicine_description)
         TextView medicineDescription;
+        @BindView(R.id.deletebutton)
+        ImageButton deleteButton;
 
         public ViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
+            deleteButton.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            delete(getLayoutPosition());
         }
     }
 }
+
