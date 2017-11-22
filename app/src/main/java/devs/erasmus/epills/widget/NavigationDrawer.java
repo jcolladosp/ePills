@@ -67,7 +67,6 @@ public class NavigationDrawer {
                                 break;
                             case 2:
                                 context.startActivity(new Intent(context,AddPillGeneralActivity.class));
-                                activity.finish();
 
                                 break;
                             case 3:
