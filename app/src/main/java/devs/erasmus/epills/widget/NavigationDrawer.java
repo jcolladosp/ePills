@@ -17,7 +17,7 @@ import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 
 import devs.erasmus.epills.R;
-import devs.erasmus.epills.controller.AddPill_General_Activity;
+import devs.erasmus.epills.controller.AddPillGeneralActivity;
 import devs.erasmus.epills.controller.ClockActivity;
 
 /**
@@ -63,7 +63,7 @@ public class NavigationDrawer {
 
                                 break;
                             case 2:
-                                context.startActivity(new Intent(context,AddPill_General_Activity.class));
+                                context.startActivity(new Intent(context,AddPillGeneralActivity.class));
                                 break;
                         }
 
