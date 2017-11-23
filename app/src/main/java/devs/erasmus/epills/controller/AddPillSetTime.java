@@ -34,6 +34,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import devs.erasmus.epills.model.IntakeMoment;
 import devs.erasmus.epills.model.Receipt;
+import devs.erasmus.epills.utils.AlarmUtil;
 import devs.erasmus.epills.utils.SetAlarmUtil;
 import devs.erasmus.epills.widget.AddPillFinishDialog;
 import devs.erasmus.epills.R;
@@ -322,18 +323,11 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
 
         for(int i = 0; i<allIntake.size(); i++){
             if(!allIntake.get(i).getIsAlarmSet()) {
-                SetAlarmUtil alarm = new SetAlarmUtil();
-                alarm.setAlarm(this, allIntake.get(i).getMedicine().getName(),
+                AlarmUtil.setAlarm(this, allIntake.get(i).getMedicine().getName(),
                         allIntake.get(i).getQuantity(),
                         allIntake.get(i).getStartDate(),
                         allIntake.get(i).getEndDate(),
                         allIntake.get(i).getAlarmRequestCode());
-
-                /*SetAlarmUtil_DEPRECATED alarm = new SetAlarmUtil_DEPRECATED(this, allIntake.get(i).getMedicine().getName(),
-                        allIntake.get(i).getQuantity(),
-                        allIntake.get(i).getStartDate(),
-                        allIntake.get(i).getEndDate(),
-                        allIntake.get(i).getAlarmRequestCode());*/
 
                 allIntake.get(i).setIsAlarmSet(true);
                 allIntake.get(i).save();
