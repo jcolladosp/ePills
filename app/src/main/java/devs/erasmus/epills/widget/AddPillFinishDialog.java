@@ -61,16 +61,21 @@ public class AddPillFinishDialog extends DialogFragment {
                 .setItems(R.array.addPillFinish, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        AddPillSetTime setAlarmActivity = (AddPillSetTime) getActivity();
                         switch (which) {
                             case 0:
                                 AddPillSetTime activity = (AddPillSetTime)getActivity();
                                 Intent intent = new Intent(getActivity(), AddPillSetTime.class);
-                                intent.putExtra(AddPillSetTime.EXTRA_MEDICINEID, activity.getMedicineId());
+                                intent.putExtra(AddPillSetTime.EXTRA_MEDICINEID, activity.getMedicineId())
+                                        .putExtra(AddPillSetTime.EXTRA_RECEIPTID, activity.getReceiptID());
+
+                                //setAlarmActivity.setAlarm();
                                 startActivity(intent);
                                 activity.finish();
                                 break;
                             case 1:
                                 MainActivity.pillAddedSuccess();
+                                setAlarmActivity.setNewAlarms();
                                 getActivity().finish();
                                 break;
                             default:

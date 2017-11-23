@@ -1,8 +1,7 @@
 package devs.erasmus.epills.model;
 
 import org.litepal.crud.DataSupport;
-
-import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by jcolladosp on 28/10/2017.
@@ -11,32 +10,39 @@ import java.util.Calendar;
 
 public class IntakeMoment extends DataSupport {
 
-    private Calendar intakeDate;
+    private Date startDate;
+    private Date endDate;
     private Receipt receipt;
     private Medicine medicine;
     private int quantity;
     private int alarmRequestCode;
-    /**
-     * Represents the weekDay for this certain event. Sun = 0, Mon = 1;
-     */
-    private int weekDay;
+    private boolean isAlarmSet;
 
-    public IntakeMoment(Calendar intakeDate, Receipt receipt, Medicine medicine, int quantity, int alarmRequestCode, int weekDay) {
-        this.intakeDate = intakeDate;
+    public IntakeMoment(Date startDate, Date endDate, Receipt receipt, Medicine medicine, int quantity, int alarmRequestCode) {
+        this.startDate = startDate;
+        this.endDate = endDate;
         this.receipt = receipt;
         this.medicine = medicine;
         this.quantity = quantity;
         this.alarmRequestCode = alarmRequestCode;
-        this.weekDay = weekDay;
+
+        isAlarmSet = false; //default value
     }
 
-    public Calendar getIntakeDate() {
-        return intakeDate;
+    public Date getStartDate() { return startDate; }
+
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
     }
 
-    public void setIntakeDate(Calendar intakeDate) {
-        this.intakeDate = intakeDate;
+    public Date getEndDate() {
+        return endDate;
     }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
+
 
     public Receipt getReceipt() {
         return receipt;
@@ -46,7 +52,7 @@ public class IntakeMoment extends DataSupport {
         this.receipt = receipt;
     }
 
-    public Medicine getMedicine     () {
+    public Medicine getMedicine() {
         return medicine;
     }
 
@@ -70,11 +76,11 @@ public class IntakeMoment extends DataSupport {
         this.alarmRequestCode = alarmRequestCode;
     }
 
-    public int getWeekDay() {
-        return weekDay;
+    public boolean getIsAlarmSet() {
+        return isAlarmSet;
     }
 
-    public void setWeekDay(int weekDay) {
-        this.weekDay = weekDay;
+    public void setIsAlarmSet(boolean isAlarmSet) {
+        this.isAlarmSet = isAlarmSet;
     }
 }

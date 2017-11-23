@@ -262,7 +262,7 @@ public class AddPillGeneralActivity extends AppCompatActivity {
                 description_text.setText(drugDescription);
 
             } else {
-                nameLayout.setError("INCORRECT SUBSTANCE NAME");
+                nameLayout.setError("INCORRECT SUBSTANCE NAME OR NO INTERNET CONNECTION");
             }
         }
     }
