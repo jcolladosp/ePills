@@ -35,7 +35,6 @@ import butterknife.ButterKnife;
 import devs.erasmus.epills.model.IntakeMoment;
 import devs.erasmus.epills.model.Receipt;
 import devs.erasmus.epills.utils.AlarmUtil;
-import devs.erasmus.epills.utils.SetAlarmUtil;
 import devs.erasmus.epills.widget.AddPillFinishDialog;
 import devs.erasmus.epills.R;
 import devs.erasmus.epills.model.Medicine;
