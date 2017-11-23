@@ -33,6 +33,10 @@ Paper link: https://docs.google.com/document/d/14k_HZtBkN8quOTmMbACSD_Fw7UverJun
 
 * [custom-analog-clock-view](https://github.com/rosenpin/custom-analog-clock-view). A customizable analog clock widget for Android
 
+* [vertical-stepper-form](https://github.com/ernestoyaquello/vertical-stepper-form). A library to build material designed set-up steppers.
+
+* [discreteSeekbar](https://github.com/AnderWeb/discreteSeekBar). A library supporting a material designed discrete slider.
+
   ​
 
 ## Permissions

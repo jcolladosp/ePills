@@ -1,11 +1,19 @@
 package devs.erasmus.epills.controller;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -23,7 +31,9 @@ import devs.erasmus.epills.widget.SquareImageView;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.ProgressBar;
 
+
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.mikepenz.materialdrawer.Drawer;
 
 import org.json.JSONArray;
@@ -40,11 +50,11 @@ import java.util.Date;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import devs.erasmus.epills.R;
-import devs.erasmus.epills.widget.NavigationDrawer;
 
-public class AddPill_General_Activity extends AppCompatActivity {
-//TODO: Make responsive to orientation changes
-    static final String EXTRA_PHOTO_URI = "devs.erasmus.epills.extra_photo_uri";
+import static android.content.res.Configuration.ORIENTATION_LANDSCAPE;
+
+public class AddPillGeneralActivity extends AppCompatActivity {
+    private static final String STATE_PHOTO = "STATE_PHOTOURL";
 
     private String mCurrentPhotoPath;
 
@@ -54,15 +64,24 @@ public class AddPill_General_Activity extends AppCompatActivity {
     @BindView(R.id.FAB)
     FloatingActionButton confirm_Button;
     @BindView(R.id.name_text)
-    EditText name_text;
+    TextInputEditText name_text;
     @BindView(R.id.description_text)
-    MultiAutoCompleteTextView description_text;
+    TextInputEditText description_text;
     @BindView(R.id.loading_indicator)
     ProgressBar loading_indicator;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.image_view)
     SquareImageView imageView;
+    @BindView(R.id.app_bar_layout)
+    AppBarLayout appBarLayout;
+    @BindView(R.id.coordinator_layout)
+    CoordinatorLayout coordinatorLayout;
+    @BindView(R.id.name_layout)
+    TextInputLayout nameLayout;
+    @BindView(R.id.description_layout)
+    TextInputLayout descriptionLayout;
+
 
     private Drawer drawer;
     static final int REQUEST_IMAGE_CAPTURE = 1;
@@ -70,14 +89,41 @@ public class AddPill_General_Activity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_pill__general_);
+        setContentView(R.layout.activity_add_pill_general);
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
 
-        drawer = NavigationDrawer.getDrawerBuilder(this,this,toolbar).build();
+        if (savedInstanceState != null) {
+            mCurrentPhotoPath = savedInstanceState.getString(STATE_PHOTO, null) ;
 
-        dispatchPictureIntent();
+        }
+
+        Glide.with(this)
+                .load(mCurrentPhotoPath)
+                .error(
+                        Glide.with(this).load(R.mipmap.ic_picture_foreground)
+                )
+                .apply(RequestOptions.centerCropTransform())
+                .into(imageView);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Glide.with(this)
+                    .load(mCurrentPhotoPath)
+                    .apply(RequestOptions.centerCropTransform())
+                    .into(imageView);
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle instance) {
+        super.onSaveInstanceState(instance);
+        if (mCurrentPhotoPath != null) {
+            instance.putString(STATE_PHOTO,mCurrentPhotoPath);
+        }
     }
 
     @OnClick(R.id.FAB)
@@ -85,10 +131,12 @@ public class AddPill_General_Activity extends AppCompatActivity {
         confirm();
     }
     @OnClick(R.id.autofill_button)
-    void onAutoFill(){
+    void onAutoFill() {
         makeSearchQuery();
     }
-    private void dispatchPictureIntent() {
+
+    @OnClick(R.id.image_view)
+    public void dispatchPictureIntent() {
         Intent takepicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takepicture.resolveActivity(getPackageManager()) != null) {
             File photoFile = null;
@@ -108,17 +156,6 @@ public class AddPill_General_Activity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Glide.with(this)
-                    .load(mCurrentPhotoPath)
-                    .into(imageView);
-        } else {
-            finish();
-        }
-    }
-
     private File createPictureFile() throws IOException {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_"+timeStamp + R.string.app_name;
@@ -135,9 +172,9 @@ public class AddPill_General_Activity extends AppCompatActivity {
     private void confirm() {
         //Check if the all Fields are filled out
         if(TextUtils.isEmpty(name_text.getText().toString())) {
-            name_text.setError(getString(R.string.empty_Name));
+            nameLayout.setError(getString(R.string.empty_Name));
         } else {
-            Medicine medicine = new Medicine(name_text.getText().toString(), mCurrentPhotoPath);
+            Medicine medicine = new Medicine(name_text.getText().toString(), description_text.getText().toString(), mCurrentPhotoPath);
             medicine.save();
             int id = DataSupport.count(Medicine.class); //Possible because of auto-increment.
 
@@ -147,17 +184,17 @@ public class AddPill_General_Activity extends AppCompatActivity {
 
             //Start time activity
             Intent intent = new Intent(this, AddPillSetTime.class);
-            intent.putExtra(AddPillSetTime.EXTRA_MEDICINEID, id);
-            intent.putExtra(AddPillSetTime.EXTRA_RECEIPTID, receipt.getId());
+            intent.putExtra(AddPillSetTime.EXTRA_MEDICINEID, id)
+                    .putExtra(AddPillSetTime.EXTRA_RECEIPTID, receipt.getId());
             startActivity(intent);
             finish();
         }
+
     }
 
 
 
-    //AutoFill logic
-    
+    //--------------------------------AutoFill logic------------------------------@author{REMO}
     
     //Retrieves the substance name from name_text, constructs the URL with AutoFillNetworkUtils.buildUrl
     //and finally fires an AsyncTask to perform the GET request using queryTask
@@ -225,11 +262,9 @@ public class AddPill_General_Activity extends AppCompatActivity {
                 description_text.setText(drugDescription);
 
             } else {
-                name_text.setError("INCORRECT SUBSTANCE NAME");
+                nameLayout.setError("INCORRECT SUBSTANCE NAME OR NO INTERNET CONNECTION");
             }
         }
     }
-
-
 
 }

@@ -2,7 +2,6 @@ package devs.erasmus.epills.model;
 
 import org.litepal.crud.DataSupport;
 
-import java.util.ArrayList;
 
 /**
  * Created by jcolladosp on 28/10/2017.
@@ -15,10 +14,11 @@ public class Medicine extends DataSupport {
     private String description;
     private String image;
 
-    public Medicine(String name,String image) {
+    public Medicine(String name, String description, String image) {
 
         this.name = name;
         this.image = image;
+        this.description = description;
 
     }
 

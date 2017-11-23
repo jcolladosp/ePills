@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
+import java.util.Calendar;
 import java.util.List;
 
 import devs.erasmus.epills.R;
@@ -54,8 +55,9 @@ public class PillCardAdapter extends RecyclerView.Adapter<PillCardAdapter.MyView
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
         IntakeMoment medicineQuantity = pillList.get(position);
+
         holder.title.setText(medicineQuantity.getMedicine().getName());
-        holder.count.setText(medicineQuantity.getIntakeDate().getTime().toString());
+        holder.count.setText(String.valueOf(medicineQuantity.getStartDate()));
 
         // loading album cover using Glide library
         Glide.with(mContext).load(medicineQuantity.getMedicine().getImage()).into(holder.thumbnail);

@@ -33,4 +33,9 @@
     <string name="end_after_startDateError">Please choose an end date after the start date!</string>
     <string name="pill_added_success">Medicine added successfully</string>
     <string name="dialog_title">Do you wish....</string>
+
+    <!-- PillBox -->
+    <string name="medicinBox_Title">Medicin Box</string>
+    <string name="empty_description">No description</string>
+    <string name="delete_button">delete</string>
 </resources>

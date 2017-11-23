@@ -49,16 +49,6 @@ public class AutoFillNetworkUtils {
         return url;
     }
 
-    public static boolean isNetworkConnected() {
-        ConnectivityManager cm = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = cm.getActiveNetworkInfo();
-        if (networkInfo == null) {
-            // no internet connection
-            return false;
-        } else
-            return true;
-    }
-
     //Returns the entire result from the HTTP response.
     public static String getResponseFromHttpUrl(URL url) throws IOException {
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();

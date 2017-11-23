@@ -12,7 +12,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Pair;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.DatePicker;
@@ -20,18 +20,21 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.TimePicker;
-
-import com.mikepenz.materialdrawer.Drawer;
+import android.widget.Toast;
 
 import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
 import org.litepal.crud.DataSupport;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import devs.erasmus.epills.model.IntakeMoment;
 import devs.erasmus.epills.model.Receipt;
+import devs.erasmus.epills.utils.SetAlarmUtil;
 import devs.erasmus.epills.widget.AddPillFinishDialog;
 import devs.erasmus.epills.R;
 import devs.erasmus.epills.model.Medicine;
@@ -39,11 +42,8 @@ import ernestoyaquello.com.verticalstepperform.VerticalStepperFormLayout;
 import ernestoyaquello.com.verticalstepperform.interfaces.VerticalStepperForm;
 
 public class AddPillSetTime extends AppCompatActivity implements VerticalStepperForm{
-
     //STATE STRINGS
     private final static String
-            STATE_TIME_Hour = "STATE_TIME_HOUR",
-            STATE_TIME_Minute = "STATE_TIME_MINUTE",
             STATE_STARTDATE = "STATE_STARTDATE",
             STATE_ENDDATE = "State_ENDDATE",
             STATE_SUBTITLES = "STATE_SUBTITLES",
@@ -61,10 +61,11 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
     //Stepnumbers of each element
     String[] stepTitles;
     String[] stepSubTitles;
-    private final int REPETITION_STEP = 3;
+
     private final int TIME_STEP = 0;
     private final int DATE_STEP = 1;
     private final int QUANTITY_STEP = 2;
+    private final int REPETITION_STEP = 3;
     private final int TOTAL_STEPS = 4;
 
     //Stepper-Views
@@ -83,7 +84,6 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
     //State variables
     private Calendar startDate; //Holds the current startDate.
     private Calendar endDate;
-    private Pair<Integer, Integer> time;
     private boolean[] weekdaysSelection = new boolean[7];
     private boolean singleSelected = true; //First time the single button is selected.
 
@@ -103,8 +103,8 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
         //TODO: drawer: Yes or no? TOOLBAR: how?
         //Get the medicine object from DB
         int medicineId = getIntent().getIntExtra(EXTRA_MEDICINEID, -1);
-        int receiptId = getIntent().getIntExtra(EXTRA_RECEIPTID, -1);
-        if (medicineId == -1 || receiptId == -1) {
+        long receiptId = getIntent().getLongExtra(EXTRA_RECEIPTID, -1);
+        if (medicineId == -1 || receiptId == -1l) {
             throw new RuntimeException("No ID for medicine!");
         }
 
@@ -131,7 +131,6 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
 
             //Set Time variables
             Calendar calendar = Calendar.getInstance();
-            time = new Pair(calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE));
             startDate = (Calendar) calendar.clone();
             calendar.roll(Calendar.DAY_OF_MONTH,true);
             endDate = calendar;
@@ -144,14 +143,13 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
             }
 
             //Reload Time Variables
-            time = new Pair(savedInstanceState.getInt(STATE_TIME_Hour), savedInstanceState.getInt(STATE_TIME_Minute));
             startDate = (Calendar)savedInstanceState.getSerializable(STATE_STARTDATE);
             endDate = (Calendar) savedInstanceState.getSerializable(STATE_ENDDATE);
 
             singleSelected = savedInstanceState.getBoolean(STATE_REP_Single);
         }
 
-        setTimePicker(time.first, time.second);
+        setTimePicker(startDate.get(Calendar.HOUR_OF_DAY),startDate.get(Calendar.MINUTE));
         setStartDatePicker(startDate.get(Calendar.YEAR), startDate.get(Calendar.MONTH), startDate.get(Calendar.DAY_OF_MONTH));
         setEndDatePicker(endDate.get(Calendar.YEAR), endDate.get(Calendar.MONTH), endDate.get(Calendar.DAY_OF_MONTH));
 
@@ -197,8 +195,6 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
     public void onSaveInstanceState(Bundle state) {
         state.putSerializable(STATE_ENDDATE,endDate);
         state.putSerializable(STATE_STARTDATE,startDate);
-        state.putInt(STATE_TIME_Hour,time.first);
-        state.putInt(STATE_TIME_Minute, time.second);
         ArrayList<String> subtitles = new ArrayList<>();
         for (int i = 0; i < TOTAL_STEPS; i++ ) {
             subtitles.add(verticalStepper.getStepsSubtitles(i));
@@ -268,13 +264,93 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
 
     @Override
     public void sendData() {
-
-        //TODO: Save data! Remo.
-
         //after data save show interface whether additional intake should be shown.
         AddPillFinishDialog finishDialog = AddPillFinishDialog.newInstance();
         finishDialog.show(getSupportFragmentManager(),AddPillFinishDialog.tag);
 
+        String medicineName = medicine.getName(); // MEDICINE NAME
+        int quantity = seekBar.getProgress(); //HOW MANY PILLS TO TAKE AT ONCE
+
+        Date dateToStart = this.startDate.getTime();
+        Date dateToEnd =this.endDate.getTime();
+
+        //intake for alarm without occurences
+        if(singleSelected){
+            int alarmId = (int) System.currentTimeMillis(); //unique id
+            IntakeMoment intakeMoment = new IntakeMoment(dateToStart, dateToStart, receipt, medicine, seekBar.getProgress(), alarmId);
+            intakeMoment.save();
+            /*
+            SetAlarmUtil_DEPRECATED alarm = new SetAlarmUtil_DEPRECATED(this, intakeMoment.getMedicine().getName(),
+                    intakeMoment.getQuantity(),
+                    intakeMoment.getStartDate(),
+                    intakeMoment.getEndDate(),
+                    intakeMoment.getAlarmRequestCode());*/
+
+
+        }
+        //intake for alarm with occurences
+        else {
+            for(int weekday=0; weekday<weekdaysSelection.length; weekday++) {
+                if(weekdaysSelection[weekday]) {
+                    Date newDateToStart = fixDate(weekday+1); //fix date if starting an alarm for next week(e.g today is friday and i want an alarm for monday)
+
+                    if(dateToEnd.after(newDateToStart)) {
+                        int alarmId = (int) System.currentTimeMillis(); //unique id
+                        IntakeMoment intakeMoment = new IntakeMoment(newDateToStart, dateToEnd, receipt, medicine, seekBar.getProgress(), alarmId);
+                        intakeMoment.save();/*
+                    SetAlarmUtil_DEPRECATED alarm = new SetAlarmUtil_DEPRECATED(this, intakeMoment.getMedicine().getName(),
+                            intakeMoment.getQuantity(),
+                            intakeMoment.getStartDate(),
+                            intakeMoment.getEndDate(),
+                            intakeMoment.getAlarmRequestCode());*/
+
+                    }
+                }
+            }
+
+            //When finish button it's pressed, setAlarm is called
+        }
+
+    }
+
+
+    public void setNewAlarms(){
+        //DISABLE INSTANT RUN OR IT'S NOT GOING TO WORK PROPERLY
+        List<IntakeMoment> allIntake = DataSupport.findAll(IntakeMoment.class);
+        Log.e("intakes",String.valueOf(allIntake.size()));
+        Toast.makeText(this, "intake count: " + String.valueOf(allIntake.size()), Toast.LENGTH_SHORT).show();
+
+        for(int i = 0; i<allIntake.size(); i++){
+            if(!allIntake.get(i).getIsAlarmSet()) {
+                SetAlarmUtil alarm = new SetAlarmUtil();
+                alarm.setAlarm(this, allIntake.get(i).getMedicine().getName(),
+                        allIntake.get(i).getQuantity(),
+                        allIntake.get(i).getStartDate(),
+                        allIntake.get(i).getEndDate(),
+                        allIntake.get(i).getAlarmRequestCode());
+
+                /*SetAlarmUtil_DEPRECATED alarm = new SetAlarmUtil_DEPRECATED(this, allIntake.get(i).getMedicine().getName(),
+                        allIntake.get(i).getQuantity(),
+                        allIntake.get(i).getStartDate(),
+                        allIntake.get(i).getEndDate(),
+                        allIntake.get(i).getAlarmRequestCode());*/
+
+                allIntake.get(i).setIsAlarmSet(true);
+                allIntake.get(i).save();
+            }
+        }
+
+    }
+
+    private Date fixDate(int weekday){
+        Calendar occurenceCalendar = Calendar.getInstance();
+        occurenceCalendar.setTime(startDate.getTime());
+        occurenceCalendar.set(Calendar.DAY_OF_WEEK, weekday);
+
+        if(occurenceCalendar.get(Calendar.DAY_OF_MONTH) < startDate.get(Calendar.DAY_OF_MONTH)) {
+            occurenceCalendar.set(Calendar.DAY_OF_MONTH, occurenceCalendar.get(Calendar.DAY_OF_MONTH) + 7);
+        }
+        return occurenceCalendar.getTime();
     }
 
     private View createQuantityStep() {
@@ -295,7 +371,7 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
         singleRadioButton = repetitionContent.findViewById(R.id.singleRep_radio);
         endDateTextView = repetitionContent.findViewById(R.id.endDateLabel);
         endDateTextView.setText (getDateString(endDate));
-        final String[] weekdays = {"Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"};
+        final String[] weekdays = {"Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"};
 
         for(int i = 0; i < weekdays.length; i++) {
             final LinearLayout dayLayout = getDayLayout(i);
@@ -533,8 +609,9 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
                 new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                        time = new Pair<>(hourOfDay, minute);
-                        timeTextView.setText(getTimeString());
+                       startDate.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                       startDate.set(Calendar.MINUTE, minute);
+                       timeTextView.setText(getTimeString());
                     }
                 }, hour, minute, true);
     }
@@ -557,10 +634,13 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
      */
     @NonNull
     private String getTimeString() {
-        String hourString = ((time.first<9) ? "0"+ time.first : String.valueOf(time.first));
-        String minuteString = (time.second<9) ? "0" + time.second : String.valueOf(time.second);
+        int minute = startDate.get(Calendar.MINUTE);
+        int hour = startDate.get(Calendar.HOUR_OF_DAY);
+        String hourString = ((hour<9) ? "0"+ hour : String.valueOf(hour));
+        String minuteString = (minute<9) ? "0" + minute : String.valueOf(minute);
         String time = hourString + ":" + minuteString;
-        return hourString + ":" + minuteString;
+
+        return time;
     }
 
     private String getDateString(Calendar date) {
@@ -587,5 +667,9 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
     private LinearLayout getDayLayout(int i) {
         int id = repetitionContent.getResources().getIdentifier("day_"+i, "id", getPackageName());
         return (LinearLayout) repetitionContent.findViewById(id);
+    }
+
+    public long getReceiptID() {
+        return receipt.getId();
     }
 }

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+android:layout_height="?android:attr/listPreferredItemHeight"
+android:padding="6dip" >
+
+<ImageView
+    android:id="@+id/imageView"
+    android:layout_width="wrap_content"
+    android:layout_height="fill_parent"
+    android:layout_alignParentBottom="true"
+    android:layout_alignParentTop="true"
+    android:layout_marginRight="6dip"
+    android:contentDescription="Medicine"
+    android:src="@mipmap/ic_picture_round" />
+
+    <TextView
+        android:id="@+id/medicine_description"
+        android:layout_width="fill_parent"
+        android:layout_height="26dip"
+        android:layout_alignParentBottom="true"
+        android:layout_toEndOf="@+id/imageView"
+        android:layout_toStartOf="@+id/deletebutton"
+        android:singleLine="true"
+        android:text="Description"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/medicine_name"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/medicine_description"
+        android:layout_alignParentTop="true"
+        android:layout_alignWithParentIfMissing="true"
+        android:layout_toEndOf="@+id/imageView"
+        android:layout_toStartOf="@+id/deletebutton"
+        android:gravity="center_vertical"
+        android:text="Example application"
+        android:textSize="16sp" />
+
+    <ImageButton
+        android:id="@+id/deletebutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:adjustViewBounds="true"
+        android:background="@color/cardview_shadow_end_color"
+        android:tint="@color/md_red_A700"
+        app:srcCompat="@android:drawable/ic_menu_delete" />
+
+</RelativeLayout>
+
