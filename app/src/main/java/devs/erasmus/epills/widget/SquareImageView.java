@@ -17,7 +17,10 @@
 package devs.erasmus.epills.widget;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.util.AttributeSet;
+
+import static android.content.res.Configuration.ORIENTATION_LANDSCAPE;
 
 public class SquareImageView  extends android.support.v7.widget.AppCompatImageView {
 
@@ -38,6 +41,13 @@ public class SquareImageView  extends android.support.v7.widget.AppCompatImageVi
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
         int width = getMeasuredWidth();
-        setMeasuredDimension(width, width);
+        double screenCoverage = 0.44;
+
+        if (getContext().getResources().getConfiguration().orientation == ORIENTATION_LANDSCAPE ) {
+            screenCoverage = 0.33;
+        }
+        //The picture should cover a third of the screen by default.
+        int height = (int)((double)Resources.getSystem().getDisplayMetrics().heightPixels * screenCoverage );
+        setMeasuredDimension(width, height);
     }
 }

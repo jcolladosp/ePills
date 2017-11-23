@@ -65,9 +65,9 @@ public class ClockActivity extends AppCompatActivity {
         Date startDate =  Calendar.getInstance().getTime();
         Date endDate =  Calendar.getInstance().getTime();
 
-        Medicine medicine = new Medicine("Ibuprofeno","http://omicrono.elespanol.com/wp-content/uploads/2015/05/ibuprofeno.jpg");
-        Medicine medicine2 = new Medicine("Paracetamol","https://www.supermadre.net/wp-content/uploads/2016/05/paracetamol.jpg");
-        Medicine medicine3 = new Medicine("Strepsils","http://www.londondrugs.com/dw/image/v2/AAJI_PRD/on/demandware.static/-/Sites-londondrugs-master/default/dw39a84b23/products/L7861065/large/L7861065.JPG?sw=556&sh=680&sm=fit");
+        Medicine medicine = new Medicine("Ibuprofeno",null,"http://omicrono.elespanol.com/wp-content/uploads/2015/05/ibuprofeno.jpg");
+        Medicine medicine2 = new Medicine("Paracetamol",null,"https://www.supermadre.net/wp-content/uploads/2016/05/paracetamol.jpg");
+        Medicine medicine3 = new Medicine("Strepsils",null,"http://www.londondrugs.com/dw/image/v2/AAJI_PRD/on/demandware.static/-/Sites-londondrugs-master/default/dw39a84b23/products/L7861065/large/L7861065.JPG?sw=556&sh=680&sm=fit");
 
 
         IntakeMoment a = new IntakeMoment(startDate, endDate, new Receipt(), medicine,3, 98);

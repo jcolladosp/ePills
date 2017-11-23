@@ -14,10 +14,11 @@ public class Medicine extends DataSupport {
     private String description;
     private String image;
 
-    public Medicine(String name,String image) {
+    public Medicine(String name, String description, String image) {
 
         this.name = name;
         this.image = image;
+        this.description = description;
 
     }
 
