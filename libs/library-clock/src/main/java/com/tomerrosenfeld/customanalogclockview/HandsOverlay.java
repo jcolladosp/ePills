@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 
@@ -18,9 +19,17 @@ public class HandsOverlay implements DialOverlay {
     private final boolean mUseLargeFace;
     private float mHourRot;
     private float mMinRot;
-    private float mPillRot;
     private boolean mShowSeconds;
     private float scale;
+
+    private Canvas canvas;
+    private int cX;
+    private int cY;
+    private int w;
+    private int h;
+    private boolean sizeChanged;
+    private int hour;
+    private ArrayList<Integer> hourPillsList;
 
     public HandsOverlay(Context context, boolean useLargeFace) {
         final Resources r = context.getResources();
@@ -38,6 +47,7 @@ public class HandsOverlay implements DialOverlay {
         mHour = hourHand;
         mMinute = minuteHand;
         mPill = pill;
+        hourPillsList = new ArrayList<>();
     }
     public HandsOverlay withScale(float scale){
         this.scale = scale;
@@ -61,12 +71,17 @@ public class HandsOverlay implements DialOverlay {
     public void onDraw(Canvas canvas, int cX, int cY, int w, int h, Calendar calendar,
                        boolean sizeChanged) {
 
+        this.canvas = canvas;
+        this.cX = cX;
+        this.cY = cY;
+        this.w = w;
+        this.h = h;
+        this.sizeChanged = sizeChanged;
         updateHands(calendar);
 
         canvas.save();
         if (!CustomAnalogClock.hourOnTop) {
             drawHours(canvas, cX, cY, w, h, calendar, sizeChanged);
-            drawPill(canvas, cX, cY, w, h, 12, sizeChanged);
 
         }
         else
@@ -78,12 +93,13 @@ public class HandsOverlay implements DialOverlay {
             drawMinutes(canvas, cX, cY, w, h, calendar, sizeChanged);
         else {
             drawHours(canvas, cX, cY, w, h, calendar, sizeChanged);
-            drawPill(canvas, cX, cY, w, h, 12, sizeChanged);
 
         }
 
-
         canvas.restore();
+
+        drawPills();
+
     }
 
     private void drawMinutes(Canvas canvas, int cX, int cY, int w, int h, Calendar calendar,
@@ -109,20 +125,27 @@ public class HandsOverlay implements DialOverlay {
         }
         mHour.draw(canvas);
     }
-    private void drawPill(Canvas canvas, int cX, int cY, int w, int h,int m,
-                           boolean sizeChanged) {
-        mHourRot = getHourHandAngle(m, 0);
+    private void drawPills() {
+        for (Integer hour : hourPillsList) {
+            canvas.save();
+            Drawable pillIcon = mPill;
+            float mPillRot = getHourHandAngle(hour, 0);
 
-        canvas.rotate(mHourRot, cX, cY);
+            canvas.rotate(mPillRot, cX, cY);
 
-        if (sizeChanged) {
-            w = (int) (mPill.getIntrinsicWidth()* scale);
-            h = (int) (mPill.getIntrinsicHeight()* scale);
-            mPill.setBounds(cX - (w / 2), cY - (h / 2), cX + (w / 2), cY + (h / 2));
+            if (sizeChanged) {
+                w = (int) (pillIcon.getIntrinsicWidth() * scale);
+                h = (int) (pillIcon.getIntrinsicHeight() * scale);
+                pillIcon.setBounds(cX - (w / 2), cY - (h / 2), cX + (w / 2), cY + (h / 2));
+            }
+            pillIcon.draw(canvas);
+            canvas.restore();
+
         }
-        mPill.draw(canvas);
     }
-
+    public void setHourPill(int hour){
+        hourPillsList.add(hour);
+    }
     public void setShowSeconds(boolean showSeconds) {
         mShowSeconds = showSeconds;
     }

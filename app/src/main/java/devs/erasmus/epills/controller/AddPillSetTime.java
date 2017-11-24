@@ -277,7 +277,7 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
         //intake for alarm without occurences
         if(singleSelected){
             int alarmId = (int) System.currentTimeMillis(); //unique id
-            IntakeMoment intakeMoment = new IntakeMoment(dateToStart, dateToStart, receipt, medicine, seekBar.getProgress(), alarmId);
+            IntakeMoment intakeMoment = new IntakeMoment(dateToStart, dateToStart, receipt, medicine.getId(), seekBar.getProgress(), alarmId);
             intakeMoment.save();
         }
         //intake for alarm with occurences
@@ -288,8 +288,10 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
 
                     if(dateToEnd.after(newDateToStart)) {
                         int alarmId = (int) System.currentTimeMillis(); //unique id
-                        IntakeMoment intakeMoment = new IntakeMoment(newDateToStart, dateToEnd, receipt, medicine, seekBar.getProgress(), alarmId);
+
+                        IntakeMoment intakeMoment = new IntakeMoment(newDateToStart, dateToEnd, receipt, medicine.getId(), seekBar.getProgress(), alarmId);
                         intakeMoment.save();
+
                     }
                 }
             }
@@ -306,16 +308,17 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
         Log.e("intakes",String.valueOf(allIntake.size()));
         Toast.makeText(this, "intake count: " + String.valueOf(allIntake.size()), Toast.LENGTH_SHORT).show();
 
-        for(int i = 0; i<allIntake.size(); i++){
-            if(!allIntake.get(i).getIsAlarmSet()) {
-                AlarmUtil.setAlarm(this, allIntake.get(i).getMedicine().getName(),
-                        allIntake.get(i).getQuantity(),
-                        allIntake.get(i).getStartDate(),
-                        allIntake.get(i).getEndDate(),
-                        allIntake.get(i).getAlarmRequestCode());
+        for(IntakeMoment intakeMoment : allIntake){
+            if(!intakeMoment.getIsAlarmSet()) {
+                Medicine medicine = DataSupport.find(Medicine.class, intakeMoment.getMedicineId());
+                AlarmUtil.setAlarm(this, medicine.getName(),intakeMoment.getQuantity(),
+                                                intakeMoment.getStartDate(),
+                                                intakeMoment.getEndDate(),
+                                                intakeMoment.getAlarmRequestCode());
 
-                allIntake.get(i).setIsAlarmSet(true);
-                allIntake.get(i).save();
+
+                intakeMoment.setIsAlarmSet(true);
+                intakeMoment.save();
             }
         }
 
