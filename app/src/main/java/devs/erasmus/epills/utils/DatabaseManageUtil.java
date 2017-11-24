@@ -1,5 +1,8 @@
 package devs.erasmus.epills.utils;
 
+import android.util.Log;
+import android.widget.Toast;
+
 import org.litepal.crud.DataSupport;
 
 import java.util.List;
@@ -18,7 +21,7 @@ public class DatabaseManageUtil {
         List<Medicine> medicines = DataSupport.where("name = ?", medicine.getName()).find(Medicine.class);
 
         for(int i=0;i<medicines.size();i++){
-            //TODO: check for intakes
+            cancelIntakeFromDatabaseByMedicine(medicines.get(i));
 
             medicines.get(i).delete();
         }
@@ -26,7 +29,7 @@ public class DatabaseManageUtil {
 
 
     static public void cancelIntakeFromDatabaseByMedicine(Medicine medicine){
-        List<IntakeMoment> intakes = DataSupport.where("medicine = ?",String.valueOf(medicine)).find(IntakeMoment.class);
+        List<IntakeMoment> intakes = DataSupport.where("medicine = '" +String.valueOf(medicine)+"'" ).find(IntakeMoment.class);
 
         //remove intakes from db
         for(int i=0; i<intakes.size(); i++) {
