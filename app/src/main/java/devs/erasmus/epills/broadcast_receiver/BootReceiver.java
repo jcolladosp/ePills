@@ -43,8 +43,11 @@ public class BootReceiver extends BroadcastReceiver {
                 int alarmRequestCode = c.getInt(c.getColumnIndex("alarmrequestcode"));
 
 
-                Date startDate = new Date();
-                Date endDate = new Date();
+                Date startDate = long2Date(startDateMillis);
+                //refresh startDate to current day/month/year
+                //startDate = fixDate(startDate);
+
+                Date endDate = long2Date(endDateMillis);
 
                 startDate.setTime(startDateMillis);
                 endDate.setTime(endDateMillis);
@@ -52,22 +55,27 @@ public class BootReceiver extends BroadcastReceiver {
                 AlarmUtil.setAlarm(context, "", quantity, startDate, endDate, alarmRequestCode);
                 Toast.makeText(context, "alarm set"+ String.valueOf(alarmRequestCode), Toast.LENGTH_SHORT).show();
             }
-            Toast.makeText(context, String.valueOf(i), Toast.LENGTH_SHORT).show();
-                /*
-                String test = c.getColumnName(1);
-                String stringDate = String.valueOf(test);
-                Date startDate = new Date();
-
-                try {
-                    startDate = dateFormat.parse(stringDate);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-
-                Toast.makeText(context, String.valueOf(test), Toast.LENGTH_SHORT).show();
-                */
             c.close();
         }
 
+    }
+
+    /*
+    private Date fixDate(Date date){
+        Calendar dateCalendar = Calendar.getInstance();
+        dateCalendar.setTime(date);
+
+        while(dateCalendar.getTimeInMillis() < System.currentTimeMillis()){
+            dateCalendar.set(Calendar.DAY_OF_MONTH, dateCalendar.get(Calendar.DAY_OF_MONTH) + 1);
+        }
+
+        return dateCalendar.getTime();
+    }
+    */
+    private Date long2Date(long dateInMillis){
+        Date date = new Date();
+        date.setTime(dateInMillis);
+
+        return date;
     }
 }
