@@ -6,20 +6,22 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import org.litepal.crud.DataSupport;
+
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import devs.erasmus.epills.broadcast_receiver.AlarmBroadcastReceiver;
+import devs.erasmus.epills.model.IntakeMoment;
 
 /**
  * Created by Lenovo-PC on 22/11/2017.
  */
 
-public class SetAlarmUtil {
+public class AlarmUtil {
 
-    public SetAlarmUtil() {
+    public AlarmUtil() {
         //
     }
 
@@ -44,6 +46,7 @@ public class SetAlarmUtil {
                     calendar.getTimeInMillis(),
                     pendingIntent);
 
+            intent.putExtra("isOnce", true);
             Log.e("set alarm:", String.valueOf(calendar.getTime()) + " (" + String.valueOf(alarmId) + ")");
         }
         //create an alarm with occurencies
@@ -53,6 +56,7 @@ public class SetAlarmUtil {
                     AlarmManager.INTERVAL_DAY * 7, //once a week
                     pendingIntent);
 
+            intent.putExtra("isOnce", false);
             Log.e("set occurent alarm:", String.valueOf(calendar.getTime()) + " (" + String.valueOf(alarmId) + ")");
 
             //set the end date alarm
@@ -77,6 +81,11 @@ public class SetAlarmUtil {
         if (pendingIntent != null) {
             alarmManager.cancel(pendingIntent);
             Log.e("cancel alarm:", String.valueOf(alarmId));
+
+            DatabaseManageUtil.cancelIntakeFromDatabaseByAlarmId(alarmId);
         }
+
     }
+
+
 }

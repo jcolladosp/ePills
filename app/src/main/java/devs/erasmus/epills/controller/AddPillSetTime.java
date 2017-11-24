@@ -34,7 +34,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import devs.erasmus.epills.model.IntakeMoment;
 import devs.erasmus.epills.model.Receipt;
-import devs.erasmus.epills.utils.SetAlarmUtil;
+import devs.erasmus.epills.utils.AlarmUtil;
 import devs.erasmus.epills.widget.AddPillFinishDialog;
 import devs.erasmus.epills.R;
 import devs.erasmus.epills.model.Medicine;
@@ -279,14 +279,6 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
             int alarmId = (int) System.currentTimeMillis(); //unique id
             IntakeMoment intakeMoment = new IntakeMoment(dateToStart, dateToStart, receipt, medicine.getId(), seekBar.getProgress(), alarmId);
             intakeMoment.save();
-            /*
-            SetAlarmUtil_DEPRECATED alarm = new SetAlarmUtil_DEPRECATED(this, intakeMoment.getMedicine().getName(),
-                    intakeMoment.getQuantity(),
-                    intakeMoment.getStartDate(),
-                    intakeMoment.getEndDate(),
-                    intakeMoment.getAlarmRequestCode());*/
-
-
         }
         //intake for alarm with occurences
         else {
@@ -296,13 +288,9 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
 
                     if(dateToEnd.after(newDateToStart)) {
                         int alarmId = (int) System.currentTimeMillis(); //unique id
+
                         IntakeMoment intakeMoment = new IntakeMoment(newDateToStart, dateToEnd, receipt, medicine.getId(), seekBar.getProgress(), alarmId);
-                        intakeMoment.save();/*
-                    SetAlarmUtil_DEPRECATED alarm = new SetAlarmUtil_DEPRECATED(this, intakeMoment.getMedicine().getName(),
-                            intakeMoment.getQuantity(),
-                            intakeMoment.getStartDate(),
-                            intakeMoment.getEndDate(),
-                            intakeMoment.getAlarmRequestCode());*/
+                        intakeMoment.save();
 
                     }
                 }
@@ -320,24 +308,17 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
         Log.e("intakes",String.valueOf(allIntake.size()));
         Toast.makeText(this, "intake count: " + String.valueOf(allIntake.size()), Toast.LENGTH_SHORT).show();
 
-        for(int i = 0; i<allIntake.size(); i++){
-            if(!allIntake.get(i).getIsAlarmSet()) {
-                SetAlarmUtil alarm = new SetAlarmUtil();
-               /* alarm.setAlarm(this, allIntake.get(i).getMedicine().getName(),
-                        allIntake.get(i).getQuantity(),
-                        allIntake.get(i).getStartDate(),
-                        allIntake.get(i).getEndDate(),
-                        allIntake.get(i).getAlarmRequestCode());
-                        */
+        for(IntakeMoment intakeMoment : allIntake){
+            if(!intakeMoment.getIsAlarmSet()) {
+                Medicine medicine = DataSupport.find(Medicine.class, intakeMoment.getMedicineId());
+                AlarmUtil.setAlarm(this, medicine.getName(),intakeMoment.getQuantity(),
+                                                intakeMoment.getStartDate(),
+                                                intakeMoment.getEndDate(),
+                                                intakeMoment.getAlarmRequestCode());
 
-                /*SetAlarmUtil_DEPRECATED alarm = new SetAlarmUtil_DEPRECATED(this, allIntake.get(i).getMedicine().getName(),
-                        allIntake.get(i).getQuantity(),
-                        allIntake.get(i).getStartDate(),
-                        allIntake.get(i).getEndDate(),
-                        allIntake.get(i).getAlarmRequestCode());*/
 
-                allIntake.get(i).setIsAlarmSet(true);
-                allIntake.get(i).save();
+                intakeMoment.setIsAlarmSet(true);
+                intakeMoment.save();
             }
         }
 

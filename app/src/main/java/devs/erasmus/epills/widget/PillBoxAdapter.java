@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -23,6 +24,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import devs.erasmus.epills.R;
 import devs.erasmus.epills.model.Medicine;
+import devs.erasmus.epills.utils.DatabaseManageUtil;
 
 /**
  * Created by Jonas on 22.11.2017.
@@ -75,7 +77,9 @@ public class PillBoxAdapter extends RecyclerView.Adapter <PillBoxAdapter.ViewHol
     }
 
     public void delete(int position) {
-        medicines.remove(position);
+
+        DatabaseManageUtil.cancelMedicineFromDatabase(medicines.get(position));
+        //medicines.remove(position);
         notifyItemRemoved(position);
         //TODO: Delete existing DB instances and alarms.
     }
