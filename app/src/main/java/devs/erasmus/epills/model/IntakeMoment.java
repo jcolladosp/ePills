@@ -9,6 +9,7 @@ import java.util.Date;
  */
 
 public class IntakeMoment extends DataSupport {
+    private long id;
 
     private Date startDate;
     private Date endDate;
@@ -17,16 +18,33 @@ public class IntakeMoment extends DataSupport {
     private int quantity;
     private int alarmRequestCode;
     private boolean isAlarmSet;
+    private long medicineId;
 
-    public IntakeMoment(Date startDate, Date endDate, Receipt receipt, Medicine medicine, int quantity, int alarmRequestCode) {
+    public IntakeMoment(Date startDate, Date endDate, Receipt receipt, long medicineId, int quantity, int alarmRequestCode) {
         this.startDate = startDate;
         this.endDate = endDate;
         this.receipt = receipt;
-        this.medicine = medicine;
+        this.medicineId = medicineId;
         this.quantity = quantity;
         this.alarmRequestCode = alarmRequestCode;
 
         isAlarmSet = false; //default value
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public boolean isAlarmSet() {
+        return isAlarmSet;
+    }
+
+    public void setAlarmSet(boolean alarmSet) {
+        isAlarmSet = alarmSet;
     }
 
     public Date getStartDate() { return startDate; }
@@ -82,5 +100,13 @@ public class IntakeMoment extends DataSupport {
 
     public void setIsAlarmSet(boolean isAlarmSet) {
         this.isAlarmSet = isAlarmSet;
+    }
+
+    public long getMedicineId() {
+        return medicineId;
+    }
+
+    public void setMedicineId(long medicineId) {
+        this.medicineId = medicineId;
     }
 }

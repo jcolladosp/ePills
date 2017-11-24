@@ -277,7 +277,7 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
         //intake for alarm without occurences
         if(singleSelected){
             int alarmId = (int) System.currentTimeMillis(); //unique id
-            IntakeMoment intakeMoment = new IntakeMoment(dateToStart, dateToStart, receipt, medicine, seekBar.getProgress(), alarmId);
+            IntakeMoment intakeMoment = new IntakeMoment(dateToStart, dateToStart, receipt, medicine.getId(), seekBar.getProgress(), alarmId);
             intakeMoment.save();
             /*
             SetAlarmUtil_DEPRECATED alarm = new SetAlarmUtil_DEPRECATED(this, intakeMoment.getMedicine().getName(),
@@ -296,7 +296,7 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
 
                     if(dateToEnd.after(newDateToStart)) {
                         int alarmId = (int) System.currentTimeMillis(); //unique id
-                        IntakeMoment intakeMoment = new IntakeMoment(newDateToStart, dateToEnd, receipt, medicine, seekBar.getProgress(), alarmId);
+                        IntakeMoment intakeMoment = new IntakeMoment(newDateToStart, dateToEnd, receipt, medicine.getId(), seekBar.getProgress(), alarmId);
                         intakeMoment.save();/*
                     SetAlarmUtil_DEPRECATED alarm = new SetAlarmUtil_DEPRECATED(this, intakeMoment.getMedicine().getName(),
                             intakeMoment.getQuantity(),
@@ -323,11 +323,12 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
         for(int i = 0; i<allIntake.size(); i++){
             if(!allIntake.get(i).getIsAlarmSet()) {
                 SetAlarmUtil alarm = new SetAlarmUtil();
-                alarm.setAlarm(this, allIntake.get(i).getMedicine().getName(),
+               /* alarm.setAlarm(this, allIntake.get(i).getMedicine().getName(),
                         allIntake.get(i).getQuantity(),
                         allIntake.get(i).getStartDate(),
                         allIntake.get(i).getEndDate(),
                         allIntake.get(i).getAlarmRequestCode());
+                        */
 
                 /*SetAlarmUtil_DEPRECATED alarm = new SetAlarmUtil_DEPRECATED(this, allIntake.get(i).getMedicine().getName(),
                         allIntake.get(i).getQuantity(),

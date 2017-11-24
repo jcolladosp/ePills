@@ -12,6 +12,9 @@ import com.mikepenz.materialdrawer.Drawer;
 import com.tomerrosenfeld.customanalogclockview.CustomAnalogClock;
 import com.viewpagerindicator.as.library.indicator.RecyclerCirclePageIndicator;
 import com.viewpagerindicator.as.library.pageview.RecyclerViewPager;
+
+import org.litepal.crud.DataSupport;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -51,9 +54,8 @@ public class ClockActivity extends AppCompatActivity {
         drawer = NavigationDrawer.getDrawerBuilder(this,this,toolbar).build();
         prepareAnalogClock();
         preparePillsAdapter();
-        setExampleMedicines();
+        setPills();
 
-        analogClock.drawPill(21);
 
 
     }
@@ -77,23 +79,19 @@ public class ClockActivity extends AppCompatActivity {
 
 
     }
-    private void setExampleMedicines(){
+    private void setPills(){
+        intakeMomentList.clear();
+        pillCardAdapter.notifyDataSetChanged();
 
-        Date startDate =  Calendar.getInstance().getTime();
-        Date endDate =  Calendar.getInstance().getTime();
-
-        Medicine medicine = new Medicine("Ibuprofeno",null,"http://omicrono.elespanol.com/wp-content/uploads/2015/05/ibuprofeno.jpg");
-        Medicine medicine2 = new Medicine("Paracetamol",null,"https://www.supermadre.net/wp-content/uploads/2016/05/paracetamol.jpg");
-        Medicine medicine3 = new Medicine("Strepsils",null,"http://www.londondrugs.com/dw/image/v2/AAJI_PRD/on/demandware.static/-/Sites-londondrugs-master/default/dw39a84b23/products/L7861065/large/L7861065.JPG?sw=556&sh=680&sm=fit");
+        Date today = new Date();
 
 
-        IntakeMoment a = new IntakeMoment(startDate, endDate, new Receipt(), medicine,3, 98);
-        IntakeMoment b = new IntakeMoment(startDate, endDate, new Receipt(), medicine2,3, 96);
-        IntakeMoment c = new IntakeMoment(startDate, endDate, new Receipt(), medicine3,3, 97);
-
-        intakeMomentList.add(a);
-        intakeMomentList.add(b);
-        intakeMomentList.add(c);
+        List<IntakeMoment> allIntake = DataSupport.findAll(IntakeMoment.class);
+        for (IntakeMoment intake : allIntake){
+            intake.setMedicine(DataSupport.find(Medicine.class, intake.getMedicineId()));
+            intakeMomentList.add(intake);
+            analogClock.drawPill(intake.getStartDate().getHours());
+        }
 
         pillCardAdapter.notifyDataSetChanged();
     }

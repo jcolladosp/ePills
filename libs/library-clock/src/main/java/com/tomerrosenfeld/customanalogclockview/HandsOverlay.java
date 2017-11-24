@@ -19,7 +19,6 @@ public class HandsOverlay implements DialOverlay {
     private final boolean mUseLargeFace;
     private float mHourRot;
     private float mMinRot;
-    private float mPillRot;
     private boolean mShowSeconds;
     private float scale;
 
@@ -98,8 +97,8 @@ public class HandsOverlay implements DialOverlay {
         }
 
         canvas.restore();
-        if(hour !=0)
-        drawPill(hour);
+
+        drawPills();
 
     }
 
@@ -126,17 +125,23 @@ public class HandsOverlay implements DialOverlay {
         }
         mHour.draw(canvas);
     }
-    private void drawPill(int hour) {
-        mPillRot = getHourHandAngle(hour, 0);
+    private void drawPills() {
+        for (Integer hour : hourPillsList) {
+            canvas.save();
+            Drawable pillIcon = mPill;
+            float mPillRot = getHourHandAngle(hour, 0);
 
-        canvas.rotate(mPillRot, cX, cY);
+            canvas.rotate(mPillRot, cX, cY);
 
-        if (sizeChanged) {
-            w = (int) (mPill.getIntrinsicWidth()* scale);
-            h = (int) (mPill.getIntrinsicHeight()* scale);
-            mPill.setBounds(cX - (w / 2), cY - (h / 2), cX + (w / 2), cY + (h / 2));
+            if (sizeChanged) {
+                w = (int) (pillIcon.getIntrinsicWidth() * scale);
+                h = (int) (pillIcon.getIntrinsicHeight() * scale);
+                pillIcon.setBounds(cX - (w / 2), cY - (h / 2), cX + (w / 2), cY + (h / 2));
+            }
+            pillIcon.draw(canvas);
+            canvas.restore();
+
         }
-        mPill.draw(canvas);
     }
     public void setHourPill(int hour){
         hourPillsList.add(hour);

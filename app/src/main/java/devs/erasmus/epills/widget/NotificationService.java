@@ -57,7 +57,7 @@ public class NotificationService extends Service {
         Notification notify = new Notification.Builder(this)
                 .setContentTitle("You have to take ["+ medicineName + "], [" + quantity + "] time(s)")
                 .setContentText("take the goddamn pill")
-                .setSmallIcon(R.drawable.ic_check_mark)
+                .setSmallIcon(R.drawable.icon_alarm)
                 .setContentIntent(pendingIntent)
                 .build();
         notificationManager.notify(id, notify);

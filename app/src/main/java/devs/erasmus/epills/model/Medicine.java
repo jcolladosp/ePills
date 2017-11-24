@@ -9,6 +9,7 @@ import org.litepal.crud.DataSupport;
  */
 
 public class Medicine extends DataSupport {
+    private long id;
 
     private String name;
     private String description;
@@ -20,6 +21,18 @@ public class Medicine extends DataSupport {
         this.image = image;
         this.description = description;
 
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public String getName() {
