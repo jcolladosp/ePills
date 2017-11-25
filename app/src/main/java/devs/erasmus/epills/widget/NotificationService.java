@@ -39,8 +39,9 @@ public class NotificationService extends Service {
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         Intent openActivityIntent = new Intent(this.getApplicationContext(), ClockActivity.class);
 
+        //using an unique id everytime alarm has it's own notification, it maybe overwhelming
         int id= (int) System.currentTimeMillis();
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, id, openActivityIntent, 0);
+        PendingIntent openActivityPendingIntent = PendingIntent.getActivity(this, id, openActivityIntent, 0);
 
         /*
         Intent takeIntent = new Intent(this, );
@@ -55,10 +56,11 @@ public class NotificationService extends Service {
                 */
 
         Notification notify = new Notification.Builder(this)
-                .setContentTitle("You have to take ["+ medicineName + "], [" + quantity + "] time(s)")
-                .setContentText("take the goddamn pill")
+                .setContentTitle("You have to take "+ medicineName + ", " + quantity + " time(s)")
+                .setContentText("take the pill!")
                 .setSmallIcon(R.drawable.icon_alarm)
-                .setContentIntent(pendingIntent)
+                .setContentIntent(openActivityPendingIntent)
+                .setAutoCancel(true) // cancel when pressed
                 .build();
         notificationManager.notify(id, notify);
 
