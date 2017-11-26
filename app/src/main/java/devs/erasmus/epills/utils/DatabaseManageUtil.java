@@ -29,7 +29,7 @@ public class DatabaseManageUtil {
 
 
     static public void cancelIntakeFromDatabaseByMedicine(Medicine medicine){
-        List<IntakeMoment> intakes = DataSupport.where("medicine = '" +String.valueOf(medicine)+"'" ).find(IntakeMoment.class);
+        List<IntakeMoment> intakes = DataSupport.where("medicineId = " +String.valueOf(medicine.getId())).find(IntakeMoment.class);
 
         //remove intakes from db
         for(int i=0; i<intakes.size(); i++) {

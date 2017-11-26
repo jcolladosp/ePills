@@ -329,8 +329,13 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
         occurenceCalendar.setTime(startDate.getTime());
         occurenceCalendar.set(Calendar.DAY_OF_WEEK, weekday);
 
-        if(occurenceCalendar.get(Calendar.DAY_OF_MONTH) < startDate.get(Calendar.DAY_OF_MONTH)) {
-            occurenceCalendar.set(Calendar.DAY_OF_MONTH, occurenceCalendar.get(Calendar.DAY_OF_MONTH) + 7);
+        Log.e("before change", String.valueOf(occurenceCalendar.getTime()));
+        //check if the set changed the month
+        if(occurenceCalendar.get(Calendar.MONTH) == startDate.get(Calendar.MONTH)) {
+            if(occurenceCalendar.get(Calendar.DAY_OF_MONTH) < startDate.get(Calendar.DAY_OF_MONTH)) {
+                occurenceCalendar.set(Calendar.DAY_OF_MONTH, occurenceCalendar.get(Calendar.DAY_OF_MONTH) + 7);
+            }
+            Log.e("after change", String.valueOf(occurenceCalendar.getTime()));
         }
         return occurenceCalendar.getTime();
     }
