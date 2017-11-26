@@ -330,9 +330,10 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
         occurenceCalendar.set(Calendar.DAY_OF_WEEK, weekday);
 
         //check if the set changed the month: if today is Sunday 26 Nov and you want an alarm on Friday,
-        //the set above will change the date to Friday 2 Dic, without this first if you would change
+        //the set above will change the date to Friday 2 Dic, without this first if  the next if would change
         //the date to Friday 9 Dic
         if(occurenceCalendar.get(Calendar.MONTH) == startDate.get(Calendar.MONTH)) {
+            //check if you are trying to set an alarm for the next week, if True change week
             if(occurenceCalendar.get(Calendar.DAY_OF_MONTH) < startDate.get(Calendar.DAY_OF_MONTH)) {
                 occurenceCalendar.set(Calendar.DAY_OF_MONTH, occurenceCalendar.get(Calendar.DAY_OF_MONTH) + 7);
             }
