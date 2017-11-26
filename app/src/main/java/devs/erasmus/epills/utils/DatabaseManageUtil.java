@@ -32,15 +32,17 @@ public class DatabaseManageUtil {
         List<IntakeMoment> intakes = DataSupport.where("medicineId = " +String.valueOf(medicine.getId())).find(IntakeMoment.class);
 
         //remove intakes from db
-        for(IntakeMoment intakeMoment : intakes) {
-            intakeMoment.delete();
-        }
+        intakesDelete(intakes);
     }
 
     static public void cancelIntakeFromDatabaseByAlarmId(int alarmId){
         List<IntakeMoment> intakes = DataSupport.where("alarmRequestCode = ?",String.valueOf(alarmId)).find(IntakeMoment.class);
 
         //remove intakes from db
+        intakesDelete(intakes);
+    }
+
+    static public void intakesDelete(List<IntakeMoment> intakes){
         for(IntakeMoment intakeMoment : intakes) {
             intakeMoment.delete();
         }
