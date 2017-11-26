@@ -284,7 +284,9 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
         else {
             for(int weekday=0; weekday<weekdaysSelection.length; weekday++) {
                 if(weekdaysSelection[weekday]) {
-                    Date newDateToStart = fixDate(weekday+1); //fix date if starting an alarm for next week(e.g today is friday and i want an alarm for monday)
+                    //I need this to fix date if starting an alarm for next week(e.g today is friday and i want an alarm for monday)
+                    Calendar fixedCalendar = AlarmUtil.fixCalendar(startDate, weekday+1);
+                    Date newDateToStart = fixedCalendar.getTime();
 
                     if(dateToEnd.after(newDateToStart)) {
                         int alarmId = (int) System.currentTimeMillis(); //unique id
@@ -321,18 +323,6 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
                 intakeMoment.save();
             }
         }
-
-    }
-
-    private Date fixDate(int weekday){
-        Calendar occurenceCalendar = Calendar.getInstance();
-        occurenceCalendar.setTime(startDate.getTime());
-        occurenceCalendar.set(Calendar.DAY_OF_WEEK, weekday);
-
-        if(occurenceCalendar.get(Calendar.DAY_OF_MONTH) < startDate.get(Calendar.DAY_OF_MONTH)) {
-            occurenceCalendar.set(Calendar.DAY_OF_MONTH, occurenceCalendar.get(Calendar.DAY_OF_MONTH) + 7);
-        }
-        return occurenceCalendar.getTime();
     }
 
     private View createQuantityStep() {

@@ -36,27 +36,29 @@ public class AlarmUtil {
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-
-        pendingIntent = PendingIntent.getBroadcast(context, alarmId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         calendar.setTime(startDate);
 
         //create an alarm without occurencies
         if (startDate.equals(endDate)) {
+            intent.putExtra("isOnce", true);
+            pendingIntent = PendingIntent.getBroadcast(context, alarmId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
             alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,
                     calendar.getTimeInMillis(),
                     pendingIntent);
 
-            intent.putExtra("isOnce", true);
             Log.e("set alarm:", String.valueOf(calendar.getTime()) + " (" + String.valueOf(alarmId) + ")");
         }
         //create an alarm with occurencies
         else {
+            intent.putExtra("isOnce", false);
+            pendingIntent = PendingIntent.getBroadcast(context, alarmId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
                     calendar.getTimeInMillis(),
                     AlarmManager.INTERVAL_DAY * 7, //once a week
                     pendingIntent);
 
-            intent.putExtra("isOnce", false);
             Log.e("set occurent alarm:", String.valueOf(calendar.getTime()) + " (" + String.valueOf(alarmId) + ")");
 
             //set the end date alarm
@@ -87,5 +89,23 @@ public class AlarmUtil {
 
     }
 
+    //Purpose: fix the calendar to set the proper alarm, it's used when adding a multi-time alarm
+    //to fix the problematic cases and when retrieving the multi-time alarms
+    static public Calendar fixCalendar(Calendar startDate, int weekday){
+        Calendar occurenceCalendar = Calendar.getInstance();
+        occurenceCalendar.setTime(startDate.getTime());
+        occurenceCalendar.set(Calendar.DAY_OF_WEEK, weekday);
+
+        //check if the set changed the month: if today is Sunday 26 Nov and you want an alarm on Friday,
+        //the set above will change the date to Friday 2 Dic, without this first if  the next if would change
+        //the date to Friday 9 Dic
+        if(occurenceCalendar.get(Calendar.MONTH) == startDate.get(Calendar.MONTH)) {
+            //check if you are trying to set an alarm for the next week, if True change week
+            if(occurenceCalendar.get(Calendar.DAY_OF_MONTH) < startDate.get(Calendar.DAY_OF_MONTH)) {
+                occurenceCalendar.set(Calendar.DAY_OF_MONTH, occurenceCalendar.get(Calendar.DAY_OF_MONTH) + 7);
+            }
+        }
+        return occurenceCalendar;
+    }
 
 }

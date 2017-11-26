@@ -60,9 +60,6 @@ public class BootReceiver extends BroadcastReceiver {
 
                 Date endDate = long2Date(endDateMillis);
 
-                startDate.setTime(startDateMillis);
-                endDate.setTime(endDateMillis);
-
                 AlarmUtil.setAlarm(context, medicineName, quantity, startDate, endDate, alarmRequestCode);
                 Toast.makeText(context, "alarm set"+ String.valueOf(alarmRequestCode), Toast.LENGTH_SHORT).show();
 
@@ -73,18 +70,6 @@ public class BootReceiver extends BroadcastReceiver {
 
     }
 
-    /*
-    private Date fixDate(Date date){
-        Calendar dateCalendar = Calendar.getInstance();
-        dateCalendar.setTime(date);
-
-        while(dateCalendar.getTimeInMillis() < System.currentTimeMillis()){
-            dateCalendar.set(Calendar.DAY_OF_MONTH, dateCalendar.get(Calendar.DAY_OF_MONTH) + 1);
-        }
-
-        return dateCalendar.getTime();
-    }
-    */
     private Date long2Date(long dateInMillis){
         Date date = new Date();
         date.setTime(dateInMillis);
