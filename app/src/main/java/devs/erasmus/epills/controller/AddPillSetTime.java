@@ -323,7 +323,6 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
                 intakeMoment.save();
             }
         }
-
     }
 
     private View createQuantityStep() {
