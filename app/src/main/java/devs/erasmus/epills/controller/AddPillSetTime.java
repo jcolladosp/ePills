@@ -284,7 +284,9 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
         else {
             for(int weekday=0; weekday<weekdaysSelection.length; weekday++) {
                 if(weekdaysSelection[weekday]) {
-                    Date newDateToStart = fixDate(weekday+1); //fix date if starting an alarm for next week(e.g today is friday and i want an alarm for monday)
+                    //I need this to fix date if starting an alarm for next week(e.g today is friday and i want an alarm for monday)
+                    Calendar fixedCalendar = AlarmUtil.fixCalendar(startDate, weekday+1);
+                    Date newDateToStart = fixedCalendar.getTime();
 
                     if(dateToEnd.after(newDateToStart)) {
                         int alarmId = (int) System.currentTimeMillis(); //unique id
@@ -322,23 +324,6 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
             }
         }
 
-    }
-
-    private Date fixDate(int weekday){
-        Calendar occurenceCalendar = Calendar.getInstance();
-        occurenceCalendar.setTime(startDate.getTime());
-        occurenceCalendar.set(Calendar.DAY_OF_WEEK, weekday);
-
-        //check if the set changed the month: if today is Sunday 26 Nov and you want an alarm on Friday,
-        //the set above will change the date to Friday 2 Dic, without this first if  the next if would change
-        //the date to Friday 9 Dic
-        if(occurenceCalendar.get(Calendar.MONTH) == startDate.get(Calendar.MONTH)) {
-            //check if you are trying to set an alarm for the next week, if True change week
-            if(occurenceCalendar.get(Calendar.DAY_OF_MONTH) < startDate.get(Calendar.DAY_OF_MONTH)) {
-                occurenceCalendar.set(Calendar.DAY_OF_MONTH, occurenceCalendar.get(Calendar.DAY_OF_MONTH) + 7);
-            }
-        }
-        return occurenceCalendar.getTime();
     }
 
     private View createQuantityStep() {
