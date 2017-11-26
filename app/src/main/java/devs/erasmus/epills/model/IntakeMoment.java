@@ -28,7 +28,6 @@ public class IntakeMoment extends DataSupport {
         this.quantity = quantity;
         this.alarmRequestCode = alarmRequestCode;
 
-        isAlarmSet = false; //default value
     }
 
     public long getId() {
@@ -37,14 +36,6 @@ public class IntakeMoment extends DataSupport {
 
     public void setId(long id) {
         this.id = id;
-    }
-
-    public boolean isAlarmSet() {
-        return isAlarmSet;
-    }
-
-    public void setAlarmSet(boolean alarmSet) {
-        isAlarmSet = alarmSet;
     }
 
     public Date getStartDate() { return startDate; }

@@ -54,14 +54,22 @@ public class BootReceiver extends BroadcastReceiver {
                     medicineName = medicineCursor.getString(medicineCursor.getColumnIndex("name"));
                 }
 
-                Date startDate = long2Date(startDateMillis);
-                //refresh startDate to current day/month/year
-                //startDate = fixDate(startDate);
 
+                //logic part to refresh startDate to the correct day/month/year
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(startDateMillis);
+                int weekDay = calendar.get(Calendar.DAY_OF_WEEK);
+
+                while(calendar.getTimeInMillis() < System.currentTimeMillis()){
+                    calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH) + 7);
+                }
+
+
+                Date startDate = calendar.getTime();
                 Date endDate = long2Date(endDateMillis);
 
+                Log.e("resetting alarm", String.valueOf(startDate) + "( " + String.valueOf(alarmRequestCode) + " )");
                 AlarmUtil.setAlarm(context, medicineName, quantity, startDate, endDate, alarmRequestCode);
-                Toast.makeText(context, "alarm set"+ String.valueOf(alarmRequestCode), Toast.LENGTH_SHORT).show();
 
                 medicineCursor.close();
             }

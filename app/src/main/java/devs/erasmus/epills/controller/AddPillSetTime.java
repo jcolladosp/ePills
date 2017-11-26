@@ -311,16 +311,12 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
         Toast.makeText(this, "intake count: " + String.valueOf(allIntake.size()), Toast.LENGTH_SHORT).show();
 
         for(IntakeMoment intakeMoment : allIntake){
-            if(!intakeMoment.getIsAlarmSet()) {
+            if(!AlarmUtil.isAlarmSet(this, intakeMoment.getAlarmRequestCode())) {
                 Medicine medicine = DataSupport.find(Medicine.class, intakeMoment.getMedicineId());
                 AlarmUtil.setAlarm(this, medicine.getName(),intakeMoment.getQuantity(),
                                                 intakeMoment.getStartDate(),
                                                 intakeMoment.getEndDate(),
                                                 intakeMoment.getAlarmRequestCode());
-
-
-                intakeMoment.setIsAlarmSet(true);
-                intakeMoment.save();
             }
         }
     }

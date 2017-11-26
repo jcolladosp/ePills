@@ -90,7 +90,8 @@ public class AlarmUtil {
     }
 
     //Purpose: fix the calendar to set the proper alarm, it's used when adding a multi-time alarm
-    //to fix the problematic cases and when retrieving the multi-time alarms
+    //to fix the problematic cases of setting an alarm at the end of the month or for another week
+    // and when retrieving the multi-time alarms on boot
     static public Calendar fixCalendar(Calendar startDate, int weekday){
         Calendar occurenceCalendar = Calendar.getInstance();
         occurenceCalendar.setTime(startDate.getTime());
@@ -106,6 +107,13 @@ public class AlarmUtil {
             }
         }
         return occurenceCalendar;
+    }
+
+    static public boolean isAlarmSet(Context context, int alarmId){
+        Intent intent = new Intent(context, AlarmBroadcastReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, alarmId, intent, PendingIntent.FLAG_NO_CREATE);
+
+        return (pendingIntent != null); //True: alarm is set
     }
 
 }
