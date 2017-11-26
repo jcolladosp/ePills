@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import devs.erasmus.epills.utils.DatabaseManageUtil;
+import devs.erasmus.epills.utils.LitePalManageUtil;
 import devs.erasmus.epills.widget.NotificationService;
 
 import static devs.erasmus.epills.utils.AlarmUtil.cancelAlarm;
@@ -33,7 +33,7 @@ public class AlarmBroadcastReceiver extends BroadcastReceiver {
             serviceIntent.putExtra("quantity", quantity);
 
             if(isOnce){
-                DatabaseManageUtil.cancelIntakeFromDatabaseByAlarmId(alarmId);
+                LitePalManageUtil.cancelIntakeFromDatabaseByAlarmId(alarmId);
             }
             //PUT EXTRAS FOR NOTIFICATION INFOS
             context.startService(serviceIntent);

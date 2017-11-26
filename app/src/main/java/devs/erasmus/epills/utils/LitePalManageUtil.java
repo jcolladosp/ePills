@@ -14,7 +14,7 @@ import devs.erasmus.epills.model.Medicine;
  * Created by Lenovo-PC on 23/11/2017.
  */
 
-public class DatabaseManageUtil {
+public class LitePalManageUtil {
 
 
     static public void cancelMedicineFromDatabase(Medicine medicine){

@@ -6,14 +6,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import org.litepal.crud.DataSupport;
-
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 import devs.erasmus.epills.broadcast_receiver.AlarmBroadcastReceiver;
-import devs.erasmus.epills.model.IntakeMoment;
 
 /**
  * Created by Lenovo-PC on 22/11/2017.
@@ -84,7 +80,7 @@ public class AlarmUtil {
             alarmManager.cancel(pendingIntent);
             Log.e("cancel alarm:", String.valueOf(alarmId));
 
-            DatabaseManageUtil.cancelIntakeFromDatabaseByAlarmId(alarmId);
+            LitePalManageUtil.cancelIntakeFromDatabaseByAlarmId(alarmId);
         }
 
     }
