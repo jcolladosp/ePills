@@ -19,7 +19,6 @@ public class IntakeMoment extends DataSupport {
     private int alarmRequestCode;
     private boolean isAlarmSet;
     private long medicineId;
-    private boolean toDelete;
 
     public IntakeMoment(Date startDate, Date endDate, Receipt receipt, long medicineId, int quantity, int alarmRequestCode) {
         this.startDate = startDate;
@@ -28,7 +27,6 @@ public class IntakeMoment extends DataSupport {
         this.medicineId = medicineId;
         this.quantity = quantity;
         this.alarmRequestCode = alarmRequestCode;
-        toDelete = false;
     }
 
     public long getId() {
@@ -100,13 +98,5 @@ public class IntakeMoment extends DataSupport {
 
     public void setMedicineId(long medicineId) {
         this.medicineId = medicineId;
-    }
-
-    public boolean isToDelete() {
-        return toDelete;
-    }
-
-    public void setToDelete(boolean toDelete) {
-        this.toDelete = toDelete;
     }
 }

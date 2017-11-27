@@ -27,6 +27,7 @@ public class AlarmBroadcastReceiver extends BroadcastReceiver {
 
         if(end==1){ //end alarm!
             cancelAlarm(context, alarmId);
+            SQLiteManageUtils.deleteIntakesByAlarmId(alarmId);
         }
         else {
             Log.e("ringing", medicineName + String.valueOf(alarmId));
@@ -36,8 +37,6 @@ public class AlarmBroadcastReceiver extends BroadcastReceiver {
             serviceIntent.putExtra("medicineName", medicineName);
             serviceIntent.putExtra("alarmId", alarmId);
             serviceIntent.putExtra("quantity", quantity);
-
-
 
             if(isOnce){
                 SQLiteManageUtils.deleteIntakesByAlarmId(alarmId);
