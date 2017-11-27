@@ -23,11 +23,7 @@
         <activity
             android:name=".controller.MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
 
@@ -52,6 +48,16 @@
         <activity
             android:name=".controller.AddPillSetTime"
             android:label="@style/AppTheme.NoActionBar" />
+        <activity
+
+            android:name=".controller.SplashActivity"
+            android:label="@style/AppTheme.NoActionBar">
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+         </activity>
 
         <activity android:name=".controller.MedicineBoxActivity"
             android:label="@string/medicinBox_Title"

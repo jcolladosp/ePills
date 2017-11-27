@@ -1,6 +1,7 @@
 package devs.erasmus.epills.widget;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestBuilder;
+import com.bumptech.glide.request.RequestOptions;
 
 import java.util.Calendar;
 import java.util.List;
@@ -60,7 +63,13 @@ public class PillCardAdapter extends RecyclerView.Adapter<PillCardAdapter.MyView
         holder.count.setText(String.valueOf(medicineQuantity.getStartDate()));
 
         // loading album cover using Glide library
-        Glide.with(mContext).load(medicineQuantity.getMedicine().getImage()).into(holder.thumbnail);
+        RequestOptions requestOptions = new RequestOptions();
+        requestOptions.placeholder(R.drawable.pill_placeholder);
+        requestOptions.error(R.drawable.pill_placeholder);
+        requestOptions.centerCrop();
+
+        Glide.with(mContext).setDefaultRequestOptions(requestOptions).load(medicineQuantity.getMedicine().getImage()).into(holder.thumbnail);
+
 
         holder.overflow.setOnClickListener(new View.OnClickListener() {
             @Override
