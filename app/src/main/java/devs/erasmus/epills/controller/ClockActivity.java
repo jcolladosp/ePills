@@ -1,7 +1,12 @@
 package devs.erasmus.epills.controller;
 
+import android.content.ComponentName;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
@@ -16,6 +21,7 @@ import com.tomerrosenfeld.customanalogclockview.CustomAnalogClock;
 import com.viewpagerindicator.as.library.indicator.RecyclerCirclePageIndicator;
 import com.viewpagerindicator.as.library.pageview.RecyclerViewPager;
 
+import org.litepal.LitePal;
 import org.litepal.crud.DataSupport;
 
 import java.util.ArrayList;
@@ -25,7 +31,9 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import devs.erasmus.epills.R;
+import devs.erasmus.epills.broadcast_receiver.BootReceiver;
 import devs.erasmus.epills.model.IntakeMoment;
 import devs.erasmus.epills.model.Medicine;
 import devs.erasmus.epills.utils.ClockUtils;
@@ -46,20 +54,32 @@ public class ClockActivity extends AppCompatActivity {
     RecyclerCirclePageIndicator indicator;
     @BindView(R.id.noPills)
     TextView noPillsTV;
+    @BindView(R.id.cards_layout)
+    ConstraintLayout cards_layout;
 
-    private Drawer drawer;
+    private static Drawer drawer;
+    private View parentLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_clock);
         ButterKnife.bind(this);
-
+        LitePal.initialize(getApplicationContext());
+        enableBootReceiver(true);
         setSupportActionBar(toolbar);
+        parentLayout = findViewById(R.id.clock_layout);
 
         drawer = NavigationDrawer.getDrawerBuilder(this,this,toolbar).build();
+        drawer.setSelection(1,false);
+
         prepareAnalogClock();
         preparePillsAdapter();
         setPills();
+
+        if(getIntent().getBooleanExtra("pill",false)){
+            pillAddedSuccess();
+        }
 
 
 
@@ -114,8 +134,23 @@ public class ClockActivity extends AppCompatActivity {
         else{
             noPillsTV.setText(R.string.no_pills_found);
             noPillsTV.setVisibility(View.VISIBLE);
+            cards_layout.setVisibility(View.GONE);
 
         }
+    }
+    @OnClick(R.id.add_fab)
+    void add_fab(){
+        startActivity(new Intent(this,AddPillGeneralActivity.class));
+    }
+
+    public void pillAddedSuccess(){
+        drawer.closeDrawer();
+
+        Snackbar mySnackbar = Snackbar.make(parentLayout,
+                R.string.pill_added_success, Snackbar.LENGTH_SHORT);
+        mySnackbar.show();
+
+
     }
 
     @Override
@@ -142,6 +177,20 @@ public class ClockActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+    private void enableBootReceiver(boolean b) {
+        ComponentName receiver = new ComponentName(this, BootReceiver.class);
+        PackageManager pm = this.getPackageManager();
 
+        if(b){
+            pm.setComponentEnabledSetting(receiver,
+                    PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                    PackageManager.DONT_KILL_APP);
+        }
+        else{
+            pm.setComponentEnabledSetting(receiver,
+                    PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                    PackageManager.DONT_KILL_APP);
+        }
+    }
 
 }

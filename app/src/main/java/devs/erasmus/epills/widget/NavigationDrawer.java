@@ -43,8 +43,8 @@ public class NavigationDrawer {
 
 
         PrimaryDrawerItem item1 = new PrimaryDrawerItem().withIdentifier(1).withName(activity.getApplicationContext().getString(R.string.title_activity_clock));
-        SecondaryDrawerItem item2 = new SecondaryDrawerItem().withIdentifier(2).withName(activity.getString(R.string.add_medicine));
-        SecondaryDrawerItem item3 = new SecondaryDrawerItem().withIdentifier(3).withName(activity.getString(R.string.medicinBox_Title));
+        PrimaryDrawerItem item2 = new PrimaryDrawerItem().withIdentifier(2).withName(activity.getString(R.string.add_medicine));
+        PrimaryDrawerItem item3 = new PrimaryDrawerItem().withIdentifier(3).withName(activity.getString(R.string.medicinBox_Title));
         return  drawerBuilder =  new DrawerBuilder()
                 .withActivity(activity)
                 .withToolbar(toolbar)
@@ -67,6 +67,8 @@ public class NavigationDrawer {
                                 break;
                             case 2:
                                 context.startActivity(new Intent(context,AddPillGeneralActivity.class));
+                                activity.finish();
+
 
                                 break;
                             case 3:

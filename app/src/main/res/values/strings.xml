@@ -44,5 +44,7 @@
     <string name="no_pills_today">You don\'t have any pill to take today :)</string>
 
     <string name="pill_deleted_success">Pill deleted successfully</string>
+    <string name="pill_info_card">Take %1$s pill(s) at %2$s:%3$s</string>
+
 
 </resources>

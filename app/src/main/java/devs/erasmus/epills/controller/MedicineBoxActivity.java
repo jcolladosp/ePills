@@ -34,7 +34,7 @@ public class MedicineBoxActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         drawer = NavigationDrawer.getDrawerBuilder(this,this,toolbar).build();
-
+        drawer.setSelection(3,false);
         recyclerView.setHasFixedSize(true);//Improve Performance
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);

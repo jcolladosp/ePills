@@ -104,7 +104,7 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
         //Get the medicine object from DB
         int medicineId = getIntent().getIntExtra(EXTRA_MEDICINEID, -1);
         long receiptId = getIntent().getLongExtra(EXTRA_RECEIPTID, -1);
-        if (medicineId == -1 || receiptId == -1l) {
+        if (medicineId == -1 || receiptId == -1) {
             throw new RuntimeException("No ID for medicine!");
         }
 
@@ -306,10 +306,7 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
     public void setNewAlarms(){
         //DISABLE INSTANT RUN OR IT'S NOT GOING TO WORK PROPERLY
         List<IntakeMoment> allIntake = DataSupport.findAll(IntakeMoment.class);
-        Log.e("intakes",String.valueOf(allIntake.size()));
-        Toast.makeText(this, "intake count: " + String.valueOf(allIntake.size()), Toast.LENGTH_SHORT).show();
-
-        for(IntakeMoment intakeMoment : allIntake){
+      for(IntakeMoment intakeMoment : allIntake){
             if(!AlarmUtil.isAlarmSet(this, intakeMoment.getAlarmRequestCode())) {
                 Medicine medicine = DataSupport.find(Medicine.class, intakeMoment.getMedicineId());
                 AlarmUtil.setAlarm(this, medicine.getName(),intakeMoment.getQuantity(),

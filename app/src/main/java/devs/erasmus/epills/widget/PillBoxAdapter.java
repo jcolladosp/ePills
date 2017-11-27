@@ -22,6 +22,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import devs.erasmus.epills.R;
 import devs.erasmus.epills.model.Medicine;
 import devs.erasmus.epills.utils.LitePalManageUtil;
@@ -103,10 +104,10 @@ public class PillBoxAdapter extends RecyclerView.Adapter <PillBoxAdapter.ViewHol
         public ViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
-            deleteButton.setOnClickListener(this);
+
         }
 
-        @Override
+        @OnClick(R.id.deletebutton)
         public void onClick(View v) {
             delete(getLayoutPosition());
         }

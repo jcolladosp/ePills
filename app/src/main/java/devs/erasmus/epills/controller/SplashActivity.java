@@ -28,12 +28,12 @@ public class SplashActivity extends AppCompatActivity {
             public void run() {
                 if(ClockUtils.isFirstTime(getApplicationContext())) {
                     ClockUtils.setFirstTimeDone(getApplicationContext());
-                    Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                    Intent i = new Intent(getApplicationContext(), ClockActivity.class);
                     startActivity(i);
 
                 }
                 else{
-                    Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                    Intent i = new Intent(getApplicationContext(), ClockActivity.class);
                     startActivity(i);
                 }
             }

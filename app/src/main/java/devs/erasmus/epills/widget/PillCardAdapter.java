@@ -1,6 +1,7 @@
 package devs.erasmus.epills.widget;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -34,10 +35,10 @@ public class PillCardAdapter extends RecyclerView.Adapter<PillCardAdapter.MyView
 
         public MyViewHolder(View view) {
             super(view);
-            title = (TextView) view.findViewById(R.id.title);
-            count = (TextView) view.findViewById(R.id.count);
-            thumbnail = (ImageView) view.findViewById(R.id.thumbnail);
-            overflow = (ImageView) view.findViewById(R.id.overflow);
+            title = view.findViewById(R.id.title);
+            count = view.findViewById(R.id.count);
+            thumbnail = view.findViewById(R.id.thumbnail);
+            overflow = view.findViewById(R.id.overflow);
         }
     }
 
@@ -59,8 +60,13 @@ public class PillCardAdapter extends RecyclerView.Adapter<PillCardAdapter.MyView
     public void onBindViewHolder(final MyViewHolder holder, int position) {
         IntakeMoment medicineQuantity = pillList.get(position);
 
+        String info_pill = mContext.getString(R.string.pill_info_card,String.valueOf(medicineQuantity.getQuantity()) ,
+                String.valueOf(medicineQuantity.getStartDate().getHours()),
+                String.format("%02d",  medicineQuantity.getStartDate().getMinutes()));
+
+
         holder.title.setText(medicineQuantity.getMedicine().getName());
-        holder.count.setText(String.valueOf(medicineQuantity.getStartDate()));
+        holder.count.setText(info_pill);
 
         // loading album cover using Glide library
         RequestOptions requestOptions = new RequestOptions();

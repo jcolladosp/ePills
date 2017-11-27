@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import devs.erasmus.epills.R;
 import devs.erasmus.epills.controller.AddPillSetTime;
+import devs.erasmus.epills.controller.ClockActivity;
 import devs.erasmus.epills.controller.MainActivity;
 
 
@@ -73,9 +74,12 @@ public class AddPillFinishDialog extends DialogFragment {
                                 activity.finish();
                                 break;
                             case 1:
-                                MainActivity.pillAddedSuccess();
                                 setAlarmActivity.setNewAlarms();
                                 getActivity().finish();
+                                Intent i = new Intent(getContext(),ClockActivity.class);
+                                i.putExtra("pill", true);
+                                startActivity(i);
+
                                 break;
                             default:
                                 throw new RuntimeException("Programming error! You should never reach default");
