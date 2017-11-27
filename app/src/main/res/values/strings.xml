@@ -46,5 +46,8 @@
     <string name="pill_deleted_success">Pill deleted successfully</string>
     <string name="pill_info_card">Take %1$s pill(s) at %2$s:%3$s</string>
 
+    <!-- Notification -->
+    <string name="channel_name">Pill Reminder Channel</string>
+    <string name="channel_description">This is the notification channel of ePills</string>
 
 </resources>
