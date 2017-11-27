@@ -35,7 +35,12 @@
     <string name="dialog_title">Do you wish....</string>
 
     <!-- PillBox -->
-    <string name="medicinBox_Title">Medicin Box</string>
+    <string name="medicinBox_Title">Medicine Box</string>
     <string name="empty_description">No description</string>
     <string name="delete_button">delete</string>
+
+    <string name="add_medicine">New medicine</string>
+    <string name="no_pills_found">You don\'t have any pills yet, please add them :)</string>
+    <string name="no_pills_today">You don\'t have any to take today :)</string>
+
 </resources>

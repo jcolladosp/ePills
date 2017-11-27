@@ -5,8 +5,11 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.mikepenz.materialdrawer.Drawer;
 import com.tomerrosenfeld.customanalogclockview.CustomAnalogClock;
@@ -25,7 +28,7 @@ import butterknife.ButterKnife;
 import devs.erasmus.epills.R;
 import devs.erasmus.epills.model.IntakeMoment;
 import devs.erasmus.epills.model.Medicine;
-import devs.erasmus.epills.model.Receipt;
+import devs.erasmus.epills.utils.ClockUtils;
 import devs.erasmus.epills.widget.NavigationDrawer;
 import devs.erasmus.epills.widget.PillCardAdapter;
 
@@ -41,6 +44,8 @@ public class ClockActivity extends AppCompatActivity {
     Toolbar toolbar;
     @BindView (R.id.indicator)
     RecyclerCirclePageIndicator indicator;
+    @BindView(R.id.noPills)
+    TextView noPillsTV;
 
     private Drawer drawer;
     @Override
@@ -74,26 +79,37 @@ public class ClockActivity extends AppCompatActivity {
         mRecyclerView.setAdapter(pillCardAdapter);
         mRecyclerView.setHorizontalScrollBarEnabled(false);
         indicator.setViewPager(mRecyclerView);
-        indicator.setRadius(15);
+        indicator.setRadius(12);
         indicator.setFillColor(Color.parseColor("#FF33B5E5"));
 
 
     }
     private void setPills(){
-        intakeMomentList.clear();
-        pillCardAdapter.notifyDataSetChanged();
+        if(DataSupport.count(IntakeMoment.class)!=0) {
+            noPillsTV.setVisibility(View.GONE);
+            intakeMomentList.clear();
+            pillCardAdapter.notifyDataSetChanged();
 
-        Date today = new Date();
+            Date today = new Date();
+            Date tomorrow = ClockUtils.addDays(today,1);
+
+            Log.i("hora", String.valueOf(today.getTime()));
+            Log.i("hora", String.valueOf(tomorrow.getTime()));
 
 
-        List<IntakeMoment> allIntake = DataSupport.findAll(IntakeMoment.class);
-        for (IntakeMoment intake : allIntake){
-            intake.setMedicine(DataSupport.find(Medicine.class, intake.getMedicineId()));
-            intakeMomentList.add(intake);
-            analogClock.drawPill(intake.getStartDate().getHours());
+            List<IntakeMoment> allIntake = DataSupport.findAll(IntakeMoment.class);
+            for (IntakeMoment intake : allIntake) {
+                intake.setMedicine(DataSupport.find(Medicine.class, intake.getMedicineId()));
+                intakeMomentList.add(intake);
+                analogClock.drawPill(intake.getStartDate().getHours());
+            }
+
+            pillCardAdapter.notifyDataSetChanged();
         }
+        else{
+            noPillsTV.setVisibility(View.VISIBLE);
 
-        pillCardAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override
