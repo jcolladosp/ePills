@@ -68,7 +68,7 @@ public class PillBoxAdapter extends RecyclerView.Adapter <PillBoxAdapter.ViewHol
 
         Glide.with(context)
                 .load(med.getImage())
-                .apply(RequestOptions.circleCropTransform().fallback(R.mipmap.ic_picture_round).error(R.mipmap.ic_picture_round))
+                .apply(RequestOptions.circleCropTransform().fallback(R.mipmap.ic_pill_placeholder).error(R.mipmap.ic_pill_placeholder))
                 .into(holder.imageView);
     }
 
