@@ -41,6 +41,8 @@
 
     <string name="add_medicine">New medicine</string>
     <string name="no_pills_found">You don\'t have any pills yet, please add them :)</string>
-    <string name="no_pills_today">You don\'t have any to take today :)</string>
+    <string name="no_pills_today">You don\'t have any pill to take today :)</string>
+
+    <string name="pill_deleted_success">Pill deleted successfully</string>
 
 </resources>

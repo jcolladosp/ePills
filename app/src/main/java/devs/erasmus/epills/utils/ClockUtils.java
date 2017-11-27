@@ -1,5 +1,8 @@
 package devs.erasmus.epills.utils;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+
 import java.util.Calendar;
 import java.util.Date;
 
@@ -14,5 +17,17 @@ public class ClockUtils {
         cal.setTime(date);
         cal.add(Calendar.DATE, days); //minus number would decrement the days
         return cal.getTime();
+    }
+    public static SharedPreferences getPrefs(Context context) {
+        return context.getSharedPreferences(PrefKeys.NAME.toString(), Context.MODE_PRIVATE);
+    }
+    public static boolean isFirstTime(Context context) {
+        return  getPrefs(context).getBoolean(PrefKeys.FIRST_TIME.toString(), true);
+
+    }
+    public static void setFirstTimeDone(Context context){
+        SharedPreferences.Editor editor = getPrefs(context).edit();
+        editor.putBoolean(PrefKeys.FIRST_TIME.toString(),false);
+        editor.commit();
     }
 }

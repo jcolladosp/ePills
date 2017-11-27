@@ -97,7 +97,12 @@ public class ClockActivity extends AppCompatActivity {
             Log.i("hora", String.valueOf(tomorrow.getTime()));
 
 
-            List<IntakeMoment> allIntake = DataSupport.findAll(IntakeMoment.class);
+            List<IntakeMoment> allIntake = DataSupport.where("startdate between "
+            +today.getTime() +" and "+ tomorrow.getTime()).find(IntakeMoment.class);
+            if(allIntake.size()==0){
+                noPillsTV.setText(R.string.no_pills_today);
+                noPillsTV.setVisibility(View.VISIBLE);
+            }
             for (IntakeMoment intake : allIntake) {
                 intake.setMedicine(DataSupport.find(Medicine.class, intake.getMedicineId()));
                 intakeMomentList.add(intake);
@@ -107,6 +112,7 @@ public class ClockActivity extends AppCompatActivity {
             pillCardAdapter.notifyDataSetChanged();
         }
         else{
+            noPillsTV.setText(R.string.no_pills_found);
             noPillsTV.setVisibility(View.VISIBLE);
 
         }
