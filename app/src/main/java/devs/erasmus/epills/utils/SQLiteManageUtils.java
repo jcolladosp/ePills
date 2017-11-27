@@ -32,7 +32,6 @@ public class SQLiteManageUtils {
             int quantity = intakeCursor.getInt(intakeCursor.getColumnIndex("quantity"));
             int alarmRequestCode = intakeCursor.getInt(intakeCursor.getColumnIndex("alarmrequestcode"));
             long medicineId = intakeCursor.getLong(intakeCursor.getColumnIndex("medicineid"));
-            int isOnce = intakeCursor.getInt(intakeCursor.getColumnIndex("isonce"));
             Cursor medicineCursor = db.query("medicine", null, "id = " + String.valueOf(medicineId), null, null, null, null);
             String medicineName = "placeholder name";
 

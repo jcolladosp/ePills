@@ -77,7 +77,7 @@ public class PillBoxAdapter extends RecyclerView.Adapter <PillBoxAdapter.ViewHol
 
     public void delete(int position) {
 
-        LitePalManageUtil.cancelMedicineFromDatabase(medicines.get(position));
+        LitePalManageUtil.cancelMedicineFromDatabase(context, medicines.get(position));
         //medicines.remove(position);
         notifyItemRemoved(position);
         //TODO: Delete existing DB instances and alarms.

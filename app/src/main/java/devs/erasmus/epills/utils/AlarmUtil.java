@@ -62,7 +62,7 @@ public class AlarmUtil {
             alarmManager.cancel(pendingIntent);
             Log.e("cancel alarm:", String.valueOf(alarmId));
 
-            LitePalManageUtil.deleteIntakeByAlarmId(alarmId);
+            LitePalManageUtil.deleteIntakeByAlarmId(context, alarmId);
         }
 
     }

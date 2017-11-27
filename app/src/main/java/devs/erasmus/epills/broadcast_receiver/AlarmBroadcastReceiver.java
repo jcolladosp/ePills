@@ -52,7 +52,7 @@ public class AlarmBroadcastReceiver extends BroadcastReceiver {
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTimeInMillis(startDateInMillis);
 
-                //refrsh startDate to the next date
+                //refresh startDate to the next date
                 while (calendar.getTimeInMillis() < System.currentTimeMillis()) {
                     calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH) + 7);
                 }
