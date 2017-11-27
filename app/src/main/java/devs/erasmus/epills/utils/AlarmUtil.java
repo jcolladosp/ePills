@@ -6,14 +6,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import org.litepal.crud.DataSupport;
-
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 import devs.erasmus.epills.broadcast_receiver.AlarmBroadcastReceiver;
-import devs.erasmus.epills.model.IntakeMoment;
 
 /**
  * Created by Lenovo-PC on 22/11/2017.
@@ -30,49 +26,31 @@ public class AlarmUtil {
         PendingIntent pendingIntent;
         Intent intent = new Intent(context, AlarmBroadcastReceiver.class);
 
+        intent.putExtra("startDate", startDate.getTime());
+        intent.putExtra("endDate", endDate.getTime());
         intent.putExtra("medicineName", medicineName);
         intent.putExtra("alarmId", alarmId);
         intent.putExtra("quantity", quantity);
+
+        if(endDate==startDate){
+            intent.putExtra("isOnce", 1);
+        }
+        else{
+            intent.putExtra("isOnce", 0);
+        }
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
         calendar.setTime(startDate);
 
-        //create an alarm without occurencies
-        if (startDate.equals(endDate)) {
-            intent.putExtra("isOnce", true);
-            pendingIntent = PendingIntent.getBroadcast(context, alarmId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        pendingIntent = PendingIntent.getBroadcast(context, alarmId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,
-                    calendar.getTimeInMillis(),
-                    pendingIntent);
+        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,
+                                                calendar.getTimeInMillis(),
+                                                pendingIntent);
 
-            Log.e("set alarm:", String.valueOf(calendar.getTime()) + " (" + String.valueOf(alarmId) + ")");
-        }
-        //create an alarm with occurencies
-        else {
-            intent.putExtra("isOnce", false);
-            pendingIntent = PendingIntent.getBroadcast(context, alarmId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Log.e("set alarm:", String.valueOf(calendar.getTime()) + " (" + String.valueOf(alarmId) + ")");
 
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP,
-                    calendar.getTimeInMillis(),
-                    AlarmManager.INTERVAL_DAY * 7, //once a week
-                    pendingIntent);
-
-            Log.e("set occurent alarm:", String.valueOf(calendar.getTime()) + " (" + String.valueOf(alarmId) + ")");
-
-            //set the end date alarm
-            calendar.setTime(endDate);
-            intent.putExtra("end", 1);
-            int id = (int) System.currentTimeMillis();
-            pendingIntent = PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_UPDATE_CURRENT); //intent stores the alarmId of the alarm to cancel
-
-            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,
-                    calendar.getTimeInMillis(),
-                    pendingIntent);
-
-            Log.e("set endalarm:", String.valueOf(calendar.getTime()));
-        }
     }
 
     static public void cancelAlarm(Context context, int alarmId) {
@@ -84,13 +62,14 @@ public class AlarmUtil {
             alarmManager.cancel(pendingIntent);
             Log.e("cancel alarm:", String.valueOf(alarmId));
 
-            DatabaseManageUtil.cancelIntakeFromDatabaseByAlarmId(alarmId);
+            LitePalManageUtil.deleteIntakeByAlarmId(context, alarmId);
         }
 
     }
 
     //Purpose: fix the calendar to set the proper alarm, it's used when adding a multi-time alarm
-    //to fix the problematic cases and when retrieving the multi-time alarms
+    //to fix the problematic cases of setting an alarm at the end of the month or for another week
+    // and when retrieving the multi-time alarms on boot
     static public Calendar fixCalendar(Calendar startDate, int weekday){
         Calendar occurenceCalendar = Calendar.getInstance();
         occurenceCalendar.setTime(startDate.getTime());
@@ -106,6 +85,13 @@ public class AlarmUtil {
             }
         }
         return occurenceCalendar;
+    }
+
+    static public boolean isAlarmSet(Context context, int alarmId){
+        Intent intent = new Intent(context, AlarmBroadcastReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, alarmId, intent, PendingIntent.FLAG_NO_CREATE);
+
+        return (pendingIntent != null); //True: alarm is set
     }
 
 }

@@ -266,7 +266,6 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
     public void sendData() {
         //after data save show interface whether additional intake should be shown.
         AddPillFinishDialog finishDialog = AddPillFinishDialog.newInstance();
-        finishDialog.show(getSupportFragmentManager(),AddPillFinishDialog.tag);
 
         String medicineName = medicine.getName(); // MEDICINE NAME
         int quantity = seekBar.getProgress(); //HOW MANY PILLS TO TAKE AT ONCE
@@ -277,7 +276,7 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
         //intake for alarm without occurences
         if(singleSelected){
             int alarmId = (int) System.currentTimeMillis(); //unique id
-            IntakeMoment intakeMoment = new IntakeMoment(dateToStart, dateToStart, receipt, medicine.getId(), seekBar.getProgress(), alarmId);
+            IntakeMoment intakeMoment = new IntakeMoment(dateToStart, dateToStart, receipt, medicine.getId(), seekBar.getProgress(), alarmId, 1);
             intakeMoment.save();
         }
         //intake for alarm with occurences
@@ -291,15 +290,15 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
                     if(dateToEnd.after(newDateToStart)) {
                         int alarmId = (int) System.currentTimeMillis(); //unique id
 
-                        IntakeMoment intakeMoment = new IntakeMoment(newDateToStart, dateToEnd, receipt, medicine.getId(), seekBar.getProgress(), alarmId);
+                        IntakeMoment intakeMoment = new IntakeMoment(newDateToStart, dateToEnd, receipt, medicine.getId(), seekBar.getProgress(), alarmId, 0);
                         intakeMoment.save();
 
                     }
                 }
             }
-
-            //When finish button it's pressed, setAlarm is called
         }
+        finishDialog.show(getSupportFragmentManager(),AddPillFinishDialog.tag);
+        //When finish button it's pressed, setAlarm is called
 
     }
 
@@ -311,16 +310,12 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
         Toast.makeText(this, "intake count: " + String.valueOf(allIntake.size()), Toast.LENGTH_SHORT).show();
 
         for(IntakeMoment intakeMoment : allIntake){
-            if(!intakeMoment.getIsAlarmSet()) {
+            if(!AlarmUtil.isAlarmSet(this, intakeMoment.getAlarmRequestCode())) {
                 Medicine medicine = DataSupport.find(Medicine.class, intakeMoment.getMedicineId());
                 AlarmUtil.setAlarm(this, medicine.getName(),intakeMoment.getQuantity(),
                                                 intakeMoment.getStartDate(),
                                                 intakeMoment.getEndDate(),
                                                 intakeMoment.getAlarmRequestCode());
-
-
-                intakeMoment.setIsAlarmSet(true);
-                intakeMoment.save();
             }
         }
     }
