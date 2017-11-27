@@ -276,7 +276,7 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
         //intake for alarm without occurences
         if(singleSelected){
             int alarmId = (int) System.currentTimeMillis(); //unique id
-            IntakeMoment intakeMoment = new IntakeMoment(dateToStart, dateToStart, receipt, medicine.getId(), seekBar.getProgress(), alarmId, true);
+            IntakeMoment intakeMoment = new IntakeMoment(dateToStart, dateToStart, receipt, medicine.getId(), seekBar.getProgress(), alarmId, 1);
             intakeMoment.save();
         }
         //intake for alarm with occurences
@@ -290,7 +290,7 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
                     if(dateToEnd.after(newDateToStart)) {
                         int alarmId = (int) System.currentTimeMillis(); //unique id
 
-                        IntakeMoment intakeMoment = new IntakeMoment(newDateToStart, dateToEnd, receipt, medicine.getId(), seekBar.getProgress(), alarmId, false);
+                        IntakeMoment intakeMoment = new IntakeMoment(newDateToStart, dateToEnd, receipt, medicine.getId(), seekBar.getProgress(), alarmId, 0);
                         intakeMoment.save();
 
                     }

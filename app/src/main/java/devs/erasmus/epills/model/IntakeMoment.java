@@ -19,16 +19,16 @@ public class IntakeMoment extends DataSupport {
     private int alarmRequestCode;
     private boolean isAlarmSet;
     private long medicineId;
-    private boolean isOnce;
+    private int isOnce; //0 is false, 1 is true
 
-    public IntakeMoment(Date startDate, Date endDate, Receipt receipt, long medicineId, int quantity, int alarmRequestCode, boolean isOnce) {
+    public IntakeMoment(Date startDate, Date endDate, Receipt receipt, long medicineId, int quantity, int alarmRequestCode, int isOnce) {
         this.startDate = startDate;
         this.endDate = endDate;
         this.receipt = receipt;
         this.medicineId = medicineId;
         this.quantity = quantity;
         this.alarmRequestCode = alarmRequestCode;
-        this.isOnce = isOnce; //default
+        this.isOnce = isOnce;
     }
 
     public long getId() {
@@ -102,11 +102,11 @@ public class IntakeMoment extends DataSupport {
         this.medicineId = medicineId;
     }
 
-    public boolean isOnce() {
+    public int isOnce() {
         return isOnce;
     }
 
-    public void setOnce(boolean once) {
+    public void setOnce(int once) {
         isOnce = once;
     }
 }

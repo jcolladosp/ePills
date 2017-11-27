@@ -37,7 +37,7 @@ public class LitePalManageUtil {
         intakesDelete(intakes);
     }
 
-    static public void deleteIntakesByAlarmId(int alarmId){
+    static public void deleteIntakeByAlarmId(int alarmId){
         List<IntakeMoment> intakes = DataSupport.where("alarmRequestCode = ?",String.valueOf(alarmId)).find(IntakeMoment.class);
 
         //remove intakes from db
