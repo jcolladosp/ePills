@@ -32,23 +32,18 @@ public class BootReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
             SQLiteDatabase db = SQLiteDatabase.openDatabase(DATABASE_TABLE_NAME, null, OPEN_READWRITE);
-            //i need sdf because SQLite doesn't actually support Date as a type, so i have to rebuild it
-            SimpleDateFormat dateFormat = new SimpleDateFormat();
 
            //String[] columns = new String[]{"startDate", "endDate", "medicine", "quantity", "alarmRequestCode", "isAlarmSet"};
            Cursor intakeCursor = db.query("intakemoment", null, null, null, null, null, null);
 
-            int i=0;
             for (intakeCursor.moveToFirst(); !intakeCursor.isAfterLast(); intakeCursor.moveToNext()) {
-                i++;
                 long startDateMillis = intakeCursor.getLong(intakeCursor.getColumnIndex("startdate"));
                 long endDateMillis = intakeCursor.getLong(intakeCursor.getColumnIndex("enddate"));
                 int quantity = intakeCursor.getInt(intakeCursor.getColumnIndex("quantity"));
                 int alarmRequestCode = intakeCursor.getInt(intakeCursor.getColumnIndex("alarmrequestcode"));
                 long medicineId = intakeCursor.getLong(intakeCursor.getColumnIndex("medicineid"));
-                String medicineName = "no name";
                 Cursor medicineCursor = db.query("medicine", null, "id = "+String.valueOf(medicineId), null, null, null, null);
-
+                String medicineName = "placeholder name";
 
                 if(medicineCursor.moveToFirst()){
                     medicineName = medicineCursor.getString(medicineCursor.getColumnIndex("name"));
@@ -60,10 +55,11 @@ public class BootReceiver extends BroadcastReceiver {
                 calendar.setTimeInMillis(startDateMillis);
                 int weekDay = calendar.get(Calendar.DAY_OF_WEEK);
 
+                /*
                 while(calendar.getTimeInMillis() < System.currentTimeMillis()){
                     calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH) + 7);
                 }
-
+                */
 
                 Date startDate = calendar.getTime();
                 Date endDate = long2Date(endDateMillis);

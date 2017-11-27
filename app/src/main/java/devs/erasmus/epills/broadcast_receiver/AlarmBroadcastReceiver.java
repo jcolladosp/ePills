@@ -3,9 +3,14 @@ package devs.erasmus.epills.broadcast_receiver;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.provider.ContactsContract;
 import android.util.Log;
 
+import org.litepal.LitePal;
+import org.litepal.crud.DataSupport;
+
 import devs.erasmus.epills.utils.LitePalManageUtil;
+import devs.erasmus.epills.utils.SQLiteManageUtils;
 import devs.erasmus.epills.widget.NotificationService;
 
 import static devs.erasmus.epills.utils.AlarmUtil.cancelAlarm;
@@ -24,7 +29,7 @@ public class AlarmBroadcastReceiver extends BroadcastReceiver {
             cancelAlarm(context, alarmId);
         }
         else {
-            Log.e("this", medicineName + String.valueOf(alarmId));
+            Log.e("ringing", medicineName + String.valueOf(alarmId));
 
             //create intent goto NotificationService
             Intent serviceIntent = new Intent(context, NotificationService.class);
@@ -32,8 +37,10 @@ public class AlarmBroadcastReceiver extends BroadcastReceiver {
             serviceIntent.putExtra("alarmId", alarmId);
             serviceIntent.putExtra("quantity", quantity);
 
+
+
             if(isOnce){
-                LitePalManageUtil.cancelIntakeFromDatabaseByAlarmId(alarmId);
+                SQLiteManageUtils.deleteIntakesByAlarmId(alarmId);
             }
             //PUT EXTRAS FOR NOTIFICATION INFOS
             context.startService(serviceIntent);

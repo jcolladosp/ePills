@@ -80,7 +80,7 @@ public class AlarmUtil {
             alarmManager.cancel(pendingIntent);
             Log.e("cancel alarm:", String.valueOf(alarmId));
 
-            LitePalManageUtil.cancelIntakeFromDatabaseByAlarmId(alarmId);
+            LitePalManageUtil.deleteIntakesByAlarmId(alarmId);
         }
 
     }
