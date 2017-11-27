@@ -42,30 +42,35 @@ public class BootReceiver extends BroadcastReceiver {
                 int quantity = intakeCursor.getInt(intakeCursor.getColumnIndex("quantity"));
                 int alarmRequestCode = intakeCursor.getInt(intakeCursor.getColumnIndex("alarmrequestcode"));
                 long medicineId = intakeCursor.getLong(intakeCursor.getColumnIndex("medicineid"));
-                Cursor medicineCursor = db.query("medicine", null, "id = "+String.valueOf(medicineId), null, null, null, null);
+                int isOnce = intakeCursor.getInt(intakeCursor.getColumnIndex("isonce"));
+                Cursor medicineCursor = db.query("medicine", null, "id = " + String.valueOf(medicineId), null, null, null, null);
                 String medicineName = "placeholder name";
 
-                if(medicineCursor.moveToFirst()){
+                if (medicineCursor.moveToFirst()) {
                     medicineName = medicineCursor.getString(medicineCursor.getColumnIndex("name"));
                 }
 
+                Date currentDate = Calendar.getInstance().getTime();
 
-                //logic part to refresh startDate to the correct day/month/year
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTimeInMillis(startDateMillis);
-                int weekDay = calendar.get(Calendar.DAY_OF_WEEK);
-
-                /*
-                while(calendar.getTimeInMillis() < System.currentTimeMillis()){
-                    calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH) + 7);
+                //if the alarm is already passed, set it off as a one-time alarm!
+                if(startDateMillis < System.currentTimeMillis()){
+                    AlarmUtil.setAlarm(context, medicineName, quantity, currentDate, currentDate, alarmRequestCode);
                 }
-                */
 
-                Date startDate = calendar.getTime();
-                Date endDate = long2Date(endDateMillis);
+                //logic part to refresh startDate to the correct day/month/year if multi-time alarm
+                if(isOnce==0){
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTimeInMillis(startDateMillis);
 
-                Log.e("resetting alarm", String.valueOf(startDate) + "( " + String.valueOf(alarmRequestCode) + " )");
-                AlarmUtil.setAlarm(context, medicineName, quantity, startDate, endDate, alarmRequestCode);
+                    Date startDate = calendar.getTime();
+                    Date endDate = long2Date(endDateMillis);
+
+                    while (calendar.getTimeInMillis() < System.currentTimeMillis()) {
+                        calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH) + 7);
+                    }
+                    Log.e("resetting alarm", String.valueOf(startDate) + "( " + String.valueOf(alarmRequestCode) + " )");
+                    AlarmUtil.setAlarm(context, medicineName, quantity, startDate, endDate, alarmRequestCode);
+                }
 
                 medicineCursor.close();
             }
