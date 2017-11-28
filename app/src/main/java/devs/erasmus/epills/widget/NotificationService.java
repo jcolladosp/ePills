@@ -58,9 +58,9 @@ public class NotificationService extends Service {
         takeIntent.putExtra("action","Take");
         takeIntent.putExtra("id", id);
         //action pendings
-        PendingIntent skipPending = PendingIntent.getBroadcast(this,0,skipIntent,PendingIntent.FLAG_UPDATE_CURRENT);
-        PendingIntent snoozePending = PendingIntent.getBroadcast(this,0,snoozeIntent,PendingIntent.FLAG_UPDATE_CURRENT);
-        PendingIntent takePending = PendingIntent.getBroadcast(this,0,takeIntent,PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent skipPending = PendingIntent.getBroadcast(this,1,skipIntent,PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent snoozePending = PendingIntent.getBroadcast(this,2,snoozeIntent,PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent takePending = PendingIntent.getBroadcast(this,3,takeIntent,PendingIntent.FLAG_UPDATE_CURRENT);
 
         //New more flexible notification system ,Android Oreo only
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -79,7 +79,7 @@ public class NotificationService extends Service {
             // channel, if the device supports this feature.
             mChannel.setLightColor(Color.GREEN);
             mChannel.enableVibration(true);
-            mChannel.setVibrationPattern(new long[]{100, 100, 100, 100});
+            mChannel.setVibrationPattern(new long[]{100, 500});
             notificationManager.createNotificationChannel(mChannel);
 
             NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, channelId)
