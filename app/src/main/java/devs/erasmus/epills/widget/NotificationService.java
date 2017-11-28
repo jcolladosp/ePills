@@ -79,7 +79,7 @@ public class NotificationService extends Service {
             // channel, if the device supports this feature.
             mChannel.setLightColor(Color.GREEN);
             mChannel.enableVibration(true);
-            mChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+            mChannel.setVibrationPattern(new long[]{100, 100, 100, 100});
             notificationManager.createNotificationChannel(mChannel);
 
             NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, channelId)
