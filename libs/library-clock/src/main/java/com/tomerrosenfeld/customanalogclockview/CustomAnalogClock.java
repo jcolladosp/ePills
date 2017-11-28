@@ -83,7 +83,7 @@ public class CustomAnalogClock extends View {
     }
 
     public void init(Context context) {
-        init(context, R.drawable.default_face, R.drawable.default_hour_hand, R.drawable.default_minute_hand,R.drawable.default_minute_hand  , 0, false, false);
+        init(context, R.drawable.default_face, R.drawable.default_hour_hand, R.drawable.default_minute_hand,R.drawable.default_minute_hand,R.drawable.default_hour_hand  , 0, false, false);
     }
 
     /**
@@ -104,7 +104,7 @@ public class CustomAnalogClock extends View {
         setFace(r.getDrawable(drawableRes));
     }
 
-    public void init(Context context, @DrawableRes int watchFace, @DrawableRes int hourHand, @DrawableRes int minuteHand, @DrawableRes int pill, int alpha, boolean is24, boolean hourOnTop) {
+    public void init(Context context, @DrawableRes int watchFace, @DrawableRes int hourHand, @DrawableRes int minuteHand, @DrawableRes int pill,@DrawableRes int highlight, int alpha, boolean is24, boolean hourOnTop) {
         CustomAnalogClock.is24 = is24;
 
         CustomAnalogClock.hourOnTop = hourOnTop;
@@ -116,10 +116,12 @@ public class CustomAnalogClock extends View {
 
         Drawable Mhand = context.getResources().getDrawable(minuteHand);
         Drawable mPill = context.getResources().getDrawable(pill);
+        Drawable mHighlight = context.getResources().getDrawable(highlight);
+
 
         mCalendar = Calendar.getInstance();
 
-        mHandsOverlay = new HandsOverlay(Hhand, Mhand,mPill).withScale(sizeScale);
+        mHandsOverlay = new HandsOverlay(Hhand, Mhand,mPill,mHighlight).withScale(sizeScale);
     }
 
     public void setFace(Drawable face) {
@@ -142,6 +144,10 @@ public class CustomAnalogClock extends View {
         mCalendar.setTimeInMillis(time);
 
         invalidate();
+    }
+
+    public void highlightPill(int position) {
+        mHandsOverlay.highlightPill(position);
     }
 
     /**
