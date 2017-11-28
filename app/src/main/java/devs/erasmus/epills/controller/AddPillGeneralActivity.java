@@ -176,7 +176,7 @@ public class AddPillGeneralActivity extends AppCompatActivity {
         } else {
             Medicine medicine = new Medicine(name_text.getText().toString(), description_text.getText().toString(), mCurrentPhotoPath);
             medicine.save();
-            int id = DataSupport.count(Medicine.class); //Possible because of auto-increment.
+            long id = medicine.getId(); //Possible because of auto-increment.
 
             //Create new Receipt
             Receipt receipt = new Receipt();

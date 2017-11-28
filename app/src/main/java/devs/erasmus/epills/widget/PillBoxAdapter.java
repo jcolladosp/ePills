@@ -35,6 +35,8 @@ public class PillBoxAdapter extends RecyclerView.Adapter <PillBoxAdapter.ViewHol
     private List<Medicine> medicines;
     private Context context;
     private View view;
+    private ViewHolder vh;
+    private ViewGroup vg;
     public PillBoxAdapter(Context context) {
         this.medicines = DataSupport.findAll(Medicine.class);
         this.context = context;
@@ -49,9 +51,10 @@ public class PillBoxAdapter extends RecyclerView.Adapter <PillBoxAdapter.ViewHol
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        vg = parent;
         view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.pill_box_item,parent, false);
-        ViewHolder vh = new ViewHolder(view);
+        vh = new ViewHolder(view);
         return vh;
     }
 
@@ -83,7 +86,7 @@ public class PillBoxAdapter extends RecyclerView.Adapter <PillBoxAdapter.ViewHol
         medicines.remove(position);
         notifyDataSetChanged();
 
-        Snackbar mySnackbar = Snackbar.make(view,
+        Snackbar mySnackbar = Snackbar.make(vg,
                 R.string.pill_deleted_success, Snackbar.LENGTH_SHORT);
         mySnackbar.show();
 
