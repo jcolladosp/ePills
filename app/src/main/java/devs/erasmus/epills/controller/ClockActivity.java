@@ -107,7 +107,7 @@ public class ClockActivity extends AppCompatActivity {
         mRecyclerView.addOnPageChangedListener(new RecyclerViewPager.OnPageChangedListener() {
             @Override
             public void OnPageChanged(int oldPosition, int newPosition) {
-                analogClock.highlightPill(newPosition);
+              //  analogClock.highlightPill(newPosition);
             }
 
         });
