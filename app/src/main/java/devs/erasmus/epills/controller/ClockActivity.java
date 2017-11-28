@@ -127,9 +127,12 @@ public class ClockActivity extends AppCompatActivity {
 
             List<IntakeMoment> allIntake = DataSupport.where("startdate between "
             +today.getTime() +" and "+ tomorrow.getTime()).find(IntakeMoment.class);
+
             if(allIntake.size()==0){
                 noPillsTV.setText(R.string.no_pills_today);
                 noPillsTV.setVisibility(View.VISIBLE);
+                cards_layout.setVisibility(View.GONE);
+
             }
             for (IntakeMoment intake : allIntake) {
                 intake.setMedicine(DataSupport.find(Medicine.class, intake.getMedicineId()));
