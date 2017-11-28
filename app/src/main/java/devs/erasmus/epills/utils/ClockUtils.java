@@ -1,5 +1,6 @@
 package devs.erasmus.epills.utils;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 
@@ -29,5 +30,12 @@ public class ClockUtils {
         SharedPreferences.Editor editor = getPrefs(context).edit();
         editor.putBoolean(PrefKeys.FIRST_TIME.toString(),false);
         editor.commit();
+    }
+    public static AlertDialog.Builder getModal(int title, int body, Context context) {
+        final  AlertDialog.Builder builder = new  AlertDialog.Builder (context);
+        builder.setTitle(title);
+        builder.setMessage(body);
+
+        return builder;
     }
 }

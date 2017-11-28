@@ -73,8 +73,9 @@ public class PillCardAdapter extends RecyclerView.Adapter<PillCardAdapter.MyView
         requestOptions.placeholder(R.drawable.pill_placeholder);
         requestOptions.error(R.drawable.pill_placeholder);
         requestOptions.centerCrop();
+        String image_path= medicineQuantity.getMedicine().getImage();
 
-        Glide.with(mContext).setDefaultRequestOptions(requestOptions).load(medicineQuantity.getMedicine().getImage()).into(holder.thumbnail);
+        Glide.with(mContext).setDefaultRequestOptions(requestOptions).load(image_path).into(holder.thumbnail);
 
 
         holder.overflow.setOnClickListener(new View.OnClickListener() {

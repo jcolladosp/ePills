@@ -1,9 +1,13 @@
 package devs.erasmus.epills.controller;
 
+import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
@@ -27,6 +31,7 @@ import butterknife.OnClick;
 import devs.erasmus.epills.model.Medicine;
 import devs.erasmus.epills.model.Receipt;
 import devs.erasmus.epills.utils.AutoFillNetworkUtils;
+import devs.erasmus.epills.utils.ClockUtils;
 import devs.erasmus.epills.widget.SquareImageView;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.ProgressBar;
@@ -34,6 +39,11 @@ import android.widget.ProgressBar;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.mikepenz.materialdrawer.Drawer;
 
 import org.json.JSONArray;
@@ -46,6 +56,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -85,6 +96,7 @@ public class AddPillGeneralActivity extends AppCompatActivity {
 
     private Drawer drawer;
     static final int REQUEST_IMAGE_CAPTURE = 1;
+    public static final int GALLERY_PICK = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,6 +123,14 @@ public class AddPillGeneralActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+
+        }
+        if (data != null && requestCode == GALLERY_PICK) {
+            Uri selectedImageURI = data.getData();
+            mCurrentPhotoPath = getRealPathFromURI(selectedImageURI);
+        }
+        if(resultCode == RESULT_OK){
+
             Glide.with(this)
                     .load(mCurrentPhotoPath)
                     .apply(RequestOptions.centerCropTransform())
@@ -137,23 +157,57 @@ public class AddPillGeneralActivity extends AppCompatActivity {
 
     @OnClick(R.id.image_view)
     public void dispatchPictureIntent() {
-        Intent takepicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takepicture.resolveActivity(getPackageManager()) != null) {
-            File photoFile = null;
-            try {
-                photoFile = createPictureFile();
-            } catch (IOException ioE) {
-                ioE.printStackTrace();
-                System.exit(-1);
-            }
 
-            if(photoFile != null) {
-                Uri photoURI = FileProvider.getUriForFile(this, "devs.erasmus.epills.FileProvider", photoFile);
-                takepicture.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                startActivityForResult(takepicture, REQUEST_IMAGE_CAPTURE);
-            }
+        Dexter.withActivity(this)
+                .withPermissions(
+                        Manifest.permission.CAMERA,
+                        Manifest.permission.READ_EXTERNAL_STORAGE
+                ).withListener(new MultiplePermissionsListener() {
+            @Override public void onPermissionsChecked(MultiplePermissionsReport report) {
+                if(report.areAllPermissionsGranted()){
+                    AlertDialog.Builder builder = ClockUtils.getModal(R.string.warning_modal_title,R.string.news_image_message, AddPillGeneralActivity.this);
+                    builder.setPositiveButton(R.string.news_image_camera, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent takepicture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                            if (takepicture.resolveActivity(getPackageManager()) != null) {
+                                File photoFile = null;
+                                try {
+                                    photoFile = createPictureFile();
+                                } catch (IOException ioE) {
+                                    ioE.printStackTrace();
+                                    System.exit(-1);
+                                }
 
-        }
+                                if(photoFile != null) {
+                                    Uri photoURI = FileProvider.getUriForFile(getApplicationContext(), "devs.erasmus.epills.FileProvider", photoFile);
+                                    takepicture.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                                    startActivityForResult(takepicture, REQUEST_IMAGE_CAPTURE);
+                                }
+
+                            }
+
+                        }
+                    });
+                    builder.setNeutralButton(R.string.news_image_gallery, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent pickPhoto = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                            startActivityForResult(pickPhoto, GALLERY_PICK);
+
+
+                        }
+                    });
+                    builder.show();
+
+                }
+                }
+            @Override public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {/* ... */}
+        }).check();
+
+
+
+
     }
 
     private File createPictureFile() throws IOException {
@@ -192,7 +246,19 @@ public class AddPillGeneralActivity extends AppCompatActivity {
 
     }
 
-
+    private String getRealPathFromURI(Uri contentURI) {
+        String result;
+        Cursor cursor = getContentResolver().query(contentURI, null, null, null, null);
+        if (cursor == null) { // Source is Dropbox or other similar local file path
+            result = contentURI.getPath();
+        } else {
+            cursor.moveToFirst();
+            int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+            result = cursor.getString(idx);
+            cursor.close();
+        }
+        return result;
+    }
 
     //--------------------------------AutoFill logic------------------------------@author{REMO}
     

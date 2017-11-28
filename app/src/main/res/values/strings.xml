@@ -50,4 +50,10 @@
     <string name="channel_name">Pill Reminder Channel</string>
     <string name="channel_description">This is the notification channel of ePills</string>
 
+
+    <string name="news_image_message">From where do you want to obtain the image?</string>
+    <string name="news_image_camera">Camera</string>
+    <string name="news_image_gallery">Gallery</string>
+    <string name="warning_modal_title">Change image</string>
+
 </resources>
