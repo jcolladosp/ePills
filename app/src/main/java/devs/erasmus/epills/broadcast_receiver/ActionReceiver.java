@@ -15,34 +15,33 @@ public class ActionReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
         String action = intent.getStringExtra("action");
-        int id = intent.getIntExtra("id", 69);
+        int notificationId = intent.getIntExtra("id", 69);
+        int alarmId = intent.getIntExtra("alarmId", 69);
 
         if(action.equals("Skip")){
-            skipMethod(context, id);
+            skipMethod(context, alarmId);
         }
         else if(action.equals("Snooze")){
-            snoozeMethod(context, id);
-        }
-        else if(action.equals("Take")){
-            takeMethod(context, id);
+            snoozeMethod(context, alarmId);
         }
         else{
-            //
+            takeMethod(context, alarmId);
         }
+
+        notificationManager.cancel(alarmId);
     }
 
-    private void skipMethod(Context context, int id) {
-        Toast.makeText(context, "in skip method", Toast.LENGTH_SHORT).show();
-        notificationManager.cancel(id);
+    private void skipMethod(Context context, int alarmId) {
+        Toast.makeText(context, "Skipped intake", Toast.LENGTH_SHORT).show();
+
+
     }
 
-    private void snoozeMethod(Context context, int id){
-        Toast.makeText(context, "in snooze method", Toast.LENGTH_SHORT).show();
-        notificationManager.cancel(id);
+    private void snoozeMethod(Context context, int alarmId){
+        Toast.makeText(context, "Snoozed", Toast.LENGTH_SHORT).show();
     }
 
-    private void takeMethod(Context context, int id){
-        Toast.makeText(context, "in take method", Toast.LENGTH_SHORT).show();
-        notificationManager.cancel(id);
+    private void takeMethod(Context context, int alarmId){
+        Toast.makeText(context, "Took intake", Toast.LENGTH_SHORT).show();
     }
 }

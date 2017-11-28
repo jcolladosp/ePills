@@ -48,14 +48,17 @@ public class NotificationService extends Service {
         //action intents
         Intent skipIntent = new Intent(this.getApplicationContext(), ActionReceiver.class);
         skipIntent.putExtra("action","Skip");
+        skipIntent.putExtra("alarmId",alarmId);
         skipIntent.putExtra("id", id);
 
         Intent snoozeIntent = new Intent(this.getApplicationContext(), ActionReceiver.class);
         snoozeIntent.putExtra("action","Snooze");
+        snoozeIntent.putExtra("alarmId",alarmId);
         snoozeIntent.putExtra("id", id);
 
         Intent takeIntent = new Intent(this.getApplicationContext(), ActionReceiver.class);
         takeIntent.putExtra("action","Take");
+        takeIntent.putExtra("alarmId",alarmId);
         takeIntent.putExtra("id", id);
         //action pendings
         PendingIntent skipPending = PendingIntent.getBroadcast(this,1,skipIntent,PendingIntent.FLAG_UPDATE_CURRENT);
@@ -101,7 +104,6 @@ public class NotificationService extends Service {
             Notification notify = new Notification.Builder(this)
                     .setContentTitle("You have to take "+ medicineName + ", " + quantity + " time(s)")
                     .setContentText("take the pill!")
-                    .setColor(Color.GREEN)
                     .setSmallIcon(R.drawable.icon_alarm)
                     .setContentIntent(openActivityPendingIntent)
                     .addAction(R.drawable.ic_error, "Skip", skipPending)

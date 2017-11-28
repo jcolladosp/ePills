@@ -69,7 +69,6 @@ public class AlarmUtil {
 
     //Purpose: fix the calendar to set the proper alarm, it's used when adding a multi-time alarm
     //to fix the problematic cases of setting an alarm at the end of the month or for another week
-    // and when retrieving the multi-time alarms on boot
     static public Calendar fixCalendar(Calendar startDate, int weekday){
         Calendar occurenceCalendar = Calendar.getInstance();
         occurenceCalendar.setTime(startDate.getTime());
