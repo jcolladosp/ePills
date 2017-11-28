@@ -588,8 +588,11 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
         }
     }
 
-    public int getMedicineId () {
-        return getIntent().getIntExtra(EXTRA_MEDICINEID, -1);
+    public long getMedicineId () {
+        if (medicine == null) {
+            return -1l;
+        }
+        return medicine.getId();
     }
 
     /**
@@ -634,6 +637,9 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
     }
 
     public long getReceiptID() {
+        if(receipt == null ) {
+            return -1l;
+        }
         return receipt.getId();
     }
 }
