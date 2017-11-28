@@ -23,7 +23,6 @@ public class SQLiteManageUtils {
     static SQLiteDatabase db = SQLiteDatabase.openDatabase(DATABASE_TABLE_NAME, null, OPEN_READWRITE);
 
     static public void bootAlarmsRetrieve(Context context){
-        //String[] columns = new String[]{"startdate", "enddate", "medicine", "quantity", "alarmrequestcode", "isonce"};
         Cursor intakeCursor = db.query("intakemoment", null, null, null, null, null, null);
 
         for (intakeCursor.moveToFirst(); !intakeCursor.isAfterLast(); intakeCursor.moveToNext()) {
@@ -61,10 +60,28 @@ public class SQLiteManageUtils {
 
     static public void deleteIntakeByAlarmId(int alarmId){
         if(db == null) throw new RuntimeException("db not initialized");
+        //retrieve the medicineid related to the intake
+        Cursor medicineCursor = db.query("intakemoment", null, "alarmrequestcode = " + String.valueOf(alarmId), null, null, null, null);
 
-        String whereClause="alarmrequestcode =?";
-        String[] whereArgs = new String[]{String.valueOf(alarmId)};
-        db.delete("intakemoment",whereClause, whereArgs);
+        if(medicineCursor.moveToFirst()){
+            long medicineId = medicineCursor.getLong(medicineCursor.getColumnIndex("id"));
+            Cursor intakeCursor = db.query("intakemoment", null, "medicineid = " + String.valueOf(medicineId), null, null, null, null);
+
+            String whereClause="alarmrequestcode =?";
+            String[] intakeWhereArgs = new String[]{String.valueOf(alarmId)};
+            db.delete("intakemoment",whereClause, intakeWhereArgs);
+            Log.e("alarm deleted", String.valueOf(alarmId));
+
+            if(!intakeCursor.moveToFirst()) {
+                String medicineWhereClause = "id =?";
+                String[] medicineWhereArgs = new String[]{String.valueOf(medicineId)};
+
+                db.delete("medicine", medicineWhereClause, medicineWhereArgs);
+                Log.e("medicine deleted", String.valueOf(medicineId));
+            }
+            intakeCursor.close();
+        }
+        medicineCursor.close();
     }
 
     static public void updateIntake(int alarmId, long dateInMillis){

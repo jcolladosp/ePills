@@ -28,6 +28,7 @@ public class AlarmBroadcastReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         String medicineName = intent.getStringExtra("medicineName");
         int quantity = intent.getIntExtra("quantity", 69);
+        long medicineId = intent.getLongExtra("medicineId", 69);
         int alarmId = intent.getIntExtra("alarmId", 69);
         int isOnce = intent.getIntExtra("isOnce", 1);
 
@@ -36,6 +37,7 @@ public class AlarmBroadcastReceiver extends BroadcastReceiver {
         //create intent goto NotificationService
         Intent serviceIntent = new Intent(context, NotificationService.class);
         serviceIntent.putExtra("medicineName", medicineName);
+        serviceIntent.putExtra("medicineId", medicineId);
         serviceIntent.putExtra("alarmId", alarmId);
         serviceIntent.putExtra("quantity", quantity);
         //PUT EXTRAS FOR NOTIFICATION INFOS

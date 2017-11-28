@@ -33,7 +33,7 @@ public class AlarmUtil {
         intent.putExtra("alarmId", alarmId);
         intent.putExtra("quantity", quantity);
 
-        if(endDate==startDate){
+        if(startDate.compareTo(startDate) == 0){ //same date
             intent.putExtra("isOnce", 1);
         }
         else{
