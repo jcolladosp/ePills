@@ -34,10 +34,7 @@ public class NavigationDrawer {
                 .withActivity(activity)
                 .withHeaderBackground(R.drawable.header)
                 .withSelectionListEnabledForSingleProfile(false)
-                .withOnlyMainProfileImageVisible(true)
-                .addProfiles(
-                        new ProfileDrawerItem().withName("Jose").withEmail("jose@erasmusdevs.com").withIcon(R.drawable.profile)
-                )
+                .withOnlyMainProfileImageVisible(false)
 
                 .build();
 
