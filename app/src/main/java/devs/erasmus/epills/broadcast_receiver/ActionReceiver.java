@@ -28,7 +28,7 @@ public class ActionReceiver extends BroadcastReceiver {
             takeMethod(context, alarmId);
         }
 
-        notificationManager.cancel(alarmId);
+        notificationManager.cancel(notificationId);
     }
 
     private void skipMethod(Context context, int alarmId) {
