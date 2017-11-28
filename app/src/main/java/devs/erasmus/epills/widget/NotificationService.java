@@ -77,7 +77,7 @@ public class NotificationService extends Service {
             mChannel.enableLights(true);
             // Sets the notification light color for notifications posted to this
             // channel, if the device supports this feature.
-            mChannel.setLightColor(Color.BLUE);
+            mChannel.setLightColor(Color.GREEN);
             mChannel.enableVibration(true);
             mChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
             notificationManager.createNotificationChannel(mChannel);
@@ -101,6 +101,7 @@ public class NotificationService extends Service {
             Notification notify = new Notification.Builder(this)
                     .setContentTitle("You have to take "+ medicineName + ", " + quantity + " time(s)")
                     .setContentText("take the pill!")
+                    .setColor(Color.GREEN)
                     .setSmallIcon(R.drawable.icon_alarm)
                     .setContentIntent(openActivityPendingIntent)
                     .addAction(R.drawable.ic_error, "Skip", skipPending)
