@@ -9,6 +9,7 @@ import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -83,9 +84,10 @@ public class ClockActivity extends AppCompatActivity {
 
 
 
+
     }
     private void prepareAnalogClock(){
-        analogClock.init(this, R.drawable.clock_face, R.drawable.hour_hand, R.drawable.minute_hand,R.drawable.pill_hand, 0, true, false);
+        analogClock.init(this, R.drawable.clock_face, R.drawable.hour_hand, R.drawable.minute_hand,R.drawable.pill_hand,R.drawable.pill_highlight ,0, true, false);
         analogClock.setAutoUpdate(true);
         analogClock.setScale(1.1f);
     }
@@ -102,6 +104,15 @@ public class ClockActivity extends AppCompatActivity {
         indicator.setRadius(12);
         indicator.setFillColor(Color.parseColor("#FF33B5E5"));
 
+        mRecyclerView.addOnPageChangedListener(new RecyclerViewPager.OnPageChangedListener() {
+            @Override
+            public void OnPageChanged(int oldPosition, int newPosition) {
+                analogClock.highlightPill(newPosition);
+            }
+
+        });
+
+
 
     }
     private void setPills(){
@@ -112,9 +123,6 @@ public class ClockActivity extends AppCompatActivity {
 
             Date today = new Date();
             Date tomorrow = ClockUtils.addDays(today,1);
-
-            Log.i("hora", String.valueOf(today.getTime()));
-            Log.i("hora", String.valueOf(tomorrow.getTime()));
 
 
             List<IntakeMoment> allIntake = DataSupport.where("startdate between "

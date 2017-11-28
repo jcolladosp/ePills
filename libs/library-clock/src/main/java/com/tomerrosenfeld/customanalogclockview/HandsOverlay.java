@@ -15,7 +15,9 @@ public class HandsOverlay implements DialOverlay {
 
     private final Drawable mHour;
     private final Drawable mMinute;
-    private  Drawable mPill;
+    private final  Drawable mPill;
+    private final Drawable mPillIconHighlight;
+
     private final boolean mUseLargeFace;
     private float mHourRot;
     private float mMinRot;
@@ -38,15 +40,18 @@ public class HandsOverlay implements DialOverlay {
 
         mHour = null;
         mMinute = null;
+        mPill = null;
+        mPillIconHighlight = null;
 
     }
 
-    public HandsOverlay(Drawable hourHand, Drawable minuteHand, Drawable pill) {
+    public HandsOverlay(Drawable hourHand, Drawable minuteHand, Drawable pill,Drawable highlight) {
         mUseLargeFace = false;
 
         mHour = hourHand;
         mMinute = minuteHand;
         mPill = pill;
+        mPillIconHighlight = highlight;
         hourPillsList = new ArrayList<>();
     }
     public HandsOverlay withScale(float scale){
@@ -61,6 +66,8 @@ public class HandsOverlay implements DialOverlay {
 
         mHour = r.getDrawable(hourHandRes);
         mMinute = r.getDrawable(minuteHandRes);
+        mPill = null;
+        mPillIconHighlight = null;
     }
 
     public static float getHourHandAngle(int h, int m) {
@@ -143,6 +150,23 @@ public class HandsOverlay implements DialOverlay {
 
         }
     }
+
+        public void highlightPill(int position) {
+
+            canvas.save();
+            float mPillRot = getHourHandAngle(hourPillsList.get(position), 0);
+
+            canvas.rotate(mPillRot, cX, cY);
+
+            if (sizeChanged) {
+                w = (int) (mPillIconHighlight.getIntrinsicWidth() * scale);
+                h = (int) (mPillIconHighlight.getIntrinsicHeight() * scale);
+                mPillIconHighlight.setBounds(cX - (w / 2), cY - (h / 2), cX + (w / 2), cY + (h / 2));
+            }
+             mPillIconHighlight.draw(canvas);
+            canvas.restore();
+    }
+
     public void setHourPill(int hour){
         hourPillsList.add(hour);
     }
