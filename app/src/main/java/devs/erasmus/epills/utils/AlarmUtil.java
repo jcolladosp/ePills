@@ -4,6 +4,7 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.util.Log;
 
 import java.util.Calendar;
@@ -45,10 +46,17 @@ public class AlarmUtil {
 
         pendingIntent = PendingIntent.getBroadcast(context, alarmId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,
-                                                calendar.getTimeInMillis(),
-                                                pendingIntent);
-
+        //Compatibility check
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP,
+                    calendar.getTimeInMillis(),
+                    pendingIntent);
+        }
+        else{
+            alarmManager.setExact(alarmManager.RTC_WAKEUP,
+                    calendar.getTimeInMillis(),
+                    pendingIntent);
+        }
         Log.e("set alarm:", String.valueOf(calendar.getTime()) + " (" + String.valueOf(alarmId) + ")");
 
     }
@@ -69,7 +77,6 @@ public class AlarmUtil {
 
     //Purpose: fix the calendar to set the proper alarm, it's used when adding a multi-time alarm
     //to fix the problematic cases of setting an alarm at the end of the month or for another week
-    // and when retrieving the multi-time alarms on boot
     static public Calendar fixCalendar(Calendar startDate, int weekday){
         Calendar occurenceCalendar = Calendar.getInstance();
         occurenceCalendar.setTime(startDate.getTime());
