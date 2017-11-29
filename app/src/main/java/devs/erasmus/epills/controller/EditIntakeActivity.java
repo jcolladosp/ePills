@@ -8,7 +8,9 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v7.widget.Toolbar;
+import android.widget.Switch;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -25,6 +27,9 @@ import butterknife.OnClick;
 import devs.erasmus.epills.R;
 import devs.erasmus.epills.model.IntakeMoment;
 import devs.erasmus.epills.model.Medicine;
+import devs.erasmus.epills.utils.AlarmUtil;
+import devs.erasmus.epills.utils.LitePalManageUtil;
+import devs.erasmus.epills.utils.SQLiteManageUtils;
 import devs.erasmus.epills.widget.SquareImageView;
 
 public class EditIntakeActivity extends AppCompatActivity {
@@ -36,10 +41,12 @@ public class EditIntakeActivity extends AppCompatActivity {
     TextInputEditText time_text;
     @BindView(R.id.seekbar)
     DiscreteSeekBar seekBar;
+    @BindView(R.id.switch1)
+    Switch aSwitch;
 
     private long intakeID;
     private IntakeMoment intakeMoment;
-
+    private Medicine medicine;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +56,7 @@ public class EditIntakeActivity extends AppCompatActivity {
         //setSupportActionBar(toolbar);
         intakeID = getIntent().getLongExtra("intakeID",-1);
         intakeMoment  = DataSupport.find(IntakeMoment.class,intakeID);
-        Medicine medicine = DataSupport.find(Medicine.class,intakeMoment.getMedicineId());
+        medicine = DataSupport.find(Medicine.class,intakeMoment.getMedicineId());
 
         RequestOptions requestOptions = new RequestOptions();
         requestOptions.placeholder(R.drawable.pill_placeholder);
@@ -89,9 +96,10 @@ public class EditIntakeActivity extends AppCompatActivity {
     }
     @OnClick(R.id.time_text)
     void onText(){
-
-        int hour = intakeMoment.getStartDate().getHours();
-        int minute = intakeMoment.getStartDate().getMinutes();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(intakeMoment.getStartDate());
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int minute = calendar.get(Calendar.MINUTE);
         TimePickerDialog timePickerDialog = new TimePickerDialog(this,
                 new TimePickerDialog.OnTimeSetListener() {
 
@@ -106,15 +114,81 @@ public class EditIntakeActivity extends AppCompatActivity {
     }
     @OnClick(R.id.fab_edit)
     void onFab(){
-        intakeMoment.setQuantity(seekBar.getProgress());
-        Date date = intakeMoment.getStartDate();
+        int alarmId = intakeMoment.getAlarmRequestCode();
+
+        //OLD ALARM LOGIC
+
+        //check if i need to set next week alarm
+        if(intakeMoment.getIsOnce()==0) {
+            long startDateInMillis = intakeMoment.getStartDate().getTime();
+            long endDateInMillis = intakeMoment.getEndDate().getTime();
+            long currentTime = System.currentTimeMillis();
+
+            if(endDateInMillis > currentTime){ //end date isnt come yet
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(startDateInMillis);
+
+                //refresh startDate to the next date
+                calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH) + 7);
+
+                //if next date is before the endDate, create a new alarm
+                if(calendar.getTimeInMillis() < endDateInMillis) {
+
+                    Date startDate = calendar.getTime();
+                    Date endDate = intakeMoment.getEndDate();
+
+                    SQLiteManageUtils.updateIntake(alarmId, calendar.getTimeInMillis()); //update intake to refreshed startDate
+                    AlarmUtil.setAlarm(this, medicine.getName(), intakeMoment.getQuantity(),
+                            startDate,
+                            endDate,
+                            alarmId,
+                            true);
+                }
+                //else remove the intake
+                else{
+                    SQLiteManageUtils.deleteIntakeByAlarmId(alarmId);
+                    AlarmUtil.cancelAlarm(this, alarmId);
+                }
+            }
+            else{
+                SQLiteManageUtils.deleteIntakeByAlarmId(alarmId);
+                AlarmUtil.cancelAlarm(this, alarmId);
+            }
+        }
+        else{
+            SQLiteManageUtils.deleteIntakeByAlarmId(alarmId);
+            AlarmUtil.cancelAlarm(this, alarmId);
+        }
+
+        //NEW ALARM & INTAKE LOGIC
+
+        int newAlarmId = (int) System.currentTimeMillis();
+        int newQuantity = seekBar.getProgress();
         int hour = Integer.parseInt(time_text.getText().toString().substring(0,2));
         int minutes = Integer.parseInt(time_text.getText().toString().substring(3,5));
-        date.setHours(hour);
-        date.setMinutes(minutes);
-        intakeMoment.setStartDate(date);
-        intakeMoment.save();
-       // DataSupport.delete(IntakeMoment.class,intakeID);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, hour);
+        calendar.set(Calendar.MINUTE, minutes);
+        Date newStartDate = calendar.getTime();
+
+        //set new intakemoment for a new one-time alarm
+        IntakeMoment newIntakeMoment = new IntakeMoment(newStartDate, newStartDate,
+                                                        intakeMoment.getReceipt(),
+                                                        intakeMoment.getMedicineId(),
+                                                        newQuantity,
+                                                        newAlarmId,
+                                                        1);
+        newIntakeMoment.setSwitchState(aSwitch.isChecked());
+        newIntakeMoment.save();
+
+        //set new alarm as a one-time alarm with the new set alarm date
+        AlarmUtil.setAlarm(this, medicine.getName(),
+                newIntakeMoment.getQuantity(),
+                newIntakeMoment.getStartDate(),
+                newIntakeMoment.getEndDate(),
+                newIntakeMoment.getAlarmRequestCode(),
+                newIntakeMoment.getSwitchState());
 
         finish();
         Intent i = new Intent(this,ClockActivity.class);

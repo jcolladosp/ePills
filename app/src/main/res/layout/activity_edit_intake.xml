@@ -80,6 +80,7 @@
                 android:layout_marginStart="12dp"
                 android:layout_marginTop="20dp"
                 android:text="@string/alarm"
+                android:checked="true"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView2" />
 

@@ -31,17 +31,22 @@ public class AlarmBroadcastReceiver extends BroadcastReceiver {
         long medicineId = intent.getLongExtra("medicineId", 69);
         int alarmId = intent.getIntExtra("alarmId", 69);
         int isOnce = intent.getIntExtra("isOnce", 1);
+        boolean isEnable = intent.getBooleanExtra("isEnable", true);
 
         Log.e("ringing", medicineName + String.valueOf(alarmId));
 
-        //create intent goto NotificationService
-        Intent serviceIntent = new Intent(context, NotificationService.class);
-        serviceIntent.putExtra("medicineName", medicineName);
-        serviceIntent.putExtra("medicineId", medicineId);
-        serviceIntent.putExtra("alarmId", alarmId);
-        serviceIntent.putExtra("quantity", quantity);
-        //PUT EXTRAS FOR NOTIFICATION INFOS
-        context.startService(serviceIntent);
+        //if alarm is disable(alarmSwitch is retrieved from the edit intake switch), we don't want the notification to be shown
+        if(isEnable) {
+            //create intent goto NotificationService
+            Intent serviceIntent = new Intent(context, NotificationService.class);
+            serviceIntent.putExtra("medicineName", medicineName);
+            serviceIntent.putExtra("medicineId", medicineId);
+            serviceIntent.putExtra("alarmId", alarmId);
+            serviceIntent.putExtra("quantity", quantity);
+            //PUT EXTRAS FOR NOTIFICATION INFOS
+            context.startService(serviceIntent);
+        }
+
 
         if(isOnce==1){
             SQLiteManageUtils.deleteIntakeByAlarmId(alarmId);
@@ -49,13 +54,14 @@ public class AlarmBroadcastReceiver extends BroadcastReceiver {
         else {
             long startDateInMillis = intent.getLongExtra("startDate", 0);
             long endDateInMillis = intent.getLongExtra("endDate", 0);
+            long currentTime = System.currentTimeMillis();
 
-            if(endDateInMillis > System.currentTimeMillis()){ //end date isnt come yet
+            if(endDateInMillis > currentTime){ //end date isnt come yet
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTimeInMillis(startDateInMillis);
 
                 //refresh startDate to the next date
-                while (calendar.getTimeInMillis() < System.currentTimeMillis()) {
+                while (calendar.getTimeInMillis() < currentTime) {
                     calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH) + 7);
                 }
 
@@ -64,8 +70,8 @@ public class AlarmBroadcastReceiver extends BroadcastReceiver {
                     Date startDate = calendar.getTime();
                     Date endDate = SQLiteManageUtils.long2Date(endDateInMillis);
 
-                    AlarmUtil.setAlarm(context, medicineName, quantity, startDate, endDate, alarmId);
                     SQLiteManageUtils.updateIntake(alarmId, calendar.getTimeInMillis()); //update intake to refreshed startDate
+                    AlarmUtil.setAlarm(context, medicineName, quantity, startDate, endDate, alarmId, true);
                 }
                 //else remove the intake
                 else{

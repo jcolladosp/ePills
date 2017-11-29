@@ -283,7 +283,8 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
         else {
             for(int weekday=0; weekday<weekdaysSelection.length; weekday++) {
                 if(weekdaysSelection[weekday]) {
-                    //I need this to fix date if starting an alarm for next week(e.g today is friday and i want an alarm for monday)
+
+                    //look at AlarmUtil.fixCalendar() for explanation
                     Calendar fixedCalendar = AlarmUtil.fixCalendar(startDate, weekday+1);
                     Date newDateToStart = fixedCalendar.getTime();
 
@@ -312,7 +313,7 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
                 AlarmUtil.setAlarm(this, medicine.getName(),intakeMoment.getQuantity(),
                                                 intakeMoment.getStartDate(),
                                                 intakeMoment.getEndDate(),
-                                                intakeMoment.getAlarmRequestCode());
+                                                intakeMoment.getAlarmRequestCode(), true);
             }
         }
     }
@@ -603,8 +604,8 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
     private String getTimeString() {
         int minute = startDate.get(Calendar.MINUTE);
         int hour = startDate.get(Calendar.HOUR_OF_DAY);
-        String hourString = ((hour<9) ? "0"+ hour : String.valueOf(hour));
-        String minuteString = (minute<9) ? "0" + minute : String.valueOf(minute);
+        String hourString = ((hour<=9) ? "0"+ hour : String.valueOf(hour));
+        String minuteString = (minute<=9) ? "0" + minute : String.valueOf(minute);
         String time = hourString + ":" + minuteString;
 
         return time;
