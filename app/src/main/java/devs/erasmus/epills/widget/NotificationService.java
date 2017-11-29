@@ -45,25 +45,6 @@ public class NotificationService extends Service {
         Intent openActivityIntent = new Intent(this.getApplicationContext(), ClockActivity.class);
         int id= (int) System.currentTimeMillis();  //using an unique id everytime alarm has it's own notification, it maybe overwhelming
         PendingIntent openActivityPendingIntent = PendingIntent.getActivity(this, id, openActivityIntent, 0);
-        //action intents
-        Intent skipIntent = new Intent(this.getApplicationContext(), ActionReceiver.class);
-        skipIntent.putExtra("action","Skip");
-        skipIntent.putExtra("alarmId",alarmId);
-        skipIntent.putExtra("id", id);
-
-        Intent snoozeIntent = new Intent(this.getApplicationContext(), ActionReceiver.class);
-        snoozeIntent.putExtra("action","Snooze");
-        snoozeIntent.putExtra("alarmId",alarmId);
-        snoozeIntent.putExtra("id", id);
-
-        Intent takeIntent = new Intent(this.getApplicationContext(), ActionReceiver.class);
-        takeIntent.putExtra("action","Take");
-        takeIntent.putExtra("alarmId",alarmId);
-        takeIntent.putExtra("id", id);
-        //action pendings
-        PendingIntent skipPending = PendingIntent.getBroadcast(this,1,skipIntent,PendingIntent.FLAG_UPDATE_CURRENT);
-        PendingIntent snoozePending = PendingIntent.getBroadcast(this,2,snoozeIntent,PendingIntent.FLAG_UPDATE_CURRENT);
-        PendingIntent takePending = PendingIntent.getBroadcast(this,3,takeIntent,PendingIntent.FLAG_UPDATE_CURRENT);
 
         //New more flexible notification system ,Android Oreo only
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -90,9 +71,6 @@ public class NotificationService extends Service {
                     .setContentText("take the pill!")
                     .setSmallIcon(R.drawable.icon_alarm)
                     .setContentIntent(openActivityPendingIntent)
-                    .addAction(R.drawable.ic_error, "Skip", skipPending)
-                    .addAction(R.drawable.ic_add, "Snooze", snoozePending)
-                    .addAction(R.drawable.ic_check_mark, "Take", takePending)
                     .setAutoCancel(true);
 
             notificationManager.notify(id, notificationBuilder.build());
@@ -106,27 +84,11 @@ public class NotificationService extends Service {
                     .setContentText("take the pill!")
                     .setSmallIcon(R.drawable.icon_alarm)
                     .setContentIntent(openActivityPendingIntent)
-                    .addAction(R.drawable.ic_error, "Skip", skipPending)
-                    .addAction(R.drawable.ic_add, "Snooze", snoozePending)
-                    .addAction(R.drawable.ic_check_mark, "Take", takePending)
                     .setAutoCancel(true) // cancel when pressed
                     .build();
             notificationManager.notify(id, notify);
         }
-
-
-        /*
-        Intent takeIntent = new Intent(this, );
-        Intent dozeIntent = openActivityIntent;
-        Intent skipIntent = ;
-
-        Notification notify = new NotificationCompat.Builder(this, id)
-                .setContentIntent(pendingIntent)
-                .setSmallIcon(R.drawable.ic_check_mark)
-                .setContentTitle("Pill to take!")
-                .setContentText("take the goddamn pill")
-                */
-
+        
         return START_NOT_STICKY;
     }
 
