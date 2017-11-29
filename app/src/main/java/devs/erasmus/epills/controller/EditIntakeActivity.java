@@ -62,6 +62,7 @@ public class EditIntakeActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle(medicine.getName());
+        imageView.setBackgroundColor(getResources().getColor(R.color.grey));
 
         time_text.setText(String.format("%02d:%02d", intakeMoment.getStartDate().getHours(),intakeMoment.getStartDate().getMinutes()));
         seekBar.setProgress(intakeMoment.getQuantity());
