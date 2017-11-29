@@ -90,4 +90,19 @@ public class AlarmUtil {
         return (pendingIntent != null); //True: alarm is set
     }
 
+    //Purpose: fix the calendar to set the proper alarm, it's used when adding a multi-time alarm
+    //to fix the problematic case of setting an alarm at the end of the month or for another week
+    static public Calendar fixCalendar(Calendar startDate, int weekday){
+        Calendar occurenceCalendar = Calendar.getInstance();
+        occurenceCalendar.setTime(startDate.getTime());
+        occurenceCalendar.set(Calendar.DAY_OF_WEEK, weekday);
+
+        //check if the previous instruction changed the month: if today is Sunday 26 Nov and you want an alarm on Friday,
+        //the set above will change the date to Friday 2 Dic
+
+        if (occurenceCalendar.get(Calendar.MONTH) == startDate.get(Calendar.MONTH) && occurenceCalendar.get(Calendar.DAY_OF_MONTH) < startDate.get(Calendar.DAY_OF_MONTH)) {
+            occurenceCalendar.set(Calendar.DAY_OF_MONTH, occurenceCalendar.get(Calendar.DAY_OF_MONTH) + 7);
+        }
+        return occurenceCalendar;
+    }
 }

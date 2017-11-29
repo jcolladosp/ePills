@@ -49,18 +49,19 @@ public class AlarmBroadcastReceiver extends BroadcastReceiver {
 
 
         if(isOnce==1){
-            SQLiteManageUtils.deleteIntakeByAlarmId(context, alarmId);
+            SQLiteManageUtils.deleteIntakeByAlarmId(alarmId);
         }
         else {
             long startDateInMillis = intent.getLongExtra("startDate", 0);
             long endDateInMillis = intent.getLongExtra("endDate", 0);
+            long currentTime = System.currentTimeMillis();
 
-            if(endDateInMillis > System.currentTimeMillis()){ //end date isnt come yet
+            if(endDateInMillis > currentTime){ //end date isnt come yet
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTimeInMillis(startDateInMillis);
 
                 //refresh startDate to the next date
-                while (calendar.getTimeInMillis() < System.currentTimeMillis()) {
+                while (calendar.getTimeInMillis() < currentTime) {
                     calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH) + 7);
                 }
 
@@ -69,16 +70,16 @@ public class AlarmBroadcastReceiver extends BroadcastReceiver {
                     Date startDate = calendar.getTime();
                     Date endDate = SQLiteManageUtils.long2Date(endDateInMillis);
 
-                    AlarmUtil.setAlarm(context, medicineName, quantity, startDate, endDate, alarmId, true);
                     SQLiteManageUtils.updateIntake(alarmId, calendar.getTimeInMillis()); //update intake to refreshed startDate
+                    AlarmUtil.setAlarm(context, medicineName, quantity, startDate, endDate, alarmId, true);
                 }
                 //else remove the intake
                 else{
-                    SQLiteManageUtils.deleteIntakeByAlarmId(context, alarmId);
+                    SQLiteManageUtils.deleteIntakeByAlarmId(alarmId);
                 }
             }
             else{
-                SQLiteManageUtils.deleteIntakeByAlarmId(context, alarmId);
+                SQLiteManageUtils.deleteIntakeByAlarmId(alarmId);
             }
         }
     }
