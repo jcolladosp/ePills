@@ -2,6 +2,7 @@ package devs.erasmus.epills.controller;
 
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v7.widget.Toolbar;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -37,12 +39,14 @@ public class EditIntakeActivity extends AppCompatActivity {
     Toolbar toolbar;
     @BindView(R.id.image_view)
     SquareImageView imageView;
-    @BindView(R.id.time_text)
-    TextInputEditText time_text;
+    @BindView(R.id.time_tv)
+    TextView time_text;
     @BindView(R.id.seekbar)
     DiscreteSeekBar seekBar;
     @BindView(R.id.switch1)
     Switch aSwitch;
+    @BindView(R.id.time_layout)
+    ConstraintLayout time_layout;
 
     private long intakeID;
     private IntakeMoment intakeMoment;
@@ -94,7 +98,7 @@ public class EditIntakeActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
-    @OnClick(R.id.time_text)
+    @OnClick(R.id.time_layout)
     void onText(){
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(intakeMoment.getStartDate());
