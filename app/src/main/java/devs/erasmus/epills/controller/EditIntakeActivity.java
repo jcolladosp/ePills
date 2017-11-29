@@ -122,21 +122,20 @@ public class EditIntakeActivity extends AppCompatActivity {
         if(intakeMoment.getIsOnce()==0) {
             long startDateInMillis = intakeMoment.getStartDate().getTime();
             long endDateInMillis = intakeMoment.getEndDate().getTime();
-
             long currentTime = System.currentTimeMillis();
+
             if(endDateInMillis > currentTime){ //end date isnt come yet
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTimeInMillis(startDateInMillis);
 
                 //refresh startDate to the next date
-                while (calendar.getTimeInMillis() < currentTime) {
-                    calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH) + 7);
-                }
+                calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH) + 7);
 
                 //if next date is before the endDate, create a new alarm
                 if(calendar.getTimeInMillis() < endDateInMillis) {
+
                     Date startDate = calendar.getTime();
-                    Date endDate = SQLiteManageUtils.long2Date(endDateInMillis);
+                    Date endDate = intakeMoment.getEndDate();
 
                     SQLiteManageUtils.updateIntake(alarmId, calendar.getTimeInMillis()); //update intake to refreshed startDate
                     AlarmUtil.setAlarm(this, medicine.getName(), intakeMoment.getQuantity(),
