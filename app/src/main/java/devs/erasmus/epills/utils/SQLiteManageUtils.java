@@ -44,14 +44,14 @@ public class SQLiteManageUtils {
                 Date currentDate = Calendar.getInstance().getTime();
 
                 Toast.makeText(context, "passed alarm", Toast.LENGTH_SHORT).show();
-                AlarmUtil.setAlarm(context, medicineName, quantity, currentDate, currentDate, alarmRequestCode+1);
+                AlarmUtil.setAlarm(context, medicineName, quantity, currentDate, currentDate, alarmRequestCode+1, true);
             }
             //else set it as usual
             else{
                 Date startDate = SQLiteManageUtils.long2Date(startDateMillis);
                 Date endDate = SQLiteManageUtils.long2Date(endDateMillis);
 
-                AlarmUtil.setAlarm(context, medicineName, quantity, startDate, endDate, alarmRequestCode);
+                AlarmUtil.setAlarm(context, medicineName, quantity, startDate, endDate, alarmRequestCode, true);
             }
             medicineCursor.close();
         }

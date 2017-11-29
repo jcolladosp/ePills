@@ -94,9 +94,10 @@ public class EditIntakeActivity extends AppCompatActivity {
     }
     @OnClick(R.id.time_text)
     void onText(){
-
-        int hour = intakeMoment.getStartDate().getHours();
-        int minute = intakeMoment.getStartDate().getMinutes();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(intakeMoment.getStartDate());
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int minute = calendar.get(Calendar.MINUTE);
         TimePickerDialog timePickerDialog = new TimePickerDialog(this,
                 new TimePickerDialog.OnTimeSetListener() {
 
@@ -117,6 +118,7 @@ public class EditIntakeActivity extends AppCompatActivity {
         intakeMoment.setQuantity(seekBar.getProgress());
         int hour = Integer.parseInt(time_text.getText().toString().substring(0,2));
         int minutes = Integer.parseInt(time_text.getText().toString().substring(3,5));
+        Date oldStartDate = intakeMoment.getStartDate();
 
         calendar.set(Calendar.HOUR_OF_DAY, hour);
         calendar.set(Calendar.MINUTE, minutes);
@@ -126,7 +128,20 @@ public class EditIntakeActivity extends AppCompatActivity {
         intakeMoment.setSwitchState(aSwitch.isChecked());
         intakeMoment.save();
 
-        AlarmUtil.setAlarm(this, medicine.getName(), intakeMoment.getQuantity(), startDate, intakeMoment.getEndDate(), intakeMoment.getAlarmRequestCode());
+        //reset the current alarm with same date but with notification disable
+        if(intakeMoment.getIsOnce()==0) {
+            AlarmUtil.setAlarm(this, medicine.getName(), intakeMoment.getQuantity(),
+                    oldStartDate,
+                    intakeMoment.getEndDate(),
+                    intakeMoment.getAlarmRequestCode(),
+                    false);
+        }
+        //set new alarm as a one-time alarm with the new set alarm date
+        AlarmUtil.setAlarm(this, medicine.getName(), intakeMoment.getQuantity(),
+                startDate,
+                startDate,
+                intakeMoment.getAlarmRequestCode()+69,
+                intakeMoment.getSwitchState());
 
         finish();
         Intent i = new Intent(this,ClockActivity.class);

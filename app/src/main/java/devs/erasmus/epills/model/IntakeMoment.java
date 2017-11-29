@@ -30,7 +30,7 @@ public class IntakeMoment extends DataSupport {
         this.alarmRequestCode = alarmRequestCode;
         this.isOnce = isOnce;
 
-        this.switchState = true;
+        this.switchState = true; //default value
     }
 
     public long getId() {

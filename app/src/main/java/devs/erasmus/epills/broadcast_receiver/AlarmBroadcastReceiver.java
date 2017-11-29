@@ -31,11 +31,12 @@ public class AlarmBroadcastReceiver extends BroadcastReceiver {
         long medicineId = intent.getLongExtra("medicineId", 69);
         int alarmId = intent.getIntExtra("alarmId", 69);
         int isOnce = intent.getIntExtra("isOnce", 1);
+        boolean isEnable = intent.getBooleanExtra("isEnable", true);
 
         Log.e("ringing", medicineName + String.valueOf(alarmId));
 
         //if alarm is disable(alarmSwitch is retrieved from the edit intake switch), we don't want the notification to be shown
-        if(true) {
+        if(isEnable) {
             //create intent goto NotificationService
             Intent serviceIntent = new Intent(context, NotificationService.class);
             serviceIntent.putExtra("medicineName", medicineName);
@@ -68,7 +69,7 @@ public class AlarmBroadcastReceiver extends BroadcastReceiver {
                     Date startDate = calendar.getTime();
                     Date endDate = SQLiteManageUtils.long2Date(endDateInMillis);
 
-                    AlarmUtil.setAlarm(context, medicineName, quantity, startDate, endDate, alarmId);
+                    AlarmUtil.setAlarm(context, medicineName, quantity, startDate, endDate, alarmId, true);
                     SQLiteManageUtils.updateIntake(alarmId, calendar.getTimeInMillis()); //update intake to refreshed startDate
                 }
                 //else remove the intake
