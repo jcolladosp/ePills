@@ -603,8 +603,8 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
     private String getTimeString() {
         int minute = startDate.get(Calendar.MINUTE);
         int hour = startDate.get(Calendar.HOUR_OF_DAY);
-        String hourString = ((hour<9) ? "0"+ hour : String.valueOf(hour));
-        String minuteString = (minute<9) ? "0" + minute : String.valueOf(minute);
+        String hourString = ((hour<=9) ? "0"+ hour : String.valueOf(hour));
+        String minuteString = (minute<=9) ? "0" + minute : String.valueOf(minute);
         String time = hourString + ":" + minuteString;
 
         return time;
