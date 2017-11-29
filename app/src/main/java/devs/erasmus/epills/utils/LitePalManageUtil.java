@@ -32,14 +32,15 @@ public class LitePalManageUtil {
 
 
     static public void deleteIntakesByMedicine(Context context, Medicine medicine){
-        List<IntakeMoment> intakes = DataSupport.where("medicineId = " +String.valueOf(medicine.getId())).find(IntakeMoment.class);
+        long medicineId = medicine.getId();
+        List<IntakeMoment> intakes = findIntakeByMedicineId(medicineId);
 
         //remove intakes from db
         intakesDelete(context, intakes);
     }
 
     static public void deleteIntakeByAlarmId(Context context, int alarmId){
-        List<IntakeMoment> intakes = DataSupport.where("alarmRequestCode = ?",String.valueOf(alarmId)).find(IntakeMoment.class);
+        List<IntakeMoment> intakes = findIntakeByAlarmId(alarmId);
 
         intakesDelete(context, intakes);
     }
@@ -52,5 +53,13 @@ public class LitePalManageUtil {
             //cancel alarm
             AlarmUtil.cancelAlarm(context, intakeMoment.getAlarmRequestCode());
         }
+    }
+
+    static public List<IntakeMoment> findIntakeByAlarmId(int alarmId){
+        return DataSupport.where("alarmRequestCode = ?",String.valueOf(alarmId)).find(IntakeMoment.class);
+    }
+
+    static public List<IntakeMoment> findIntakeByMedicineId(long medicineId){
+        return DataSupport.where("medicineId = " +String.valueOf(medicineId)).find(IntakeMoment.class);
     }
 }
