@@ -34,14 +34,18 @@ public class AlarmBroadcastReceiver extends BroadcastReceiver {
 
         Log.e("ringing", medicineName + String.valueOf(alarmId));
 
-        //create intent goto NotificationService
-        Intent serviceIntent = new Intent(context, NotificationService.class);
-        serviceIntent.putExtra("medicineName", medicineName);
-        serviceIntent.putExtra("medicineId", medicineId);
-        serviceIntent.putExtra("alarmId", alarmId);
-        serviceIntent.putExtra("quantity", quantity);
-        //PUT EXTRAS FOR NOTIFICATION INFOS
-        context.startService(serviceIntent);
+        //if alarm is disable(alarmSwitch is retrieved from the edit intake switch), we don't want the notification to be shown
+        if(true) {
+            //create intent goto NotificationService
+            Intent serviceIntent = new Intent(context, NotificationService.class);
+            serviceIntent.putExtra("medicineName", medicineName);
+            serviceIntent.putExtra("medicineId", medicineId);
+            serviceIntent.putExtra("alarmId", alarmId);
+            serviceIntent.putExtra("quantity", quantity);
+            //PUT EXTRAS FOR NOTIFICATION INFOS
+            context.startService(serviceIntent);
+        }
+
 
         if(isOnce==1){
             SQLiteManageUtils.deleteIntakeByAlarmId(alarmId);

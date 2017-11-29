@@ -17,7 +17,7 @@ public class IntakeMoment extends DataSupport {
     private Medicine medicine;
     private int quantity;
     private int alarmRequestCode;
-    private boolean isAlarmSet;
+    private boolean switchState; //false is switch off, true switch on (notification disable, notification able)
     private long medicineId;
     private int isOnce; //0 is false, 1 is true
 
@@ -29,6 +29,8 @@ public class IntakeMoment extends DataSupport {
         this.quantity = quantity;
         this.alarmRequestCode = alarmRequestCode;
         this.isOnce = isOnce;
+
+        this.switchState = true;
     }
 
     public long getId() {
@@ -86,14 +88,6 @@ public class IntakeMoment extends DataSupport {
         this.alarmRequestCode = alarmRequestCode;
     }
 
-    public boolean getIsAlarmSet() {
-        return isAlarmSet;
-    }
-
-    public void setIsAlarmSet(boolean isAlarmSet) {
-        this.isAlarmSet = isAlarmSet;
-    }
-
     public long getMedicineId() {
         return medicineId;
     }
@@ -102,11 +96,19 @@ public class IntakeMoment extends DataSupport {
         this.medicineId = medicineId;
     }
 
-    public int isOnce() {
+    public int getIsOnce() {
         return isOnce;
     }
 
-    public void setOnce(int once) {
+    public void setIsOnce(int once) {
         isOnce = once;
+    }
+
+    public boolean getSwitchState() {
+        return switchState;
+    }
+
+    public void setSwitchState(boolean switchState) {
+        this.switchState = switchState;
     }
 }

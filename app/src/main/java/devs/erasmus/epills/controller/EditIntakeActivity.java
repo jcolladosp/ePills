@@ -8,7 +8,9 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v7.widget.Toolbar;
+import android.widget.Switch;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -25,6 +27,7 @@ import butterknife.OnClick;
 import devs.erasmus.epills.R;
 import devs.erasmus.epills.model.IntakeMoment;
 import devs.erasmus.epills.model.Medicine;
+import devs.erasmus.epills.utils.AlarmUtil;
 import devs.erasmus.epills.widget.SquareImageView;
 
 public class EditIntakeActivity extends AppCompatActivity {
@@ -36,10 +39,12 @@ public class EditIntakeActivity extends AppCompatActivity {
     TextInputEditText time_text;
     @BindView(R.id.seekbar)
     DiscreteSeekBar seekBar;
+    @BindView(R.id.switch1)
+    Switch aSwitch;
 
     private long intakeID;
     private IntakeMoment intakeMoment;
-
+    private Medicine medicine;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +54,7 @@ public class EditIntakeActivity extends AppCompatActivity {
         //setSupportActionBar(toolbar);
         intakeID = getIntent().getLongExtra("intakeID",-1);
         intakeMoment  = DataSupport.find(IntakeMoment.class,intakeID);
-        Medicine medicine = DataSupport.find(Medicine.class,intakeMoment.getMedicineId());
+        medicine = DataSupport.find(Medicine.class,intakeMoment.getMedicineId());
 
         RequestOptions requestOptions = new RequestOptions();
         requestOptions.placeholder(R.drawable.pill_placeholder);
@@ -106,15 +111,22 @@ public class EditIntakeActivity extends AppCompatActivity {
     }
     @OnClick(R.id.fab_edit)
     void onFab(){
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(intakeMoment.getStartDate());
+
         intakeMoment.setQuantity(seekBar.getProgress());
-        Date date = intakeMoment.getStartDate();
         int hour = Integer.parseInt(time_text.getText().toString().substring(0,2));
         int minutes = Integer.parseInt(time_text.getText().toString().substring(3,5));
-        date.setHours(hour);
-        date.setMinutes(minutes);
-        intakeMoment.setStartDate(date);
+
+        calendar.set(Calendar.HOUR_OF_DAY, hour);
+        calendar.set(Calendar.MINUTE, minutes);
+
+        Date startDate = calendar.getTime();
+        intakeMoment.setStartDate(startDate);
+        intakeMoment.setSwitchState(aSwitch.isChecked());
         intakeMoment.save();
-       // DataSupport.delete(IntakeMoment.class,intakeID);
+
+        AlarmUtil.setAlarm(this, medicine.getName(), intakeMoment.getQuantity(), startDate, intakeMoment.getEndDate(), intakeMoment.getAlarmRequestCode());
 
         finish();
         Intent i = new Intent(this,ClockActivity.class);
