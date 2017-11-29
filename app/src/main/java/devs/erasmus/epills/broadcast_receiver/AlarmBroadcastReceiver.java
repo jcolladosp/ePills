@@ -49,7 +49,7 @@ public class AlarmBroadcastReceiver extends BroadcastReceiver {
 
 
         if(isOnce==1){
-            SQLiteManageUtils.deleteIntakeByAlarmId(alarmId);
+            SQLiteManageUtils.deleteIntakeByAlarmId(context, alarmId);
         }
         else {
             long startDateInMillis = intent.getLongExtra("startDate", 0);
@@ -74,11 +74,11 @@ public class AlarmBroadcastReceiver extends BroadcastReceiver {
                 }
                 //else remove the intake
                 else{
-                    SQLiteManageUtils.deleteIntakeByAlarmId(alarmId);
+                    SQLiteManageUtils.deleteIntakeByAlarmId(context, alarmId);
                 }
             }
             else{
-                SQLiteManageUtils.deleteIntakeByAlarmId(alarmId);
+                SQLiteManageUtils.deleteIntakeByAlarmId(context, alarmId);
             }
         }
     }

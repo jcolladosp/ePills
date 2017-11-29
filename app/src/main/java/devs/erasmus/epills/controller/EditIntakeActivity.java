@@ -28,6 +28,8 @@ import devs.erasmus.epills.R;
 import devs.erasmus.epills.model.IntakeMoment;
 import devs.erasmus.epills.model.Medicine;
 import devs.erasmus.epills.utils.AlarmUtil;
+import devs.erasmus.epills.utils.LitePalManageUtil;
+import devs.erasmus.epills.utils.SQLiteManageUtils;
 import devs.erasmus.epills.widget.SquareImageView;
 
 public class EditIntakeActivity extends AppCompatActivity {
@@ -112,38 +114,55 @@ public class EditIntakeActivity extends AppCompatActivity {
     }
     @OnClick(R.id.fab_edit)
     void onFab(){
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(intakeMoment.getStartDate());
-
-        intakeMoment.setQuantity(seekBar.getProgress());
-        int hour = Integer.parseInt(time_text.getText().toString().substring(0,2));
-        int minutes = Integer.parseInt(time_text.getText().toString().substring(3,5));
         Date oldStartDate = intakeMoment.getStartDate();
+        Date oldEndDate = intakeMoment.getEndDate();
+        int oldAlarmId = intakeMoment.getAlarmRequestCode();
 
-        calendar.set(Calendar.HOUR_OF_DAY, hour);
-        calendar.set(Calendar.MINUTE, minutes);
+        //OLD ALARM LOGIC
 
-        Date startDate = calendar.getTime();
-        intakeMoment.setStartDate(startDate);
-        intakeMoment.setSwitchState(aSwitch.isChecked());
-        intakeMoment.save();
-
-        //the cheat begin:
-        //if we are dealing with a multi-time alarm, reset the current alarm with same date but with notification disable
-        //no one will notice it
+        //check if i need to set next week alarm
         if(intakeMoment.getIsOnce()==0) {
+            /*
             AlarmUtil.setAlarm(this, medicine.getName(), intakeMoment.getQuantity(),
                     oldStartDate,
                     intakeMoment.getEndDate(),
                     intakeMoment.getAlarmRequestCode(),
                     false);
+             */
         }
+        else{
+            SQLiteManageUtils.deleteIntakeByAlarmId(this, oldAlarmId);
+        }
+
+        //NEW ALARM & INTAKE LOGIC
+
+        int newAlarmId = (int) System.currentTimeMillis();
+        int newQuantity = seekBar.getProgress();
+        int hour = Integer.parseInt(time_text.getText().toString().substring(0,2));
+        int minutes = Integer.parseInt(time_text.getText().toString().substring(3,5));
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, hour);
+        calendar.set(Calendar.MINUTE, minutes);
+        Date newStartDate = calendar.getTime();
+
+        //set new intakemoment for a new one-time alarm
+        IntakeMoment newIntakeMoment = new IntakeMoment(newStartDate, newStartDate,
+                                                        intakeMoment.getReceipt(),
+                                                        intakeMoment.getMedicineId(),
+                                                        newQuantity,
+                                                        newAlarmId,
+                                                        1);
+        newIntakeMoment.setSwitchState(aSwitch.isChecked());
+        newIntakeMoment.save();
+
         //set new alarm as a one-time alarm with the new set alarm date
-        AlarmUtil.setAlarm(this, medicine.getName(), intakeMoment.getQuantity(),
-                startDate,
-                startDate,
-                intakeMoment.getAlarmRequestCode()+69,
-                intakeMoment.getSwitchState());
+        AlarmUtil.setAlarm(this, medicine.getName(),
+                newIntakeMoment.getQuantity(),
+                newIntakeMoment.getStartDate(),
+                newIntakeMoment.getEndDate(),
+                newIntakeMoment.getAlarmRequestCode(),
+                newIntakeMoment.getSwitchState());
 
         finish();
         Intent i = new Intent(this,ClockActivity.class);

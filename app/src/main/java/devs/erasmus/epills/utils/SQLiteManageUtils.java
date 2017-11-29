@@ -58,7 +58,7 @@ public class SQLiteManageUtils {
         intakeCursor.close();
     }
 
-    static public void deleteIntakeByAlarmId(int alarmId){
+    static public void deleteIntakeByAlarmId(Context context, int alarmId){
         if(db == null) throw new RuntimeException("db not initialized");
         //retrieve the medicineid related to the intake
         Cursor medicineCursor = db.query("intakemoment", null, "alarmrequestcode = " + String.valueOf(alarmId), null, null, null, null);
@@ -78,6 +78,8 @@ public class SQLiteManageUtils {
 
                 db.delete("medicine", medicineWhereClause, medicineWhereArgs);
                 Log.e("medicine deleted", String.valueOf(medicineId));
+
+                AlarmUtil.cancelAlarm(context, alarmId);
             }
             intakeCursor.close();
         }
