@@ -370,7 +370,7 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
         return repetitionContent;
     }
 
-    private View createTimeStep() {
+    private View    createTimeStep() {
         LayoutInflater inflater = LayoutInflater.from(getBaseContext());
         ConstraintLayout timeStepContent =
                 (ConstraintLayout) inflater.inflate(R.layout.stepper_time, null, false);

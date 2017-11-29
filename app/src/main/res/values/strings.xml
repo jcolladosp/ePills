@@ -44,6 +44,8 @@
     <string name="no_pills_today">You don\'t have any pill to take today :)</string>
 
     <string name="pill_deleted_success">Pill deleted successfully</string>
+    <string name="pill_edited_success">Pill edited successfully</string>
+
     <string name="pill_info_card">Take %1$s pill(s) at %2$s:%3$s</string>
 
     <!-- Notification -->
@@ -56,4 +58,5 @@
     <string name="news_image_gallery">Gallery</string>
     <string name="warning_modal_title">Change image</string>
 
+    <string name="alarm">Alarm</string>
 </resources>

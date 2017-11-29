@@ -81,6 +81,10 @@ public class ClockActivity extends AppCompatActivity {
         if(getIntent().getBooleanExtra("pill",false)){
             pillAddedSuccess();
         }
+        if(getIntent().getBooleanExtra("modified",false)){
+            pillEditSuccess();
+        }
+
 
 
 
@@ -159,6 +163,15 @@ public class ClockActivity extends AppCompatActivity {
 
         Snackbar mySnackbar = Snackbar.make(parentLayout,
                 R.string.pill_added_success, Snackbar.LENGTH_SHORT);
+        mySnackbar.show();
+
+
+    }
+    public void pillEditSuccess(){
+        drawer.closeDrawer();
+
+        Snackbar mySnackbar = Snackbar.make(parentLayout,
+                R.string.pill_edited_success, Snackbar.LENGTH_SHORT);
         mySnackbar.show();
 
 

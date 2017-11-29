@@ -1,6 +1,7 @@
 package devs.erasmus.epills.widget;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
@@ -19,6 +20,8 @@ import java.util.Calendar;
 import java.util.List;
 
 import devs.erasmus.epills.R;
+import devs.erasmus.epills.controller.ClockActivity;
+import devs.erasmus.epills.controller.EditIntakeActivity;
 import devs.erasmus.epills.model.IntakeMoment;
 
 /**
@@ -58,14 +61,14 @@ public class PillCardAdapter extends RecyclerView.Adapter<PillCardAdapter.MyView
 
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
-        IntakeMoment medicineQuantity = pillList.get(position);
+        final IntakeMoment intakeMoment = pillList.get(position);
 
-        String info_pill = mContext.getString(R.string.pill_info_card,String.valueOf(medicineQuantity.getQuantity()) ,
-                String.valueOf(medicineQuantity.getStartDate().getHours()),
-                String.format("%02d",  medicineQuantity.getStartDate().getMinutes()));
+        String info_pill = mContext.getString(R.string.pill_info_card,String.valueOf(intakeMoment.getQuantity()) ,
+                String.valueOf(intakeMoment.getStartDate().getHours()),
+                String.format("%02d",  intakeMoment.getStartDate().getMinutes()));
 
 
-        holder.title.setText(medicineQuantity.getMedicine().getName());
+        holder.title.setText(intakeMoment.getMedicine().getName());
         holder.count.setText(info_pill);
 
         // loading album cover using Glide library
@@ -73,7 +76,7 @@ public class PillCardAdapter extends RecyclerView.Adapter<PillCardAdapter.MyView
         requestOptions.placeholder(R.drawable.pill_placeholder);
         requestOptions.error(R.drawable.pill_placeholder);
         requestOptions.centerCrop();
-        String image_path= medicineQuantity.getMedicine().getImage();
+        String image_path= intakeMoment.getMedicine().getImage();
 
         Glide.with(mContext).setDefaultRequestOptions(requestOptions).load(image_path).into(holder.thumbnail);
 
@@ -81,7 +84,9 @@ public class PillCardAdapter extends RecyclerView.Adapter<PillCardAdapter.MyView
         holder.overflow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(mContext, "HI", Toast.LENGTH_SHORT).show();
+                Intent i = new Intent(mContext,EditIntakeActivity.class);
+                i.putExtra("intakeID", intakeMoment.getId());
+                mContext.startActivity(i);
             }
         });
     }
