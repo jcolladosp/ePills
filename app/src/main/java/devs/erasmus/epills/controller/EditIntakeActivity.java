@@ -128,7 +128,9 @@ public class EditIntakeActivity extends AppCompatActivity {
         intakeMoment.setSwitchState(aSwitch.isChecked());
         intakeMoment.save();
 
+        //the cheat begin:
         //reset the current alarm with same date but with notification disable
+        //no one will notice it
         if(intakeMoment.getIsOnce()==0) {
             AlarmUtil.setAlarm(this, medicine.getName(), intakeMoment.getQuantity(),
                     oldStartDate,
