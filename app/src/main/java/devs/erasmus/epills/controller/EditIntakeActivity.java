@@ -170,7 +170,7 @@ public class EditIntakeActivity extends AppCompatActivity {
                     Date endDate = intakeMoment.getEndDate();
 
                     //set new intakemoment for the old multi-time alarm
-                    IntakeMoment newIntakeMoment = new IntakeMoment(newStartDate, endDate,
+                    IntakeMoment newIntakeMoment = new IntakeMoment(startDate, endDate,
                             intakeMoment.getReceipt(),
                             intakeMoment.getMedicineId(),
                             oldQuantity,
