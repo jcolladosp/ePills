@@ -60,4 +60,5 @@
 
     <string name="alarm">Alarm</string>
     <string name="sync_google_calendar_loader">Syncing with Google Calendar...</string>
+    <string name="sync_success">Synchronized with Google Calendar</string>
 </resources>

@@ -44,19 +44,6 @@
         app:layout_constraintTop_toBottomOf="@+id/analog_clock"
         app:layout_constraintVertical_bias="0.0" />
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/add_fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end|bottom"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:src="@drawable/ic_add"
-        app:borderWidth="0dp"
-        app:elevation="6dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
     <android.support.constraint.ConstraintLayout
         android:id="@+id/cards_layout"
         android:layout_width="0dp"

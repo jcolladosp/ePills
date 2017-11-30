@@ -41,6 +41,8 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.DateTime;
 import com.google.api.client.util.ExponentialBackOff;
 import com.google.api.services.calendar.CalendarScopes;
+import com.google.api.services.calendar.model.CalendarList;
+import com.google.api.services.calendar.model.CalendarListEntry;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventDateTime;
 import com.google.api.services.calendar.model.Events;
@@ -108,7 +110,7 @@ public class ClockActivity extends AppCompatActivity {
     static final int REQUEST_PERMISSION_GET_ACCOUNTS = 1003;
 
     private static final String PREF_ACCOUNT_NAME = "accountName";
-    private static final String[] SCOPES = { CalendarScopes.CALENDAR_READONLY };
+    private static final String[] SCOPES = { CalendarScopes.CALENDAR };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -209,7 +211,7 @@ public class ClockActivity extends AppCompatActivity {
 
         }
     }
-    @OnClick(R.id.add_fab)
+
     void add_fab(){
         startActivity(new Intent(this,AddPillGeneralActivity.class));
     }
@@ -228,6 +230,14 @@ public class ClockActivity extends AppCompatActivity {
 
         Snackbar mySnackbar = Snackbar.make(parentLayout,
                 R.string.pill_edited_success, Snackbar.LENGTH_SHORT);
+        mySnackbar.show();
+
+
+    }
+    public void syncSuccess(){
+
+        Snackbar mySnackbar = Snackbar.make(parentLayout,
+                R.string.sync_success, Snackbar.LENGTH_SHORT);
         mySnackbar.show();
 
 
@@ -254,6 +264,10 @@ public class ClockActivity extends AppCompatActivity {
             allIntake = DataSupport.findAll(IntakeMoment.class);
             getResultsFromApi(allIntake);
 
+            return true;
+        }
+        if (id == R.id.action_add_medicine) {
+            add_fab();
             return true;
         }
 
@@ -283,9 +297,9 @@ public class ClockActivity extends AppCompatActivity {
         } else if (mCredential.getSelectedAccountName() == null) {
             chooseAccount();
         } else if (! isDeviceOnline()) {
-            Toast.makeText(this,"No network connection available.",Toast.LENGTH_SHORT);
+            Toast.makeText(this,"No network connection available.",Toast.LENGTH_SHORT).show();
         } else {
-            new MakeRequestTask(mCredential,intakes).execute();
+            new MakeRequestTask(mCredential).execute();
         }
     }
 
@@ -321,9 +335,8 @@ public class ClockActivity extends AppCompatActivity {
             case REQUEST_GOOGLE_PLAY_SERVICES:
                 if (resultCode != RESULT_OK) {
 
-                    Toast toast = Toast.makeText(this, "This app requires Google Play Services. Please install " +
-                            "Google Play Services on your device and relaunch this app.", Toast.LENGTH_SHORT);
-                    toast.show();
+                   Toast.makeText(this, "This app requires Google Play Services. Please install " +
+                            "Google Play Services on your device and relaunch this app.", Toast.LENGTH_SHORT).show();
 
                 } else {
                     getResultsFromApi(allIntake);
@@ -391,16 +404,14 @@ public class ClockActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    private class MakeRequestTask extends AsyncTask<Void, Void, List<String>> {
+    private class MakeRequestTask extends AsyncTask<Void, Void, Boolean> {
         private Exception mLastError = null;
-        private List<IntakeMoment> allIntakes;
-        MakeRequestTask(GoogleAccountCredential credential,List<IntakeMoment> intakes) {
+        MakeRequestTask(GoogleAccountCredential credential) {
             HttpTransport transport = AndroidHttp.newCompatibleTransport();
             JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
-            allIntakes = intakes;
             mService = new com.google.api.services.calendar.Calendar.Builder(
                     transport, jsonFactory, credential)
-                    .setApplicationName("Google Calendar API Android Quickstart")
+                    .setApplicationName("ePills")
                     .build();
         }
 
@@ -410,25 +421,61 @@ public class ClockActivity extends AppCompatActivity {
          * @param params no parameters needed for this task.
          */
         @Override
-        protected List<String> doInBackground(Void... params) {
+        protected Boolean doInBackground(Void... params) {
             try {
                  createEvents();
             } catch (Exception e) {
                 mLastError = e;
                 cancel(true);
-                return null;
+                return false;
             }
-            return null;
+            return true;
         }
 
 
         private void createEvents() throws IOException {
-            for (IntakeMoment intakeMoment : allIntakes) {
+            // Create a new calendar
+            String calendarId = "";
+            String pageToken = null;
+            //check if the calendar exists
+            do {
+                CalendarList calendarList = mService.calendarList().list().setPageToken(pageToken).execute();
+                List<CalendarListEntry> items = calendarList.getItems();
+
+                for (CalendarListEntry calendarListEntry : items) {
+                    if(calendarListEntry.getSummary().equals("ePills")){
+                        calendarId= calendarListEntry.getId();
+                        String pageToken2 = null;
+                        do {
+                            Events events = mService.events().list(calendarId).setPageToken(pageToken2).execute();
+                            List<Event> items2 = events.getItems();
+                            for (Event event : items2) {
+                                mService.events().delete(calendarId, event.getId()).execute();
+                            }
+                            pageToken2 = events.getNextPageToken();
+                        } while (pageToken2 != null);
+                    }
+                }
+                pageToken = calendarList.getNextPageToken();
+            } while (pageToken != null);
+
+            if(calendarId.equals("")){
+                com.google.api.services.calendar.model.Calendar calendar = new com.google.api.services.calendar.model.Calendar();
+                calendar.setSummary("ePills");
+                calendar.setTimeZone("Europe/Dublin");
+                // Insert the new calendar
+                com.google.api.services.calendar.model.Calendar createdCalendar = mService.calendars().insert(calendar).execute();
+                calendarId = createdCalendar.getId();
+            }
+           // mService.calendars().clear(calendarId).execute();
+
+
+            for (IntakeMoment intakeMoment : allIntake) {
                 intakeMoment.setMedicine(DataSupport.find(Medicine.class, intakeMoment.getMedicineId()));
 
                 Event event = new Event()
-                        .setSummary(intakeMoment.getMedicine().getName())
-                        .setDescription("A chance to hear more about Google's developer products.");
+                        .setSummary(intakeMoment.getQuantity() + " pill(s) of " + intakeMoment.getMedicine().getName())
+                        .setDescription(intakeMoment.getMedicine().getDescription());
 
                 DateTime startDateTime = new DateTime(intakeMoment.getStartDate());
                 EventDateTime start = new EventDateTime()
@@ -442,8 +489,6 @@ public class ClockActivity extends AppCompatActivity {
                         .setTimeZone("Europe/Dublin");
                 event.setEnd(end);
 
-
-                String calendarId = "ePills";
                 event = mService.events().insert(calendarId, event).execute();
                 Log.i("Events","Event created: "+ event.getHtmlLink());
             }
@@ -457,14 +502,9 @@ public class ClockActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(List<String> output) {
+        protected void onPostExecute(Boolean output) {
             mProgress.hide();
-            if (output == null || output.size() == 0) {
-                Toast.makeText(ClockActivity.this,"No results returned.",Toast.LENGTH_SHORT);
-            } else {
-                output.add(0, "Data retrieved using the Google Calendar API:");
-                    Log.i("results",TextUtils.join("\n", output));
-            }
+            syncSuccess();
         }
 
         @Override
@@ -481,10 +521,11 @@ public class ClockActivity extends AppCompatActivity {
                             ClockActivity.REQUEST_AUTHORIZATION);
                 } else {
                     Toast.makeText(ClockActivity.this,"The following error occurred:\n"
-                            + mLastError.getMessage(),Toast.LENGTH_SHORT);
+                            + mLastError.getMessage(),Toast.LENGTH_SHORT).show();
                 }
             } else {
-                Toast.makeText(ClockActivity.this,"Request cancelled.",Toast.LENGTH_SHORT);
+                Toast.makeText(ClockActivity.this,"Request cancelled.",Toast.LENGTH_SHORT).show();
+
             }
         }
     }
