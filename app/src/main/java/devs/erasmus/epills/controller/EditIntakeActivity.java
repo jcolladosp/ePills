@@ -92,7 +92,11 @@ public class EditIntakeActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.delete_intake) {
-
+            SQLiteManageUtils.deleteIntakeByAlarmId(intakeMoment.getAlarmRequestCode());
+            finish();
+            Intent i = new Intent(this,ClockActivity.class);
+            i.putExtra("deleted",true);
+            startActivity(i);
             return true;
         }
 

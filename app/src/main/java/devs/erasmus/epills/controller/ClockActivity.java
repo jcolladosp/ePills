@@ -139,6 +139,9 @@ public class ClockActivity extends AppCompatActivity {
         if(getIntent().getBooleanExtra("modified",false)){
             pillEditSuccess();
         }
+        if(getIntent().getBooleanExtra("deleted",false)){
+            deleteSuccess();
+        }
 
         // Initialize credentials and service object.
         mCredential = GoogleAccountCredential.usingOAuth2(
@@ -238,6 +241,14 @@ public class ClockActivity extends AppCompatActivity {
 
         Snackbar mySnackbar = Snackbar.make(parentLayout,
                 R.string.sync_success, Snackbar.LENGTH_SHORT);
+        mySnackbar.show();
+
+
+    }
+    public void deleteSuccess(){
+
+        Snackbar mySnackbar = Snackbar.make(parentLayout,
+                R.string.delete_success, Snackbar.LENGTH_SHORT);
         mySnackbar.show();
 
 
