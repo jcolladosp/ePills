@@ -51,7 +51,7 @@ public class AlarmUtil {
         calendar.setTimeInMillis(System.currentTimeMillis());
         calendar.setTime(startDate);
 
-        pendingIntent = PendingIntent.getBroadcast(context, alarmId, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        pendingIntent = PendingIntent.getBroadcast(context, alarmId, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
         //Compatibility check
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

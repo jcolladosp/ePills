@@ -118,87 +118,79 @@ public class EditIntakeActivity extends AppCompatActivity {
     }
     @OnClick(R.id.fab_edit)
     void onFab(){
-        int alarmId = intakeMoment.getAlarmRequestCode();
+        //saving the old values in case we need to set a multi-time alarm
+        int oldQuantity = intakeMoment.getQuantity();
+        Date oldStartDate = intakeMoment.getStartDate();
+        int oldIsOnce = intakeMoment.getIsOnce();
 
-        //OLD ALARM LOGIC
-
-        //check if i need to set next week alarm
-        if(intakeMoment.getIsOnce()==0) {
-            long startDateInMillis = intakeMoment.getStartDate().getTime();
-            long endDateInMillis = intakeMoment.getEndDate().getTime();
-            long currentTime = System.currentTimeMillis();
-
-            if(endDateInMillis > currentTime){ //end date isnt come yet
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTimeInMillis(startDateInMillis);
-
-                //refresh startDate to the next date
-                calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH) + 7);
-
-                //if next date is before the endDate, create a new alarm
-                if(calendar.getTimeInMillis() < endDateInMillis) {
-
-                    Date startDate = calendar.getTime();
-                    Date endDate = intakeMoment.getEndDate();
-
-                    SQLiteManageUtils.updateIntake(alarmId, calendar.getTimeInMillis()); //update intake to refreshed startDate
-                    AlarmUtil.setAlarm(this, medicine.getName(), intakeMoment.getQuantity(),
-                            startDate,
-                            endDate,
-                            alarmId,
-                            true);
-                }
-                //else remove the intake
-                else{
-                    SQLiteManageUtils.deleteIntakeByAlarmId(alarmId);
-                    AlarmUtil.cancelAlarm(this, alarmId);
-                }
-            }
-            else{
-                SQLiteManageUtils.deleteIntakeByAlarmId(alarmId);
-                AlarmUtil.cancelAlarm(this, alarmId);
-            }
-        }
-        else{
-            SQLiteManageUtils.deleteIntakeByAlarmId(alarmId);
-            AlarmUtil.cancelAlarm(this, alarmId);
-        }
-
-        //NEW ALARM & INTAKE LOGIC
-
-        int newAlarmId = (int) System.currentTimeMillis();
         int newQuantity = seekBar.getProgress();
         int hour = Integer.parseInt(time_text.getText().toString().substring(0,2));
         int minutes = Integer.parseInt(time_text.getText().toString().substring(3,5));
+        Calendar newCalendar = Calendar.getInstance();
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, hour);
-        calendar.set(Calendar.MINUTE, minutes);
-        Date newStartDate = calendar.getTime();
+        newCalendar.set(Calendar.HOUR_OF_DAY, hour);
+        newCalendar.set(Calendar.MINUTE, minutes);
+        Date newStartDate = newCalendar.getTime();
 
-        //set new intakemoment for a new one-time alarm
-        IntakeMoment newIntakeMoment = new IntakeMoment(newStartDate, newStartDate,
-                                                        intakeMoment.getReceipt(),
-                                                        intakeMoment.getMedicineId(),
-                                                        newQuantity,
-                                                        newAlarmId,
-                                                        1);
-        newIntakeMoment.setSwitchState(aSwitch.isChecked());
-        newIntakeMoment.save();
+        //update intake moment with new dates
+        intakeMoment.setStartDate(newStartDate);
+        intakeMoment.setQuantity(newQuantity);
+        intakeMoment.setSwitchState(aSwitch.isChecked());
+        intakeMoment.setIsOnce(1);
+        intakeMoment.save();
 
-        //set new alarm as a one-time alarm with the new set alarm date
+        //set refreshed alarm as a one-time alarm with the new startdate
         AlarmUtil.setAlarm(this, medicine.getName(),
-                newIntakeMoment.getQuantity(),
-                newIntakeMoment.getStartDate(),
-                newIntakeMoment.getEndDate(),
-                newIntakeMoment.getAlarmRequestCode(),
-                newIntakeMoment.getSwitchState());
+                intakeMoment.getQuantity(),
+                intakeMoment.getStartDate(),
+                intakeMoment.getStartDate(),
+                intakeMoment.getAlarmRequestCode(),
+                intakeMoment.getSwitchState());
 
+        //OLD INTAKE & ALARM LOGIC
+
+        //check if i need to set next week alarm
+        if(oldIsOnce==0) {
+            long startDateInMillis = oldStartDate.getTime();
+            long endDateInMillis = intakeMoment.getEndDate().getTime();
+            long currentTime = System.currentTimeMillis();
+
+            //if end-date isnt come yet, re-set old multi-time alarm with new id to the next week
+            if(endDateInMillis > currentTime){ //end date isnt come yet
+                int newAlarmId = (int) System.currentTimeMillis();
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(startDateInMillis);
+
+                //refresh startDate to the next week date
+                calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH) + 7);
+
+                //if next date is before the endDate, create a new alarm e intake
+                if(calendar.getTimeInMillis() < endDateInMillis) {
+                    Date startDate = calendar.getTime();
+                    Date endDate = intakeMoment.getEndDate();
+
+                    //set new intakemoment for the old multi-time alarm
+                    IntakeMoment newIntakeMoment = new IntakeMoment(startDate, endDate,
+                            intakeMoment.getReceipt(),
+                            intakeMoment.getMedicineId(),
+                            oldQuantity,
+                            newAlarmId,
+                            0);
+
+                    newIntakeMoment.save();
+
+                    AlarmUtil.setAlarm(this, medicine.getName(), newIntakeMoment.getQuantity(),
+                            startDate,
+                            endDate,
+                            newAlarmId,
+                            true);
+                }
+            }
+        }
         finish();
         Intent i = new Intent(this,ClockActivity.class);
         i.putExtra("modified",true);
         startActivity(i);
-
     }
     @Override
     public boolean onSupportNavigateUp() {

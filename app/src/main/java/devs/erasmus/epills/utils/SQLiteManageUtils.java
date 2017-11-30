@@ -61,27 +61,28 @@ public class SQLiteManageUtils {
     static public void deleteIntakeByAlarmId(int alarmId){
         if(db == null) throw new RuntimeException("db not initialized");
         //retrieve the medicineid related to the intake
-        Cursor medicineCursor = db.query("intakemoment", null, "alarmrequestcode = " + String.valueOf(alarmId), null, null, null, null);
+        Cursor intakeByAlarmCursor = db.query("intakemoment", null, "alarmrequestcode = " + String.valueOf(alarmId), null, null, null, null);
 
-        if(medicineCursor.moveToFirst()){
-            long medicineId = medicineCursor.getLong(medicineCursor.getColumnIndex("id"));
-            Cursor intakeCursor = db.query("intakemoment", null, "medicineid = " + String.valueOf(medicineId), null, null, null, null);
+        if(intakeByAlarmCursor.moveToFirst()){
+            long medicineId = intakeByAlarmCursor.getLong(intakeByAlarmCursor.getColumnIndex("id"));
 
             String whereClause="alarmrequestcode =?";
             String[] intakeWhereArgs = new String[]{String.valueOf(alarmId)};
             db.delete("intakemoment",whereClause, intakeWhereArgs);
             Log.e("alarm deleted", String.valueOf(alarmId));
 
-            if(!intakeCursor.moveToFirst()) {
+            Cursor intakeByMedicineCursor = db.query("intakemoment", null, "medicineid = " + String.valueOf(medicineId), null, null, null, null);
+
+            if(!intakeByMedicineCursor.moveToFirst()) {
                 String medicineWhereClause = "id =?";
                 String[] medicineWhereArgs = new String[]{String.valueOf(medicineId)};
 
                 db.delete("medicine", medicineWhereClause, medicineWhereArgs);
                 Log.e("medicine deleted", String.valueOf(medicineId));
             }
-            intakeCursor.close();
+            intakeByMedicineCursor.close();
         }
-        medicineCursor.close();
+        intakeByAlarmCursor.close();
     }
 
     static public void updateIntake(int alarmId, long dateInMillis){
