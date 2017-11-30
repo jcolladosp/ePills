@@ -120,6 +120,36 @@ public class EditIntakeActivity extends AppCompatActivity {
     void onFab(){
         int alarmId = intakeMoment.getAlarmRequestCode();
 
+        //NEW ALARM & INTAKE LOGIC
+
+        int newAlarmId = (int) System.currentTimeMillis();
+        int newQuantity = seekBar.getProgress();
+        int hour = Integer.parseInt(time_text.getText().toString().substring(0,2));
+        int minutes = Integer.parseInt(time_text.getText().toString().substring(3,5));
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY, hour);
+        calendar.set(Calendar.MINUTE, minutes);
+        Date newStartDate = calendar.getTime();
+
+        //set new intakemoment for a new one-time alarm
+        IntakeMoment newIntakeMoment = new IntakeMoment(newStartDate, newStartDate,
+                intakeMoment.getReceipt(),
+                intakeMoment.getMedicineId(),
+                newQuantity,
+                newAlarmId,
+                1);
+        newIntakeMoment.setSwitchState(aSwitch.isChecked());
+        newIntakeMoment.save();
+
+        //set new alarm as a one-time alarm with the new set alarm date
+        AlarmUtil.setAlarm(this, medicine.getName(),
+                newIntakeMoment.getQuantity(),
+                newIntakeMoment.getStartDate(),
+                newIntakeMoment.getEndDate(),
+                newIntakeMoment.getAlarmRequestCode(),
+                newIntakeMoment.getSwitchState());
+
         //OLD ALARM LOGIC
 
         //check if i need to set next week alarm
@@ -129,7 +159,7 @@ public class EditIntakeActivity extends AppCompatActivity {
             long currentTime = System.currentTimeMillis();
 
             if(endDateInMillis > currentTime){ //end date isnt come yet
-                Calendar calendar = Calendar.getInstance();
+                calendar = Calendar.getInstance();
                 calendar.setTimeInMillis(startDateInMillis);
 
                 //refresh startDate to the next date
@@ -163,36 +193,6 @@ public class EditIntakeActivity extends AppCompatActivity {
             SQLiteManageUtils.deleteIntakeByAlarmId(alarmId);
             AlarmUtil.cancelAlarm(this, alarmId);
         }
-
-        //NEW ALARM & INTAKE LOGIC
-
-        int newAlarmId = (int) System.currentTimeMillis();
-        int newQuantity = seekBar.getProgress();
-        int hour = Integer.parseInt(time_text.getText().toString().substring(0,2));
-        int minutes = Integer.parseInt(time_text.getText().toString().substring(3,5));
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, hour);
-        calendar.set(Calendar.MINUTE, minutes);
-        Date newStartDate = calendar.getTime();
-
-        //set new intakemoment for a new one-time alarm
-        IntakeMoment newIntakeMoment = new IntakeMoment(newStartDate, newStartDate,
-                                                        intakeMoment.getReceipt(),
-                                                        intakeMoment.getMedicineId(),
-                                                        newQuantity,
-                                                        newAlarmId,
-                                                        1);
-        newIntakeMoment.setSwitchState(aSwitch.isChecked());
-        newIntakeMoment.save();
-
-        //set new alarm as a one-time alarm with the new set alarm date
-        AlarmUtil.setAlarm(this, medicine.getName(),
-                newIntakeMoment.getQuantity(),
-                newIntakeMoment.getStartDate(),
-                newIntakeMoment.getEndDate(),
-                newIntakeMoment.getAlarmRequestCode(),
-                newIntakeMoment.getSwitchState());
 
         finish();
         Intent i = new Intent(this,ClockActivity.class);
