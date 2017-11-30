@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,6 +36,7 @@ public class PillCardAdapter extends RecyclerView.Adapter<PillCardAdapter.MyView
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView title, count;
         public ImageView thumbnail, overflow;
+        public CardView cardViewPill;
 
         public MyViewHolder(View view) {
             super(view);
@@ -42,6 +44,7 @@ public class PillCardAdapter extends RecyclerView.Adapter<PillCardAdapter.MyView
             count = view.findViewById(R.id.count);
             thumbnail = view.findViewById(R.id.thumbnail);
             overflow = view.findViewById(R.id.overflow);
+            cardViewPill = view.findViewById(R.id.card_view_pill);
         }
     }
 
@@ -81,7 +84,7 @@ public class PillCardAdapter extends RecyclerView.Adapter<PillCardAdapter.MyView
         Glide.with(mContext).setDefaultRequestOptions(requestOptions).load(image_path).into(holder.thumbnail);
 
 
-        holder.overflow.setOnClickListener(new View.OnClickListener() {
+        holder.cardViewPill.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent i = new Intent(mContext,EditIntakeActivity.class);
