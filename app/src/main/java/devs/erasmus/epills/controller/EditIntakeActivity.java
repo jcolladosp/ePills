@@ -132,6 +132,7 @@ public class EditIntakeActivity extends AppCompatActivity {
         newCalendar.set(Calendar.MINUTE, minutes);
         Date newStartDate = newCalendar.getTime();
 
+        //update intake moment with new dates
         intakeMoment.setStartDate(newStartDate);
         intakeMoment.setQuantity(newQuantity);
         intakeMoment.setSwitchState(aSwitch.isChecked());
@@ -142,7 +143,7 @@ public class EditIntakeActivity extends AppCompatActivity {
         AlarmUtil.setAlarm(this, medicine.getName(),
                 intakeMoment.getQuantity(),
                 intakeMoment.getStartDate(),
-                intakeMoment.getEndDate(),
+                intakeMoment.getStartDate(),
                 intakeMoment.getAlarmRequestCode(),
                 intakeMoment.getSwitchState());
 
