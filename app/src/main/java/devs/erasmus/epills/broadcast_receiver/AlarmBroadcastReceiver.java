@@ -49,6 +49,7 @@ public class AlarmBroadcastReceiver extends BroadcastReceiver {
 
 
         if(isOnce==1){
+            Log.e("delete one-time alarm intake", "ok");
             SQLiteManageUtils.deleteIntakeByAlarmId(alarmId);
         }
         else {
