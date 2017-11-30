@@ -59,4 +59,5 @@
     <string name="warning_modal_title">Change image</string>
 
     <string name="alarm">Alarm</string>
+    <string name="sync_google_calendar_loader">Syncing with Google Calendar...</string>
 </resources>

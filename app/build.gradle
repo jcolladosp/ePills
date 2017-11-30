@@ -17,6 +17,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    configurations.all {
+        resolutionStrategy.force 'com.google.code.findbugs:jsr305:1.3.9'
+    }
 }
 
 dependencies {
@@ -40,7 +43,13 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.3.0'
     compile 'com.buyi.recyclerviewpagerindicator:recycler-viewpager-indicator:1.1'
     compile 'com.karumi:dexter:4.2.0'
-
+    compile 'com.google.android.gms:play-services-auth:11.6.0'
+    compile('com.google.api-client:google-api-client-android:1.23.0') {
+        exclude group: 'org.apache.httpcomponents'
+    }
+    compile('com.google.apis:google-api-services-calendar:v3-rev270-1.23.0') {
+        exclude group: 'org.apache.httpcomponents'
+    }
     implementation('com.mikepenz:materialdrawer:6.0.1@aar') {
         transitive = true
     }
