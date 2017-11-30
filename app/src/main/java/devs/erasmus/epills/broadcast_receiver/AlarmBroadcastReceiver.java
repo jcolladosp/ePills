@@ -49,6 +49,7 @@ public class AlarmBroadcastReceiver extends BroadcastReceiver {
 
 
         if(isOnce==1){
+            Log.e("delete one-time alarm intake", "ok");
             SQLiteManageUtils.deleteIntakeByAlarmId(alarmId);
         }
         else {
@@ -70,6 +71,7 @@ public class AlarmBroadcastReceiver extends BroadcastReceiver {
                     Date startDate = calendar.getTime();
                     Date endDate = SQLiteManageUtils.long2Date(endDateInMillis);
 
+                    Log.e("create new multi-time alarm", String.valueOf(alarmId));
                     SQLiteManageUtils.updateIntake(alarmId, calendar.getTimeInMillis()); //update intake to refreshed startDate
                     AlarmUtil.setAlarm(context, medicineName, quantity, startDate, endDate, alarmId, true);
                 }
