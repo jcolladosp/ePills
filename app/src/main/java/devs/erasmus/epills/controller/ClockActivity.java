@@ -42,6 +42,7 @@ import com.google.api.client.util.DateTime;
 import com.google.api.client.util.ExponentialBackOff;
 import com.google.api.services.calendar.CalendarScopes;
 import com.google.api.services.calendar.model.Event;
+import com.google.api.services.calendar.model.EventDateTime;
 import com.google.api.services.calendar.model.Events;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.PermissionToken;
@@ -98,6 +99,7 @@ public class ClockActivity extends AppCompatActivity {
 
     ProgressDialog mProgress;
     GoogleAccountCredential mCredential;
+    List<IntakeMoment> allIntake;
 
 
     static final int REQUEST_ACCOUNT_PICKER = 1000;
@@ -183,16 +185,16 @@ public class ClockActivity extends AppCompatActivity {
             Date tomorrow = ClockUtils.addDays(today,1);
 
 
-            List<IntakeMoment> allIntake = DataSupport.where("startdate between "
+            List<IntakeMoment> allIntakeToday = DataSupport.where("startdate between "
             +today.getTime() +" and "+ tomorrow.getTime()).find(IntakeMoment.class);
 
-            if(allIntake.size()==0){
+            if(allIntakeToday.size()==0){
                 noPillsTV.setText(R.string.no_pills_today);
                 noPillsTV.setVisibility(View.VISIBLE);
                 cards_layout.setVisibility(View.GONE);
 
             }
-            for (IntakeMoment intake : allIntake) {
+            for (IntakeMoment intake : allIntakeToday) {
                 intake.setMedicine(DataSupport.find(Medicine.class, intake.getMedicineId()));
                 intakeMomentList.add(intake);
                 analogClock.drawPill(intake.getStartDate().getHours());
@@ -249,7 +251,8 @@ public class ClockActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_sync_calendar) {
-            getResultsFromApi();
+            allIntake = DataSupport.findAll(IntakeMoment.class);
+            getResultsFromApi(allIntake);
 
             return true;
         }
@@ -274,7 +277,7 @@ public class ClockActivity extends AppCompatActivity {
 
     // GOOGLE CALENDAR LOGIC - some code extracted from Google Calendar API guidelines
 
-    private void getResultsFromApi() {
+    private void getResultsFromApi(List<IntakeMoment> intakes) {
         if (! isGooglePlayServicesAvailable()) {
             acquireGooglePlayServices();
         } else if (mCredential.getSelectedAccountName() == null) {
@@ -282,7 +285,7 @@ public class ClockActivity extends AppCompatActivity {
         } else if (! isDeviceOnline()) {
             Toast.makeText(this,"No network connection available.",Toast.LENGTH_SHORT);
         } else {
-            new MakeRequestTask(mCredential).execute();
+            new MakeRequestTask(mCredential,intakes).execute();
         }
     }
 
@@ -297,7 +300,7 @@ public class ClockActivity extends AppCompatActivity {
                                 .getString(PREF_ACCOUNT_NAME, null);
                         if (accountName != null) {
                             mCredential.setSelectedAccountName(accountName);
-                            getResultsFromApi();
+                            getResultsFromApi(allIntake);
                         } else {
                             // Start a dialog from which the user can choose an account
                             startActivityForResult(
@@ -323,7 +326,7 @@ public class ClockActivity extends AppCompatActivity {
                     toast.show();
 
                 } else {
-                    getResultsFromApi();
+                    getResultsFromApi(allIntake);
                 }
                 break;
             case REQUEST_ACCOUNT_PICKER:
@@ -338,13 +341,13 @@ public class ClockActivity extends AppCompatActivity {
                         editor.putString(PREF_ACCOUNT_NAME, accountName);
                         editor.apply();
                         mCredential.setSelectedAccountName(accountName);
-                        getResultsFromApi();
+                        getResultsFromApi(allIntake);
                     }
                 }
                 break;
             case REQUEST_AUTHORIZATION:
                 if (resultCode == RESULT_OK) {
-                    getResultsFromApi();
+                    getResultsFromApi(allIntake);
                 }
                 break;
         }
@@ -390,10 +393,11 @@ public class ClockActivity extends AppCompatActivity {
 
     private class MakeRequestTask extends AsyncTask<Void, Void, List<String>> {
         private Exception mLastError = null;
-
-        MakeRequestTask(GoogleAccountCredential credential) {
+        private List<IntakeMoment> allIntakes;
+        MakeRequestTask(GoogleAccountCredential credential,List<IntakeMoment> intakes) {
             HttpTransport transport = AndroidHttp.newCompatibleTransport();
             JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
+            allIntakes = intakes;
             mService = new com.google.api.services.calendar.Calendar.Builder(
                     transport, jsonFactory, credential)
                     .setApplicationName("Google Calendar API Android Quickstart")
@@ -408,37 +412,42 @@ public class ClockActivity extends AppCompatActivity {
         @Override
         protected List<String> doInBackground(Void... params) {
             try {
-                return getDataFromApi();
+                 createEvents();
             } catch (Exception e) {
                 mLastError = e;
                 cancel(true);
                 return null;
             }
+            return null;
         }
 
 
-        private List<String> getDataFromApi() throws IOException {
-            // List the next 10 events from the primary calendar.
-            DateTime now = new DateTime(System.currentTimeMillis());
-            List<String> eventStrings = new ArrayList<String>();
-            Events events = mService.events().list("primary")
-                    .setMaxResults(10)
-                    .setTimeMin(now)
-                    .setOrderBy("startTime")
-                    .setSingleEvents(true)
-                    .execute();
-            List<Event> items = events.getItems();
-            for (Event event : items) {
-                DateTime start = event.getStart().getDateTime();
-                if (start == null) {
-                    // All-day events don't have start times, so just use
-                    // the start date.
-                    start = event.getStart().getDate();
-                }
-                eventStrings.add(
-                        String.format("%s (%s)", event.getSummary(), start));
+        private void createEvents() throws IOException {
+            for (IntakeMoment intakeMoment : allIntakes) {
+                intakeMoment.setMedicine(DataSupport.find(Medicine.class, intakeMoment.getMedicineId()));
+
+                Event event = new Event()
+                        .setSummary(intakeMoment.getMedicine().getName())
+                        .setDescription("A chance to hear more about Google's developer products.");
+
+                DateTime startDateTime = new DateTime(intakeMoment.getStartDate());
+                EventDateTime start = new EventDateTime()
+                        .setDateTime(startDateTime)
+                        .setTimeZone("Europe/Dublin");
+                event.setStart(start);
+
+                DateTime endDateTime = new DateTime(ClockUtils.addHours(intakeMoment.getStartDate(),1));
+                EventDateTime end = new EventDateTime()
+                        .setDateTime(endDateTime)
+                        .setTimeZone("Europe/Dublin");
+                event.setEnd(end);
+
+
+                String calendarId = "ePills";
+                event = mService.events().insert(calendarId, event).execute();
+                Log.i("Events","Event created: "+ event.getHtmlLink());
             }
-            return eventStrings;
+
         }
 
 

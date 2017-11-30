@@ -19,6 +19,13 @@ public class ClockUtils {
         cal.add(Calendar.DATE, days); //minus number would decrement the days
         return cal.getTime();
     }
+    public static Date addHours(Date date, int hours)
+    {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.add(Calendar.HOUR_OF_DAY, hours); //minus number would decrement the days
+        return cal.getTime();
+    }
     public static SharedPreferences getPrefs(Context context) {
         return context.getSharedPreferences(PrefKeys.NAME.toString(), Context.MODE_PRIVATE);
     }
