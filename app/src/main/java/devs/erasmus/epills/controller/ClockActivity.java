@@ -256,7 +256,9 @@ public class ClockActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        drawer.openDrawer();
+
+        finish();
+        System.exit(0);
     }
 
     @Override

@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,7 +37,7 @@ public class PillCardAdapter extends RecyclerView.Adapter<PillCardAdapter.MyView
     public class MyViewHolder extends RecyclerView.ViewHolder {
         public TextView title, count;
         public ImageView thumbnail, overflow;
-        public CardView cardViewPill;
+        public LinearLayout cardViewPill;
 
         public MyViewHolder(View view) {
             super(view);

@@ -1,10 +1,11 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card_view_pill"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <android.support.v7.widget.CardView
-        android:id="@+id/card_view_pill"
+        android:id="@+id/card_view_pill2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"

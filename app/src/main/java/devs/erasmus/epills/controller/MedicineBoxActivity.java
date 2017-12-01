@@ -69,4 +69,11 @@ public class MedicineBoxActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+    @Override
+    public void onBackPressed() {
+
+        finish();
+        System.exit(0);
+    }
+
 }

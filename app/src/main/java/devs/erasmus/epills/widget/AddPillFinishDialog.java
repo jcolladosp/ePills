@@ -16,7 +16,6 @@ import android.widget.Toast;
 import devs.erasmus.epills.R;
 import devs.erasmus.epills.controller.AddPillSetTime;
 import devs.erasmus.epills.controller.ClockActivity;
-import devs.erasmus.epills.controller.MainActivity;
 
 
 /**

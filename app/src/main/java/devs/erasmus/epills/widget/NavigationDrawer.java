@@ -50,8 +50,7 @@ public class NavigationDrawer {
                         item1,
                         item2,
                         item3,
-                        new DividerDrawerItem(),
-                        new SecondaryDrawerItem().withName("Settings")
+                        new DividerDrawerItem()
                 )
                 .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override

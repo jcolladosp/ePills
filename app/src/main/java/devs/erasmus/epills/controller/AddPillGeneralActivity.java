@@ -105,6 +105,8 @@ public class AddPillGeneralActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         if (savedInstanceState != null) {
             mCurrentPhotoPath = savedInstanceState.getString(STATE_PHOTO, null) ;
@@ -118,6 +120,11 @@ public class AddPillGeneralActivity extends AppCompatActivity {
                 )
                 .apply(RequestOptions.centerCropTransform())
                 .into(imageView);
+    }
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(this,ClockActivity.class));
+        finish();
     }
 
     @Override
@@ -145,7 +152,11 @@ public class AddPillGeneralActivity extends AppCompatActivity {
             instance.putString(STATE_PHOTO,mCurrentPhotoPath);
         }
     }
-
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
     @OnClick(R.id.FAB)
     void onConfirm(){
         confirm();
