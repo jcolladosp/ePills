@@ -129,7 +129,7 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
             //Set Time variables
             Calendar calendar = Calendar.getInstance();
             startDate = (Calendar) calendar.clone();
-            calendar.roll(Calendar.DAY_OF_MONTH,true);
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
             endDate = calendar;
         } else {
             //Reload the subTitle names
