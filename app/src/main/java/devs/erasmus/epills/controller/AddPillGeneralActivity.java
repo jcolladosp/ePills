@@ -1,7 +1,6 @@
 package devs.erasmus.epills.controller;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -65,6 +64,11 @@ import devs.erasmus.epills.R;
 import static android.content.res.Configuration.ORIENTATION_LANDSCAPE;
 
 public class AddPillGeneralActivity extends AppCompatActivity {
+    //IntentExtra
+    public static final String EXTRA_CANCELPRESSED = "devs.erasmus.epills.AddPillGeneralActivity.EXTRA_CANCELPRESSED";
+    public static final String EXTRA_CANCELMEDICINEID = "devs.erasmus.epills.AddPillGeneralActivity.EXTRA_CANCELMEDICINEID";
+    public static final String EXTRA_CANCELRECEIPTID = "devs.erasmus.epills.AddPillGeneralActivity.EXTRA_CANCELRECEIPTID";
+    //State Strings
     private static final String STATE_PHOTO = "STATE_PHOTOURL";
 
     private String mCurrentPhotoPath;
@@ -111,6 +115,15 @@ public class AddPillGeneralActivity extends AppCompatActivity {
         if (savedInstanceState != null) {
             mCurrentPhotoPath = savedInstanceState.getString(STATE_PHOTO, null) ;
 
+        } else if (getIntent().getBooleanExtra(EXTRA_CANCELPRESSED, false) ) { //if we come back from SetTime activity for the first time
+            long medicineId = getIntent().getLongExtra(EXTRA_CANCELMEDICINEID,-1) ;
+            if(medicineId == -1) {
+                throw new RuntimeException("No CANCELMEDICINEID provided");
+            }
+            Medicine medicine = DataSupport.find(Medicine.class, medicineId);
+            name_text.setText(medicine.getName());
+            description_text.setText(medicine.getDescription());
+            mCurrentPhotoPath = medicine.getImage();
         }
 
         Glide.with(this)
@@ -120,6 +133,7 @@ public class AddPillGeneralActivity extends AppCompatActivity {
                 )
                 .apply(RequestOptions.centerCropTransform())
                 .into(imageView);
+
     }
     @Override
     public void onBackPressed() {
@@ -129,15 +143,11 @@ public class AddPillGeneralActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-
-        }
         if (data != null && requestCode == GALLERY_PICK) {
             Uri selectedImageURI = data.getData();
             mCurrentPhotoPath = getRealPathFromURI(selectedImageURI);
         }
-        if(resultCode == RESULT_OK){
-
+        if((requestCode == GALLERY_PICK || requestCode == REQUEST_IMAGE_CAPTURE) && resultCode == RESULT_OK){
             Glide.with(this)
                     .load(mCurrentPhotoPath)
                     .apply(RequestOptions.centerCropTransform())
@@ -238,10 +248,27 @@ public class AddPillGeneralActivity extends AppCompatActivity {
         //Check if the all Fields are filled out
         if(TextUtils.isEmpty(name_text.getText().toString())) {
             nameLayout.setError(getString(R.string.empty_Name));
-        } else {
+            return;
+        } else if(getIntent().getBooleanExtra(EXTRA_CANCELPRESSED, false)) {
+            long medicineId = getIntent().getLongExtra(EXTRA_CANCELMEDICINEID, -1);
+            long receiptId = getIntent().getLongExtra(EXTRA_CANCELRECEIPTID,-1);
+
+            Medicine medicine = DataSupport.find(Medicine.class, medicineId);
+            medicine.setDescription(description_text.getText().toString());
+            medicine.setImage(mCurrentPhotoPath);
+            medicine.setName(name_text.getText().toString());
+            medicine.save();
+
+            Intent intent = new Intent(this, AddPillSetTime.class);
+            intent.putExtra(AddPillSetTime.EXTRA_MEDICINEID, medicineId)
+                    .putExtra(AddPillSetTime.EXTRA_RECEIPTID, receiptId);
+            startActivity(intent);
+            finish();
+        }
+        else {
             Medicine medicine = new Medicine(name_text.getText().toString(), description_text.getText().toString(), mCurrentPhotoPath);
             medicine.save();
-            long id = medicine.getId(); //Possible because of auto-increment.
+            long id = medicine.getId();
 
             //Create new Receipt
             Receipt receipt = new Receipt();

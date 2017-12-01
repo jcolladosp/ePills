@@ -26,9 +26,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".controller.MainActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
             android:name=".controller.AddPillGeneralActivity"
             android:label="@string/title_activity_addPill"
             android:theme="@style/AppTheme.NoActionBar" />

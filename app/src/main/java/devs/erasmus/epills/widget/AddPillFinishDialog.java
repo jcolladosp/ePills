@@ -16,6 +16,7 @@ import android.widget.Toast;
 import devs.erasmus.epills.R;
 import devs.erasmus.epills.controller.AddPillSetTime;
 import devs.erasmus.epills.controller.ClockActivity;
+import devs.erasmus.epills.model.IntakeMoment;
 
 
 /**
@@ -61,10 +62,10 @@ public class AddPillFinishDialog extends DialogFragment {
                 .setItems(R.array.addPillFinish, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        AddPillSetTime setAlarmActivity = (AddPillSetTime) getActivity();
+                        AddPillSetTime activity = (AddPillSetTime) getActivity();
                         switch (which) {
                             case 0:
-                                AddPillSetTime activity = (AddPillSetTime)getActivity();
+                                activity.saveIntake();
                                 Intent intent = new Intent(getActivity(), AddPillSetTime.class);
                                 intent.putExtra(AddPillSetTime.EXTRA_MEDICINEID, activity.getMedicineId())
                                         .putExtra(AddPillSetTime.EXTRA_RECEIPTID, activity.getReceiptID());
@@ -73,7 +74,8 @@ public class AddPillFinishDialog extends DialogFragment {
                                 activity.finish();
                                 break;
                             case 1:
-                                setAlarmActivity.setNewAlarms();
+                                activity.saveIntake();
+                                activity.setNewAlarms();
                                 getActivity().finish();
                                 Intent i = new Intent(getContext(),ClockActivity.class);
                                 i.putExtra("pill", true);
@@ -87,4 +89,5 @@ public class AddPillFinishDialog extends DialogFragment {
                 });
         return builder.create();
     }
+
 }

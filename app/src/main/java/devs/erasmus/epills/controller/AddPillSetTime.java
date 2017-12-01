@@ -2,6 +2,7 @@ package devs.erasmus.epills.controller;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
@@ -209,6 +210,16 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
     }
 
     @Override
+    public void onBackPressed() {
+        Intent resultIntent = new Intent(this, AddPillGeneralActivity.class);
+        resultIntent.putExtra(AddPillGeneralActivity.EXTRA_CANCELPRESSED, true);
+        resultIntent.putExtra(AddPillGeneralActivity.EXTRA_CANCELRECEIPTID, getReceiptID());
+        resultIntent.putExtra(AddPillGeneralActivity.EXTRA_CANCELMEDICINEID, getMedicineId());
+        startActivity(resultIntent);
+        finish();
+    }
+
+    @Override
     public View createStepContentView(int stepNumber) {
         View view = null;
         switch (stepNumber) {
@@ -264,6 +275,12 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
         //after data save show interface whether additional intake should be shown.
         AddPillFinishDialog finishDialog = AddPillFinishDialog.newInstance();
 
+        finishDialog.show(getSupportFragmentManager(),AddPillFinishDialog.tag);
+        //When finish button it's pressed, setAlarm is called
+    }
+
+    public void saveIntake() {
+
         String medicineName = medicine.getName(); // MEDICINE NAME
         int quantity = seekBar.getProgress(); //HOW MANY PILLS TO TAKE AT ONCE
 
@@ -278,13 +295,12 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
         }
         //intake for alarm with occurences
         else {
-            for(int weekday=0; weekday<weekdaysSelection.length; weekday++) {
-                if(weekdaysSelection[weekday]) {
-
-                    //look at AlarmUtil.fixCalendar() for explanation
-                    Calendar fixedCalendar = AlarmUtil.fixCalendar(startDate, weekday+1);
-                    Date newDateToStart = fixedCalendar.getTime();
-
+            Calendar currentDay = Calendar.getInstance();
+            currentDay.setTime(dateToStart);
+            for(int day = 0; day < weekdaysSelection.length; day++) {
+                int calendarDay = currentDay.get(Calendar.DAY_OF_WEEK);
+                if(weekdaysSelection[calendarDay-1]) {
+                    Date newDateToStart = currentDay.getTime();
                     if(dateToEnd.after(newDateToStart)) {
                         int alarmId = (int) System.currentTimeMillis(); //unique id
 
@@ -293,13 +309,10 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
 
                     }
                 }
+                currentDay.add(Calendar.DAY_OF_WEEK,1);
             }
         }
-        finishDialog.show(getSupportFragmentManager(),AddPillFinishDialog.tag);
-        //When finish button it's pressed, setAlarm is called
-
     }
-
 
     public void setNewAlarms(){
         //DISABLE INSTANT RUN OR IT'S NOT GOING TO WORK PROPERLY
