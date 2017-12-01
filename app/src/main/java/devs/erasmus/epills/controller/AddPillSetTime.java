@@ -275,6 +275,12 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
         //after data save show interface whether additional intake should be shown.
         AddPillFinishDialog finishDialog = AddPillFinishDialog.newInstance();
 
+        finishDialog.show(getSupportFragmentManager(),AddPillFinishDialog.tag);
+        //When finish button it's pressed, setAlarm is called
+    }
+
+    public void saveIntake() {
+
         String medicineName = medicine.getName(); // MEDICINE NAME
         int quantity = seekBar.getProgress(); //HOW MANY PILLS TO TAKE AT ONCE
 
@@ -306,11 +312,7 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
                 }
             }
         }
-        finishDialog.show(getSupportFragmentManager(),AddPillFinishDialog.tag);
-        //When finish button it's pressed, setAlarm is called
-
     }
-
 
     public void setNewAlarms(){
         //DISABLE INSTANT RUN OR IT'S NOT GOING TO WORK PROPERLY
