@@ -2,6 +2,7 @@ package devs.erasmus.epills.controller;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
@@ -206,6 +207,16 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
         state.putBooleanArray(STATE_WEEK,week_state);
         state.putBoolean(STATE_REP_Single, singleSelected);
         super.onSaveInstanceState(state);
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent resultIntent = new Intent(this, AddPillGeneralActivity.class);
+        resultIntent.putExtra(AddPillGeneralActivity.EXTRA_CANCELPRESSED, true);
+        resultIntent.putExtra(AddPillGeneralActivity.EXTRA_CANCELRECEIPTID, getReceiptID());
+        resultIntent.putExtra(AddPillGeneralActivity.EXTRA_CANCELMEDICINEID, getMedicineId());
+        startActivity(resultIntent);
+        finish();
     }
 
     @Override
