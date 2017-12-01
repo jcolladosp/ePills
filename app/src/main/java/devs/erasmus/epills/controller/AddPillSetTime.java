@@ -295,13 +295,12 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
         }
         //intake for alarm with occurences
         else {
-            for(int weekday=0; weekday<weekdaysSelection.length; weekday++) {
-                if(weekdaysSelection[weekday]) {
-
-                    //look at AlarmUtil.fixCalendar() for explanation
-                    Calendar fixedCalendar = AlarmUtil.fixCalendar(startDate, weekday+1);
-                    Date newDateToStart = fixedCalendar.getTime();
-
+            Calendar currentDay = Calendar.getInstance();
+            currentDay.setTime(dateToStart);
+            for(int day = 0; day < weekdaysSelection.length; day++) {
+                int calendarDay = currentDay.get(Calendar.DAY_OF_WEEK);
+                if(weekdaysSelection[calendarDay-1]) {
+                    Date newDateToStart = currentDay.getTime();
                     if(dateToEnd.after(newDateToStart)) {
                         int alarmId = (int) System.currentTimeMillis(); //unique id
 
@@ -310,6 +309,7 @@ public class AddPillSetTime extends AppCompatActivity implements VerticalStepper
 
                     }
                 }
+                currentDay.add(Calendar.DAY_OF_WEEK,1);
             }
         }
     }
