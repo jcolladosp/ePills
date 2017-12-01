@@ -338,7 +338,7 @@ public class AddPillGeneralActivity extends AppCompatActivity {
 
             loading_indicator.setVisibility(View.INVISIBLE);
             if (queryResults != null && !queryResults.equals("")) {
-
+                errorEnable(false);
                 try{
                     JSONObject jsonQueryResult = new JSONObject(queryResults);
                     JSONArray jsonResultArray = jsonQueryResult.getJSONArray("results");
@@ -352,9 +352,11 @@ public class AddPillGeneralActivity extends AppCompatActivity {
                                 String description = " ";
                                 for (int j=0; j<jsonDescription.length(); j++) {
                                     // This is the purpose;
-                                    description = description + "\n" + jsonDescription.getString(j);
+                                    String[] parsedDescription = jsonDescription.getString(j).split("(\\[)|(\\])") ;
+                                    description = description + "\n" + parsedDescription[0];
                                 }
                                 drugDescription=new String(description);
+                                nameLayout.isErrorEnabled();
                             }
                         }
                     }
@@ -366,7 +368,16 @@ public class AddPillGeneralActivity extends AppCompatActivity {
                 description_text.setText(drugDescription);
 
             } else {
+                errorEnable(true);
+            }
+        }
+
+        protected  void errorEnable(boolean b){
+            if(b){
                 nameLayout.setError("INCORRECT SUBSTANCE NAME OR NO INTERNET CONNECTION");
+            }
+            else{
+                nameLayout.setError(null);
             }
         }
     }
