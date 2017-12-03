@@ -1,9 +1,11 @@
 # ePills
 **ePills** is an app for medicine management.
+![Screenshot Android](http://image.ibb.co/gGBqfG/ic_launcher.png)
+
 
 
 #### Screenshot
-![Screenshot Android](http://image.ibb.co/hdqNub/Screenshot_20171203_164832_framed.png)
+![Screenshot Android](http://image.ibb.co/m0QSSw/Screenshot_20171203_164832_framed.png)
 
 
 
