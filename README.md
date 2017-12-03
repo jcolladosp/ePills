@@ -1,9 +1,9 @@
 # ePills
-**ePills** is an for medicine management.
-Paper link: https://docs.google.com/document/d/14k_HZtBkN8quOTmMbACSD_Fw7UverJunN6yQL9ite3w/edit?usp=sharing
+**ePills** is an app for medicine management.
+
 
 #### Screenshot
-![Screenshot Android](https://image.ibb.co/c8AD3G/readme_screenshot_Small.png)
+![Screenshot Android](http://image.ibb.co/hdqNub/Screenshot_20171203_164832_framed.png)
 
 
 
